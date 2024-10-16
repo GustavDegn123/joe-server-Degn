@@ -2,9 +2,11 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const http = require('http'); // Til at lave HTTP-forespørgsler for at måle RTT
+
 const app = express();
 
 app.use(cors());
+app.use(express.json()); // For at kunne læse JSON i POST-requests
 
 // Middleware til at logge serverens svartid
 app.use((req, res, next) => {
@@ -28,6 +30,12 @@ app.get("/", (req, res) => {
 app.get("/res", (req, res) => {
   res.send("Svarbesked fra serveren");
 });
+
+// Importer routes
+const userRoutes = require("./routes/userRoutes");
+
+// Brug routes
+app.use("/api/users", userRoutes);
 
 // Start serveren og mål derefter anmodningstid, svartid og RTT
 const server = app.listen(3000, () => {
