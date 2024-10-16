@@ -1,61 +1,98 @@
 body {
-  margin: 0px;
-}
-
-ul {
-    font-family: Calibri;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #f7c1d9;
-    font-size: 2em;
-  }
-  
-  li {
-    float: left;
-  } 
-  
-  li a {
-    display: block;
-    color: rgb(41, 41, 41);
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-  }
-  li img{
-    display: block;
-    width: 65px;
-  }
-  
-.active{
-    background-color: #f09bc1;
-    font-weight: bolder;
-}
-
-  li a:hover {
-    background-color: #f088b7;
-    font-weight: bolder;
-}
-
-/* .container {
-  margin: auto;
-} */
-
-.center {
-  padding-top: 50px;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
   display: flex;
   justify-content: center;
-  flex-direction: column;
-  text-align: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
-.center button {
-  border: 2px solid black;
-  border-radius: 10px;
+h1, h2 {
+  color: #333;
+}
+
+#start-page, #onboarding-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+input {
+  margin-bottom: 10px;
   padding: 10px;
-  margin-left: 45%;
-  margin-right: 45%;
-  background-color: #f7c1d9;
-  font-weight: bold;
+  width: 80%;
+  max-width: 300px;
+}
+
+#progress-container {
+  width: 80%;
+  background-color: #e0e0e0;
+  height: 30px;
+  margin: 20px auto;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#progress-bar {
+  height: 100%;
+  width: 0%;
+  background-color: #4caf50;
+  text-align: center;
+  line-height: 30px;
+  color: white;
+}
+
+#step-tabs {
+  margin-bottom: 20px;
+}
+
+#step-tabs button {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 10px;
+  border: none;
+  background-color: #ccc;
+  cursor: pointer;
+}
+
+#step-tabs button:hover {
+  background-color: #bbb;
+}
+
+.tabcontent {
+  display: none;
+  padding: 20px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  margin: 20px;
+}
+
+.tabcontent h3 {
+  margin-top: 0;
+}
+
+button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  width: 80%;
+  max-width: 200px;
+  margin-bottom: 15px;
+}
+
+button:hover {
+  background-color: #45a049;
 }

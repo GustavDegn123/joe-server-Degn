@@ -39,7 +39,6 @@ app.get("/res", (req, res) => {
 // Importer ruter for brugere fra eksterne filer (separat fil til brugerruter)
 const userRoutes = require("./routes/userRoutes");
 const onboardingRoutes = require("./routes/onboardingRoutes");
-const onboardingRoutes = require("./routes/onboardingRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
 
 // Brug ruterne for brugere

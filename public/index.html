@@ -1,24 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./static/styles/global.css">
-  <title>JOE and The Juice</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding Process</title>
+    <link rel="stylesheet" href="global.css">
 </head>
-
 <body>
-  <ul>
-    <li><img src="./static/img/joeLogo.svg" alt="Logo"></li>
-    <li><a href="/" class="active">Home</a></li>
-    <li style="float:right"><a href="/">Culture</a></li>
-    <li style="float:right"><a href="/">Locations</a></li>
-    <li style="float:right"><a href="/">Menu</a></li>
-  </ul>
-  <div class="center">
-    <button onclick="getResponse()">Press me</button>
-    <p id="response"></p>
-  </div>
+    <!-- Startside: Her kan brugeren oprette profil og logge ind -->
+    <div id="start-page">
+        <h1>Welcome to the Onboarding Process</h1>
+        
+        <!-- Opret bruger (signup-form) -->
+        <form id="signup-form">
+            <h2>Create Your Profile</h2>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <br><br>
+            <label for="email">Email:</label>
+            <input type="email" id="signup-email" name="email" required>
+            <br><br>
+            <label for="password">Password:</label>
+            <input type="password" id="signup-password" name="password" required>
+            <br><br>
+            <button type="submit">Create Account</button>
+        </form>
+
+        <!-- Login form -->
+        <form id="login-form" style="display:none;">
+            <h2>Login to Start Onboarding</h2>
+            <label for="email">Email:</label>
+            <input type="email" id="login-email" name="email" required>
+            <br><br>
+            <label for="password">Password:</label>
+            <input type="password" id="login-password" name="password" required>
+            <br><br>
+            <button type="submit">Start Onboarding</button>
+        </form>
+    </div>
+
+    <!-- Trin-visning: Onboarding-processen -->
+    <div id="onboarding-page" style="display:none;">
+        <h2>Onboarding Process</h2>
+
+        <!-- Progress bar -->
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+
+        <!-- Trin-faner -->
+        <div id="step-tabs">
+            <button class="tablink" onclick="openStep(event, 'Step1')">Step 1</button>
+            <button class="tablink" onclick="openStep(event, 'Step2')">Step 2</button>
+            <button class="tablink" onclick="openStep(event, 'Step3')">Step 3</button>
+        </div>
+
+        <!-- Trin-indhold -->
+        <div id="Step1" class="tabcontent">
+            <h3>Profile Setup</h3>
+            <p>Complete your profile details.</p>
+            <button onclick="nextStep(1)">Complete Step 1</button>
+        </div>
+
+        <div id="Step2" class="tabcontent">
+            <h3>Introduction</h3>
+            <p>Learn how the platform works.</p>
+            <button onclick="nextStep(2)">Complete Step 2</button>
+        </div>
+
+        <div id="Step3" class="tabcontent">
+            <h3>Final Setup</h3>
+            <p>Finish the onboarding process.</p>
+            <button onclick="completeOnboarding()">Complete Onboarding</button>
+        </div>
+    </div>
+
+    <script src="index.js"></script>
 </body>
 </html>
