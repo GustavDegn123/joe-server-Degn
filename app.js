@@ -12,9 +12,12 @@ app.use(cors());
 app.use(express.json()); // Sørger for, at vi kan modtage JSON-formateret data i API-forespørgsler
 
 // Servér statiske filer fra "public" mappen (til billeder, CSS, JS osv.)
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));  // Brug relative stier, så Express.js serverer filer fra public-mappen
 
-res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Route til forsiden af hjemmesiden (index.html)
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));  // Brug relative stier til index.html
+});
 
 // Test-route til at returnere en simpel besked (brugt til RTT-målinger)
 app.get("/res", (req, res) => {
