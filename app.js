@@ -11,18 +11,6 @@ app.use(cors());
 // Middleware til at parse JSON i POST-anmodninger
 app.use(express.json()); // Sørger for, at vi kan modtage JSON-formateret data i API-forespørgsler
 
-// Middleware til at logge serverens responstid for hver anmodning (deaktiveret med kommentarer)
-/*
-app.use((req, res, next) => {
-    const startTime = Date.now(); // Starttidspunkt for anmodningen
-    res.on("finish", () => {
-        const duration = Date.now() - startTime; // Beregn behandlingstiden
-        console.log(`Serveren behandlede ${req.originalUrl} på ${duration} ms`); // Udskriv responstiden til loggen
-    });
-    next(); // Fortsæt til næste middleware eller route-handler
-});
-*/
-
 // Servér statiske filer fra "public" mappen (til billeder, CSS, JS osv.)
 app.use(express.static('/var/www/joe-server-Degn/public'));
 
@@ -31,7 +19,6 @@ app.get("/", (req, res) => {
     res.sendFile(path.join('/var/www/joe-server-Degn/public', "index.html"));
 });
   
-
 // Test-route til at returnere en simpel besked (brugt til RTT-målinger)
 app.get("/res", (req, res) => {
   res.send("Svarbesked fra serveren"); // Returnerer en simpel tekstbesked
@@ -92,6 +79,4 @@ function measureRequestResponseRTT() {
 }
 
 // Kør måling af anmodning-svar RTT hver 5. sekund (5000 ms) (deaktiveret med kommentarer)
-/*
-// setInterval(measureRequestResponseRTT, 5000); // Måler RTT hvert 5. sekund
 */
