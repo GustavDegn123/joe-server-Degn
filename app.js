@@ -12,19 +12,19 @@ app.use(cors());
 app.use(express.json()); // Sørger for, at vi kan modtage JSON-formateret data i API-forespørgsler
 
 // Servér statiske filer fra "public" mappen (til billeder, CSS, JS osv.)
-app.use(express.static('/var/www/joe-server-Degn/public'));
+app.use(express.static(path.join('/var/www/joe-server-Degn/public')));
 
 // Route til forsiden af hjemmesiden (index.html)
 app.get("/", (req, res) => {
     res.sendFile(path.join('/var/www/joe-server-Degn/public', "index.html"));
 });
-  
+
 // Test-route til at returnere en simpel besked (brugt til RTT-målinger)
 app.get("/res", (req, res) => {
   res.send("Svarbesked fra serveren"); // Returnerer en simpel tekstbesked
 });
 
-// Importer ruter for brugere fra eksterne filer (separat fil til brugerruter)
+// Importer ruter for brugere, onboarding og feedback fra eksterne filer
 const userRoutes = require("./routes/userRoutes");
 const onboardingRoutes = require("./routes/onboardingRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
@@ -46,7 +46,7 @@ const server = app.listen(3000, () => {
 // Sæt en timeout på serveren (f.eks. 5 sekunder)
 server.setTimeout(5000); // Hvis en anmodning tager længere end 5 sekunder, afbrydes den
 
-// Funktion til at måle anmodningstid, svartid og Round Trip Time (RTT) (deaktiveret med kommentarer)
+// (RTT-funktion deaktiveret med kommentarer)
 /*
 function measureRequestResponseRTT() {
     const reqStart = Date.now(); // Starttidspunkt for HTTP-anmodningen fra klient-siden
