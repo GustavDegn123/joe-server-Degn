@@ -28,8 +28,9 @@ app.use(express.static('/var/www/joe-server-Degn/public'));
 
 // Route til forsiden af hjemmesiden (index.html)
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
+    res.sendFile(path.join('/var/www/joe-server-Degn/public', "index.html"));
+  });
+  
 
 // Test-route til at returnere en simpel besked (brugt til RTT-målinger)
 app.get("/res", (req, res) => {
