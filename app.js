@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 */
 
 // Servér statiske filer fra "public" mappen (til billeder, CSS, JS osv.)
-app.use("/static", express.static("public"));
+app.use(express.static('public')); // Public mappen indeholder dine statiske filer
 
 // Route til forsiden af hjemmesiden (index.html)
 app.get("/", (req, res) => {
