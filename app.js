@@ -6,7 +6,6 @@ const http = require('http'); // Til at lave HTTP-forespørgsler for at måle RT
 const app = express();
 
 app.use(cors());
-app.use(express.json()); // For at kunne læse JSON i POST-requests
 
 // Middleware til at logge serverens svartid
 app.use((req, res, next) => {
