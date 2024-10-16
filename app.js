@@ -47,9 +47,6 @@ app.use("/api/users", userRoutes); // Matcher alle ruter under /api/users
 // Brug ruterne for onboarding
 app.use("/api/onboarding", onboardingRoutes); // Matcher ruter under /api/onboarding
 
-// Brug ruterne for onboarding
-app.use("/api/onboarding", onboardingRoutes); // Matcher ruter under /api/onboarding
-
 // Brug ruterne for feedback
 app.use("/api/feedback", feedbackRoutes); // Matcher ruter under /api/feedback
 
