@@ -9,9 +9,9 @@ async function measureRTT() {
   
     console.log(`RTT: ${rtt} ms`);
     console.log(`Server Time: ${data.serverTime}`);
-  }
-  
-  // Call the function when the page loads
-  document.addEventListener("DOMContentLoaded", () => {
-    measureRTT();
-  });
+}
+
+// Call the function when the page loads
+document.addEventListener("DOMContentLoaded", () => {
+  measureRTT();
+});

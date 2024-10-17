@@ -26,9 +26,10 @@ app.get("/res", (req, res) => {
 
 // RTT ping route to measure RTT
 app.get('/ping', (req, res) => {
-  const serverTime = Date.now();  // Capture server time when request is received
-  res.json({ message: 'pong', serverTime });
-});
+    const serverTime = Date.now();  // Capture server time when request is received
+    res.json({ message: 'pong', serverTime });
+  });
+  
 
 // Import routes for users, onboarding, and feedback from external files
 const userRoutes = require("./routes/userRoutes");
