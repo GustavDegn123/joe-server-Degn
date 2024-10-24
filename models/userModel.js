@@ -1,10 +1,29 @@
-const { getConnection, sql } = require('../config/db');
+// models/userModel.js
+const { getConnection } = require('../config/db');
 
-exports.createUser = async (name, email, password_hash) => {
-    const pool = await getConnection();
-    return pool.request()
-        .input('name', sql.NVarChar, name)
-        .input('email', sql.NVarChar, email)
-        .input('password_hash', sql.NVarChar, password_hash)
-        .query('INSERT INTO dbo.Users (name, email, password_hash) VALUES (@name, @email, @password_hash)');
+const createUser = async (userData) => {
+    const { name, email, phone_number, country, hashed_password, loyalty_points, loyalty_level } = userData;
+    
+    try {
+        const pool = await getConnection();
+        const result = await pool.request()
+            .input('name', name)
+            .input('email', email)
+            .input('phone_number', phone_number)
+            .input('country', country)
+            .input('hashed_password', hashed_password)
+            .input('loyalty_points', loyalty_points)
+            .input('loyalty_level', loyalty_level)
+            .query(`
+                INSERT INTO Users (name, email, phone_number, country, hashed_password, loyalty_points, loyalty_level)
+                VALUES (@name, @email, @phone_number, @country, @hashed_password, @loyalty_points, @loyalty_level)
+            `);
+        return result;
+    } catch (error) {
+        console.error('Error creating user:', error);
+        throw error;
+    }
 };
+
+module.exports = { createUser };
+
