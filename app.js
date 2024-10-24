@@ -27,9 +27,9 @@ app.get("/ping", (req, res) => {
     res.json({ message: "Pong", serverTime }); // Respond with JSON
 });
 
-// Route for serving the homepage (index.html)
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Catch-all route to serve index.html for all paths
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start server on port 3000
