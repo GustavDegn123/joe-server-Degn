@@ -10,7 +10,6 @@ const config = {
   }
 };
 
-// Function to get a pool connection and execute queries
 async function getConnection() {
   try {
     const pool = await sql.connect(config);
