@@ -4,6 +4,8 @@ const path = require("path");
 const app = express();
 const { getConnection } = require(path.join(__dirname, 'config', 'db'));
 const userRoutes = require('./routes/userRoutes');
+const loginRoutes = require('./routes/loginRoutes');
+
 
 
 getConnection();
@@ -14,6 +16,8 @@ app.use(cors());
 // Middleware to parse JSON
 app.use(express.json());
 app.use('/api', userRoutes);
+app.use('/api', loginRoutes);
+
 
 // Serve static files from "public" directory (CSS, JS, images, etc.)
 app.use(express.static(path.join(__dirname, 'public')));

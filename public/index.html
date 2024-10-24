@@ -5,30 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Onboarding Process</title>
     <link rel="stylesheet" href="/styles/global.css">
+    <link rel="stylesheet" href="/styles/createProfile.css">
 </head>
+<div class="navbar">
+    <div class="navbar-logo">
+        <img src="img/joeLogo.svg" alt="Joe Logo" class="logo">
+    </div>
+    <div class="navbar-links">
+        <a href="#">HOME</a>
+        <a href="#">MENU</a>
+        <a href="#">STORES</a>
+        <a href="#">APP</a>
+        <a href="#">CAREERS</a>
+        <a href="#">EVENT BOOKINGS</a>
+        <a href="#">& MORE</a>
+    </div>
+    <div class="navbar-user">
+        <img src="img/Denmark.jpeg" alt="Denmark Flag" class="flag">
+        <img src="img/Icon.png" alt="User Icon" class="icon">
+        <button class="user-button">Sign Up</button>
+        <button class="user-button">Login</button>
+    </div>
+</div>
+
+
 <body>
     <!-- Startside: Her kan brugeren oprette profil og logge ind -->
     <div id="start-page">
-        <h1>Welcome to the Onboarding Processsssssssss</h1>
-        
-        <!-- Opret bruger (signup-form) -->
-        <form id="signup-form">
-            <h2>Create Your Profile</h2>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
-            <br><br>
-            <label for="email">Email:</label>
-            <input type="email" id="signup-email" name="email" required>
-            <br><br>
-            <label for="password">Password:</label>
-            <input type="password" id="signup-password" name="password" required>
-            <br><br>
-            <button type="submit">Create Account</button>
-        </form>
+        <div id="onboarding-container">
+            <div id="logo">
+                <img src="img/joeLogo.svg" alt="Joe Logo" />
+            </div>
+            <h1>Create your account</h1>
+            <div class="sign">Sign up and start earning points today!</div>
+            <form id="signup-form">
+                <input type="text" id="name" name="name" placeholder="Name" required>
+                <input type="email" id="signup-email" name="email" placeholder="Email" required>
+               
+                <div class="phone-container">
+                    <div class="phone-input-wrapper">
+                        <input type="text" id="signup-phone" name="phone" placeholder="Phone number" class="phone-input" required>
+                    </div>
+                </div>
+                
+                <input type="password" id="signup-password" name="password" placeholder="Password" required>
+
+
+                <div class="checkbox-container">
+                    <label>
+                        <input type="checkbox" id="newsletter" name="newsletter">
+                        I agree term and conditions 
+                    </label>
+                    <label>
+                        <input type="checkbox" id="terms" name="terms" required>
+                        I agree loyalty program 
+                    </label>
+                </div>
+
+                <button type="submit">Create Account</button>
+            </form>
+        </div>
+    </div>
+
 
         <!-- Login form -->
         <form id="login-form" style="display:none;">
-            <h2>Login to Start Onboarding NÅÅÅL</h2>
+            <h2>Welcome Back!</h2>
+            <div>Log in to your account below</div>
             <label for="email">Email:</label>
             <input type="email" id="login-email" name="email" required>
             <br><br>
@@ -38,6 +81,7 @@
             <button type="submit">Start Onboarding</button>
         </form>
     </div>
+    
 
     <!-- Trin-visning: Onboarding-processen -->
     <div id="onboarding-page" style="display:none;">
@@ -74,6 +118,7 @@
             <button onclick="completeOnboarding()">Complete Onboarding</button>
         </div>
     </div>
+
 
     <!-- Link to the RTT script -->
     <script src="/rtt.js"></script>

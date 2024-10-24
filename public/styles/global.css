@@ -1,98 +1,80 @@
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+.navbar {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  height: 100vh;
-  margin: 0;
-  padding: 0;
-}
-
-h1, h2 {
-  color: #333;
-}
-
-#start-page, #onboarding-page {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding: 20px;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-input {
-  margin-bottom: 10px;
-  padding: 10px;
-  width: 80%;
-  max-width: 300px;
-}
-
-#progress-container {
-  width: 80%;
-  background-color: #e0e0e0;
-  height: 30px;
-  margin: 20px auto;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-#progress-bar {
-  height: 100%;
-  width: 0%;
-  background-color: #4caf50;
-  text-align: center;
-  line-height: 30px;
-  color: white;
-}
-
-#step-tabs {
-  margin-bottom: 20px;
-}
-
-#step-tabs button {
-  display: inline-block;
-  padding: 10px 20px;
-  margin: 10px;
-  border: none;
-  background-color: #ccc;
-  cursor: pointer;
-}
-
-#step-tabs button:hover {
-  background-color: #bbb;
-}
-
-.tabcontent {
-  display: none;
-  padding: 20px;
-  border: 1px solid #ddd;
   background-color: #fff;
-  margin: 20px;
-}
-
-.tabcontent h3 {
-  margin-top: 0;
-}
-
-button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
   padding: 10px 20px;
-  cursor: pointer;
-  width: 80%;
-  max-width: 200px;
-  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
 }
 
-button:hover {
-  background-color: #45a049;
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.logo {
+  height: 40px;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 30px; /* Giver mere afstand mellem links */
+  align-items: center;
+  flex-grow: 1;
+}
+
+.navbar-links a {
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
+  font-size: 15px;
+  transition: color 0.2s ease;
+}
+
+.navbar-links a:hover {
+  color: #e0b4c5;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 40px;
+}
+
+.flag {
+  width: 25px;
+  height: 18px;
+  margin-right: 12px;
+}
+
+.icon {
+  width: 25px;
+  height: 25px;
+  margin-right: 0px;
+}
+
+.user-button {
+  background-color: transparent; /* Ingen baggrundsfarve */
+  color: #000; /* Sort tekst som standard */
+  padding: 5px 10px;
+  font-weight: bold; 
+  font-size: 16px;
+  cursor: pointer;
+  transition: color 0.2s ease; /* Kun teksten Ã¦ndrer farve ved hover */
+  margin-right: 0px;
+  border: none; /* Fjerner kant pÃ¥ knappen */
+  text-align: center;
+  white-space: nowrap;
+}
+
+.user-button:hover {
+  background-color: transparent; /* SÃ¸rger for, at baggrunden forbliver gennemsigtig ved hover */
+  color: #e0b4c5; /* Ã†ndrer kun farven pÃ¥ teksten ved hover */
 }
