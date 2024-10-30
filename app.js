@@ -6,8 +6,6 @@ const { getConnection } = require(path.join(__dirname, 'config', 'db'));
 const userRoutes = require('./routes/userRoutes');
 const loginRoutes = require('./routes/loginRoutes');
 
-
-
 getConnection();
 
 // Middleware for CORS
