@@ -4,7 +4,7 @@ const cors = require("cors");
 const path = require("path");
 const app = express();
 const { getConnection } = require(path.join(__dirname, 'config', 'db'));
-const createProfileRoutes = require('./routes/CreateProfileRoutes');
+const createProfileRoutes = require('./routes/createProfileRoutes');
 const loginRoutes = require('./routes/loginRoutes');
 
 getConnection();
