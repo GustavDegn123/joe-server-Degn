@@ -21,7 +21,6 @@ const createUser = async (userData) => {
     } = userData;
     
     try {
-        // Hash password før det gemmes
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         const pool = await getConnection();
         const result = await pool.request()
@@ -40,9 +39,10 @@ const createUser = async (userData) => {
                 INSERT INTO Users (name, email, phone_number, country, hashed_password, loyalty_points, loyalty_level, terms_accepted, loyalty_program_accepted, latitude, longitude)
                 VALUES (@name, @email, @phone_number, @country, @hashed_password, @loyalty_points, @loyalty_level, @terms_accepted, @loyalty_program_accepted, @latitude, @longitude)
             `);
+        console.log("User created successfully:", result); // Bekræft succes i loggen
         return result;
     } catch (error) {
-        console.error('Error creating user:', error);
+        console.error('Error creating user:', error); // Log detaljeret fejl
         throw error;
     }
 };

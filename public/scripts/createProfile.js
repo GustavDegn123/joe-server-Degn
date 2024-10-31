@@ -22,7 +22,6 @@ document.getElementById("signup-form").addEventListener("submit", function(e) {
         loyalty_program_accepted: loyaltyProgramAccepted
     };
   
-    // Send POST-anmodning til backend for at oprette bruger
     fetch('/api/createProfile', {  // Opdateret til at matche backend-route
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
