@@ -7,8 +7,10 @@ document.getElementById("signup-form").addEventListener("submit", function(e) {
     const email = document.getElementById("signup-email").value;
     const phone = document.getElementById("signup-phone").value;
     const password = document.getElementById("signup-password").value;
-    const termsAccepted = document.getElementById("terms").checked ? 1 : 0; // Konverter til 1 eller 0
-    const loyaltyProgramAccepted = document.getElementById("loyalty_program").checked ? 1 : 0; // Konverter til 1 eller 0
+    const termsCheckbox = document.getElementById("terms");
+    const loyaltyProgramCheckbox = document.getElementById("loyalty_program");
+    const termsAccepted = termsCheckbox ? (termsCheckbox.checked ? 1 : 0) : 0;
+    const loyaltyProgramAccepted = loyaltyProgramCheckbox ? (loyaltyProgramCheckbox.checked ? 1 : 0) : 0;
   
     // Pak data i et objekt
     const userData = {
