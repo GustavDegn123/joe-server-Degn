@@ -1,9 +1,10 @@
+// Import dependencies
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const app = express();
 const { getConnection } = require(path.join(__dirname, 'config', 'db'));
-const userRoutes = require('./routes/userRoutes');
+const createProfileRoutes = require('./routes/CreateProfileRoutes');
 const loginRoutes = require('./routes/loginRoutes');
 
 getConnection();
@@ -13,26 +14,31 @@ app.use(cors());
 
 // Middleware to parse JSON
 app.use(express.json());
-app.use('/api', userRoutes);
+app.use('/api', createProfileRoutes);
 app.use('/api', loginRoutes);
-
 
 // Serve static files from "public" directory (CSS, JS, images, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get("/ping", (req, res) => {
-    const serverTime = Date.now();
-    res.json({ message: "Pong", serverTime }); // Respond with JSON
+// Route to serve the createProfile.html as the main page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'createProfile.html'));
 });
 
-// Catch-all route to serve index.html for all paths
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Additional route to login page if needed
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'login.html'));
+});
+
+// Test route to check server health
+app.get("/ping", (req, res) => {
+    const serverTime = Date.now();
+    res.json({ message: "Pong", serverTime });
 });
 
 // Start server on port 3000
 const server = app.listen(3000, () => {
-  console.log("Server running on port 3000");
+    console.log("Server running on port 3000");
 });
 
 // Set a timeout on the server (optional)
