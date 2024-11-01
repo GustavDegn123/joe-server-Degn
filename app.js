@@ -20,6 +20,7 @@ app.use(express.json());
 app.use('/api', createProfileRoutes);
 app.use('/api', loginRoutes);
 app.use('/api', productRoutes); // Nu vil ruten være tilgængelig på /api/products
+app.use('/api/cloudinary', cloudinaryRoutes);
 
 // Serve static files from "public" directory (CSS, JS, images, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -35,8 +36,8 @@ app.get('/login', (req, res) => {
 });
 
 // Route for order-now siden
-app.get('/order-now', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'ordernow.html'));
+app.get('/orderNow', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'orderNow.html'));
 });
 
 app.get('/checkout', (req, res) => {
@@ -49,8 +50,7 @@ app.get("/ping", (req, res) => {
     res.json({ message: "Pong", serverTime });
 });
 
-// Brug Cloudinary-routes
-app.use('/api/cloudinary', cloudinaryRoutes);
+
 
 // Start server on port 3000
 const server = app.listen(3000, () => {

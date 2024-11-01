@@ -125,9 +125,6 @@ function renderBasket() {
     }
 }
 
-
-
-
 // Run fetchProducts when the page loads
 document.addEventListener("DOMContentLoaded", fetchProducts);
 
