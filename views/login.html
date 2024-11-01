@@ -6,7 +6,6 @@
     <title>Login Page</title>
     <link rel="stylesheet" href="/styles/global.css">
     <link rel="stylesheet" href="/styles/createProfile.css">
-    <link rel="stylesheet" href="/styles/login.css">
 </head>
 <body>
     <!-- Navbar -->
@@ -26,11 +25,10 @@
         <div class="navbar-user">
             <img src="/img/Denmark.jpeg" alt="Denmark Flag" class="flag">
             <img src="/img/Icon.png" alt="User Icon" class="icon">
-            <button class="user-button" onclick="toggleForms('signup')">Sign Up</button>
-            <button class="user-button" onclick="toggleForms('login')">Login</button>
+            <button class="user-button" onclick="window.location.href='/'">Sign Up</button>
+            <button class="user-button" onclick="window.location.href='/login'">Login</button>
         </div>
     </div>
-
 
     <!-- Login Form -->
     <div id="login-page">
@@ -49,8 +47,6 @@
         </div>
     </div>
 
-    <!-- JavaScript Files -->
     <script src="/public/scripts/login.js" defer></script>
-    
 </body>
 </html>

@@ -37,9 +37,8 @@ document.getElementById("signup-form").addEventListener("submit", function(e) {
         console.log('User created:', data);
         alert("User account created successfully!");
   
-        // Vis login-formularen efter oprettelse af bruger
-        document.getElementById("signup-form").style.display = "none";
-        document.getElementById("login-form").style.display = "block";
+        // Naviger til login-siden efter oprettelse af bruger
+        window.location.href = "/login";
     })
     .catch(error => {
         console.error('Error creating user:', error);
