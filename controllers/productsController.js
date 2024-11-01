@@ -1,4 +1,4 @@
-const { sql, getConnection } = require('../../../Downloads/joe-server-Degn 2/config/db'); // Importér både sql og getConnection
+const { sql, getConnection } = require('../config/db'); // Adjust based on the actual location of db.js
 
 async function getAllProducts(req, res) {
   try {
