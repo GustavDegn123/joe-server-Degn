@@ -1,163 +1,193 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .sign {
-    margin-bottom: 10px;
-  }
-  
-  #onboarding-container {
-    background-color: #ffffff;
-    padding: 40px;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-  }
-  
-  #logo img {
-    width: 80px;
-    margin-bottom: 0px;
-    padding: 10px;
-  }
-  
-  h1 {
-    font-size: 20px;
-    margin-bottom: 10px;
-    color: #333;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-  .phone-container {
-    width: 100%;
-    max-width: 300px;
-    margin-bottom: 0px;
-  }
-  
-  .phone-input-wrapper {
-    position: relative;
-    width: 100%;
-  }
-  
-  .phone-input {
-    width: 100%;
-    height: 35px;
-    padding-left: 70px; /* Giver plads til flaget og landekoden */
-    border: 1px solid #ddd;
-    border-radius: 0;
-    box-sizing: border-box;
-    font-size: 14px;
-    background: url('../img/Denmark.jpeg') no-repeat 10px center, #fff; /* TilfÃ¸jer flaget som baggrund */
-    background-size: 20px 15px;
-  }
-  
-  .phone-input::placeholder {
-    color: #999;
-  }
-  
-  /* Pseudo-element for landekoden */
-  .phone-input-wrapper::before {
-    content: "+45";
-    position: absolute;
-    top: 50%;
-    left: 40px; /* Juster afstanden til teksten */
-    transform: translateY(-100%);
-    color: #333;
-    font-size: 14px;
-    pointer-events: none; /* GÃ¸r, at teksten ikke kan interageres med */
-  }
-  
-  input, .phone-input, .phone-input input {
-    border: 1.5px solid #ddd;
-    border-radius: 0;
-    box-sizing: border-box;
-    width: 100%;
-    max-width: 300px;
-    height: 45px;
-    margin-bottom: 15px;
-  }
-  
-  button {
-    background-color: #f7b8d7;
-    color: #333;
-    border: none;
-    padding: 12px;
-    border-radius: 0;
-    cursor: pointer;
-    width: 100%;
-    max-width: 300px;
-    font-size: 16px;
-  }
-  
-  button:hover {
-    background-color: #e69bb8;
-  }
-  .checkbox-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 15px;
-    font-size: 14px;
-    color: #333;
-  }
-  
-  .checkbox-container label {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
-  }
-  
-  .checkbox-container input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    margin-right: 10px;
-    border: 1.5px solid #ddd;
-    appearance: none;
-    border-radius: 2px; /* Lettere afrunding som pÃ¥ billedet */
-    background-color: #fff;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .checkbox-container input[type="checkbox"]:checked::after {
-    content: 'âœ”';
-    font-size: 12px;
-    color: #333; /* Sort flueben */
-  }
-  
-  
-  
-  input {
-    border: 1px solid #ddd;
-    border-radius: 0;
-    box-sizing: border-box;
-    width: 100%;
-    max-width: 300px;
-    height: 45px;
-    margin-bottom: 15px;
-    padding: 0 10px;
-    transition: border 0.2s ease; /* Glidende overgang */
-  }
-  
-  input:focus {
-    border: 2.5px solid #333; /* Tykkere kant ved fokus */
-    outline: none; /* Fjern standard blÃ¥ kant */
-  }
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.sign {
+  margin-bottom: 10px;
+}
+
+#onboarding-container {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+#logo img {
+  width: 80px;
+  margin-bottom: 0px;
+  padding: 10px;
+}
+
+h1 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.phone-container {
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 0px;
+}
+
+.phone-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.phone-input {
+  width: 100%;
+  height: 35px;
+  padding-left: 70px;
+  /* Giver plads til flaget og landekoden */
+  border: 1px solid #ddd;
+  border-radius: 0;
+  box-sizing: border-box;
+  font-size: 14px;
+  background: url('/img/Denmark.jpeg') no-repeat 10px center, #fff;
+  /* TilfÃ¸jer flaget som baggrund */
+  background-size: 20px 15px;
+}
+
+.phone-input::placeholder {
+  color: #999;
+}
+
+/* Pseudo-element for landekoden */
+.phone-input-wrapper::before {
+  content: "+45";
+  position: absolute;
+  top: 50%;
+  left: 40px;
+  /* Juster afstanden til teksten */
+  transform: translateY(-100%);
+  color: #333;
+  font-size: 14px;
+  pointer-events: none;
+  /* GÃ¸r, at teksten ikke kan interageres med */
+}
+
+input,
+.phone-input,
+.phone-input input {
+  border: 1.5px solid #ddd;
+  border-radius: 0;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 300px;
+  height: 45px;
+  margin-bottom: 15px;
+}
+
+button {
+  background-color: #f7b8d7;
+  color: #333;
+  border: none;
+  padding: 12px;
+  border-radius: 0;
+  cursor: pointer;
+  width: 100%;
+  max-width: 300px;
+  font-size: 16px;
+  font: bold;
+}
+
+
+button:hover {
+  background-color: #e69bb8;
+}
+
+.checkbox-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #333;
+}
+
+.checkbox-container label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: 10px;
+  height: 18px;
+  margin-right: 10px;
+  border: 1.5px solid #ddd;
+  appearance: none;
+  border-radius: 2px;
+  /* Lettere afrunding som pÃ¥ billedet */
+  background-color: #fff;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.checkbox-container input[type="checkbox"]:checked::after {
+  content: '✓';
+  /* Unicode checkmark symbol */
+  font-size: 20x;
+  color: #333;
+  /* Sort flueben */
+}
+
+
+
+input {
+  border: 1px solid #ddd;
+  border-radius: 0;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 300px;
+  height: 45px;
+  margin-bottom: 15px;
+  padding: 0 10px;
+  transition: border 0.2s ease;
+  /* Glidende overgang */
+}
+
+
+input:focus {
+  border: 2.5px solid #333;
+  /* Tykkere kant ved fokus */
+  outline: none;
+  /* Fjern standard blÃ¥ kant */
+}
+
+
+.already-account {
+  font-size: 12px;
+  /* Gør teksten lille */
+  color: #f7b8d7;
+  /* Lys grå farve */
+  text-decoration: underline;
+  /* Understreget */
+  text-align: center;
+  /* Centrer teksten, hvis nødvendigt */
+  margin-top: 20px;
+}

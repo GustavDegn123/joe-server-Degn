@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="/styles/global.css">
+    <link rel="stylesheet" href="/styles/createProfile.css">
+    <link rel="stylesheet" href="/styles/login.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="navbar-logo">
+            <img src="/img/joeLogo.svg" alt="Joe Logo" class="logo">
+        </div>
+        <div class="navbar-links">
+            <a href="#">HOME</a>
+            <a href="#">MENU</a>
+            <a href="#">STORES</a>
+            <a href="#">APP</a>
+            <a href="#">CAREERS</a>
+            <a href="#">EVENT BOOKINGS</a>
+            <a href="#">MORE</a>
+        </div>
+        <div class="navbar-user">
+            <img src="/img/Denmark.jpeg" alt="Denmark Flag" class="flag">
+            <img src="/img/Icon.png" alt="User Icon" class="icon">
+            <button class="user-button" onclick="toggleForms('signup')">Sign Up</button>
+            <button class="user-button" onclick="toggleForms('login')">Login</button>
+        </div>
+    </div>
+
+
+    <!-- Login Form -->
+    <div id="login-page">
+        <div id="onboarding-container">
+            <div id="logo">
+                <img src="/img/joeLogo.svg" alt="Joe Logo" />
+            </div>
+            <h1>Welcome Back!</h1>
+            <div class="sign">Log in to your account below</div>
+            <form id="login-form">
+                <input type="email" id="login-email" name="email" placeholder="Email" required>
+                <input type="password" id="login-password" name="password" placeholder="Password" required>
+                <button type="submit" style="font-weight: bold;">Log In</button>
+                <a href="/" class="already-account">Don't have an account? Sign Up</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="/public/scripts/login.js" defer></script>
+    
+</body>
+</html>
