@@ -6,6 +6,7 @@ const saltRounds = 10;
 
 // Funktion til at oprette en ny bruger med hash'et adgangskode
 const createUser = async (userData) => {
+    console.log("Creating user in database:", userData);
     const { 
         name, 
         email, 
@@ -35,10 +36,12 @@ const createUser = async (userData) => {
             .input('loyalty_program_accepted', loyalty_program_accepted)
             .input('latitude', latitude)
             .input('longitude', longitude)
-            .query(`
+                .query(`
                 INSERT INTO Users (name, email, phone_number, country, hashed_password, loyalty_points, loyalty_level, terms_accepted, loyalty_program_accepted, latitude, longitude)
+                OUTPUT INSERTED.user_id
                 VALUES (@name, @email, @phone_number, @country, @hashed_password, @loyalty_points, @loyalty_level, @terms_accepted, @loyalty_program_accepted, @latitude, @longitude)
             `);
+
         console.log("User created successfully:", result); // Bekræft succes i loggen
         return result;
     } catch (error) {

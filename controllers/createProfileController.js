@@ -1,14 +1,24 @@
-// controllers/userController.js
+// controllers/createProfileController.js
 const { createUser } = require('../models/userModel');
+const { sendWelcomeEmail } = require('./emailController');
 
 const createUserController = async (req, res) => {
     const userData = req.body;
 
+    console.log("Received user data:", userData);
+
     try {
         const result = await createUser(userData);
-        res.status(201).json({ message: 'User created successfully', result });
+        const userId = result.recordset[0].user_id; // Brug INSERTED.user_id fra queryen
+        const user = { id: userId, ...userData };
+
+        // Send velkomst-e-mail
+        await sendWelcomeEmail(user);
+        
+        res.status(201).json({ message: 'Bruger oprettet og e-mail sendt', result });
     } catch (error) {
-        res.status(500).json({ message: 'Failed to create user', error });
+        console.error("Error in createUserController:", error);
+        res.status(500).json({ message: 'Kunne ikke oprette bruger', error });
     }
 };
 
