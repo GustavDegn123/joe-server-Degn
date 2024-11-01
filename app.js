@@ -3,9 +3,12 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const app = express();
+const cookieParser = require("cookie-parser"); // Import cookie-parser
 const { getConnection } = require(path.join(__dirname, 'config', 'db'));
 const createProfileRoutes = require('./routes/createProfileRoutes');
 const loginRoutes = require('./routes/loginRoutes');
+const cloudinaryRoutes = require('./routes/cloudinaryRoutes');
+const productRoutes = require('./routes/productsRoutes'); // Opdater stien hvis nødvendigt
 
 getConnection();
 
@@ -16,6 +19,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/api', createProfileRoutes);
 app.use('/api', loginRoutes);
+app.use('/api', productRoutes); // Nu vil ruten være tilgængelig på /api/products
 
 // Serve static files from "public" directory (CSS, JS, images, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -30,11 +34,23 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'login.html'));
 });
 
+// Route for order-now siden
+app.get('/order-now', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'ordernow.html'));
+});
+
+app.get('/checkout', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'checkout.html'));
+});
+
 // Test route to check server health
 app.get("/ping", (req, res) => {
     const serverTime = Date.now();
     res.json({ message: "Pong", serverTime });
 });
+
+// Brug Cloudinary-routes
+app.use('/api/cloudinary', cloudinaryRoutes);
 
 // Start server on port 3000
 const server = app.listen(3000, () => {

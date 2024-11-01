@@ -1,0 +1,164 @@
+body {
+    font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+    color: white;
+  }
+  
+  .container {
+    display: flex;
+  }
+  
+  .product-gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 75%;
+    padding: 20px;
+  }
+  
+  .product-card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 200px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+  }
+  
+  .product-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .product-image {
+    width: 100%;
+    height: auto;
+  }
+  
+  .product-title {
+    font-weight: bold;
+    padding: 10px 0;
+  }
+  
+  .product-card {
+    text-align: center;
+}
+
+.add-to-basket {
+    display: inline-block;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 10px auto;
+    border-radius: 5px;
+    cursor: pointer;
+    align-items: center;
+}
+
+
+  .basket {
+    width: 25%;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-left: 1px solid #ddd;
+  }
+  
+  .basket h2 {
+    text-align: center;
+  }
+  
+  #basket-items {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  #basket-items li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  #review-order {
+    width: 100%;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+
+
+
+
+
+
+
+
+
+
+  .container {
+    display: flex;
+    padding: 20px;
+  }
+  
+  .product-gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 75%;
+  }
+  
+  .basket {
+    width: 25%;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-left: 1px solid #ddd;
+  }
+  
+  .basket h2 {
+    text-align: center;
+  }
+  
+  #basket-items {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  #review-order {
+    width: 100%;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+
+
+  @keyframes flyToBasket {
+    0% {
+        opacity: 1;
+        transform: scale(1) translate(0, 0);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.5) translate(300px, -300px); /* Justér positionen afhængigt af din kurvs placering */
+    }
+}
+
+.fly {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    animation: flyToBasket 0.7s ease forwards;
+    z-index: 10;
+    pointer-events: none;
+}
