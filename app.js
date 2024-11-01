@@ -36,7 +36,7 @@ app.get('/login', (req, res) => {
 });
 
 // Route for order-now siden
-app.get('/orderNow', (req, res) => {
+app.get('/ordernow', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'orderNow.html'));
 });
 
@@ -49,7 +49,6 @@ app.get("/ping", (req, res) => {
     const serverTime = Date.now();
     res.json({ message: "Pong", serverTime });
 });
-
 
 
 // Start server on port 3000

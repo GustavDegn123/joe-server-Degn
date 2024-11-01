@@ -28,7 +28,7 @@ document.getElementById("login-form").addEventListener("submit", function(e) {
         alert("Login successful!");
 
         // Her kan du sende brugeren videre til en ny side efter login
-        window.location.href = "/orderNow"; // Redirect til dashboard eller en anden side
+        window.location.href = "/ordernow"; // Redirect til dashboard eller en anden side
     })
     .catch(error => {
         console.error('Error during login:', error);
