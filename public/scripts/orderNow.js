@@ -112,6 +112,15 @@ function addToBasket(product) {
     });
 }
 
+// Run fetchProducts when the page loads
+document.addEventListener("DOMContentLoaded", fetchProducts);
+
+// Helper function to set cookies
+function setCookie(name, value, days) {
+    const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = `${name}=${value}; expires=${expires}; path=/;`;
+}
+
 // Function to render the basket on the frontend
 function renderBasket() {
     const basketItems = document.getElementById("basket-items");
@@ -120,27 +129,15 @@ function renderBasket() {
     for (const productName in basket) {
         const item = basket[productName];
         const li = document.createElement("li");
-        li.textContent = `${item.quantity}x ${productName}; ${item.totalPrice.toFixed(2)} kr.   | ${item.totalPoints} points | `;
+        li.textContent = `${item.quantity}x ${productName}; ${item.totalPrice.toFixed(2)} kr. | ${item.totalPoints} points`;
         basketItems.appendChild(li);
     }
 }
 
-// Run fetchProducts when the page loads
-document.addEventListener("DOMContentLoaded", fetchProducts);
-
-
-// Funktion til at sætte en cookie
-function setCookie(name, value, days) {
-    const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    const expires = "expires=" + date.toUTCString();
-    document.cookie = name + "=" + encodeURIComponent(value) + ";" + expires + ";path=/";
-}
-
-// Event listener for "Review Order" knap
+// Event listener for "Review Order" button
 document.getElementById("review-order").addEventListener("click", () => {
-    // Konverter kurvdata til JSON-streng og gem den i en cookie
-    setCookie("basket", JSON.stringify(basket), 1); // Gem kurvdata i 1 dag
-    window.location.href = "/checkout"; // Gå til checkout-siden
+    setCookie("basket", JSON.stringify(basket), 1); // Store basket data in cookie for 1 day
+    window.location.href = "/checkout"; // Navigate to checkout page
 });
+
 

@@ -2,9 +2,8 @@ const { sql, getConnection } = require('../config/db'); // Adjust based on the a
 
 async function getAllProducts(req, res) {
   try {
-    const pool = await getConnection(); // Brug den etablerede forbindelse
+    const pool = await getConnection(); // Use the established connection
     const result = await pool.request().query('SELECT * FROM dbo.Products');
-    console.log("Products fetched successfully:", result.recordset);
     res.json(result.recordset);
   } catch (err) {
     console.error("Error fetching products:", err);

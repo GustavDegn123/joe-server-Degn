@@ -26,8 +26,6 @@ Telefonnummer: ${user.phone_number}
 Bemærk venligst, at du også har accepteret vores vilkår og betingelser samt vores loyalitetsprogram. Velkommen til The Joe World!`
     };
 
-    console.log("Sending email with options:", mailOptions); // Debug e-mailindstillinger
-
     try {
         // Send e-mail
         await transporter.sendMail(mailOptions);

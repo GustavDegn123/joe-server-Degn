@@ -5,8 +5,6 @@ const { sendWelcomeEmail } = require('./emailController');
 const createUserController = async (req, res) => {
     const userData = req.body;
 
-    console.log("Received user data:", userData);
-
     try {
         const result = await createUser(userData);
         const userId = result.recordset[0].user_id; // Brug INSERTED.user_id fra queryen
