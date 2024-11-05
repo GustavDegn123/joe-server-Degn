@@ -51,12 +51,22 @@ const stripe = Stripe('pk_test_51QHLtmDyYoD3JPze0yO9cw7XiNyWF42spzAB9othHSsS4j9u
 document.getElementById('payButton').addEventListener('click', async () => {
   // Calculate the total dynamically
   const total = parseFloat(document.getElementById("total").textContent.replace(" kr", "")) * 100; // Convert to cents
+  const basketData = getCookie("basket");
+  const points = parseInt(document.getElementById("points").textContent);
+  const userId = getCookie("user_id");
 
-  // Make a request to your backend to create a checkout session with the dynamic total
+  // Make a request to your backend to create a checkout session with metadata
   const response = await fetch('/create-checkout-session', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ amount: Math.round(total) }) // Send total as an integer in cents
+    body: JSON.stringify({
+      amount: Math.round(total),
+      metadata: {
+        user_id: userId,
+        basket: basketData, // Pass basket as JSON string
+        points: points
+      }
+    })
   });
   
   const session = await response.json();
@@ -68,40 +78,8 @@ document.getElementById('payButton').addEventListener('click', async () => {
 
   if (result.error) {
     console.error(result.error.message);
-  } else {
-    // If payment succeeds, log the order in the database
-    logOrder();
   }
 });
-
-// Function to log order in the backend after successful payment
-async function logOrder() {
-  const basketData = getCookie("basket");
-  const subtotal = parseFloat(document.getElementById("subtotal").textContent.replace(" kr", ""));
-  const tax = parseFloat(document.getElementById("tax").textContent.replace(" kr", ""));
-  const total = subtotal + tax;
-  const points = parseInt(document.getElementById("points").textContent);
-  const userId = getCookie("user_id"); // Assuming user ID is stored in a cookie
-
-  const response = await fetch('/api/createOrder', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      user_id: userId,
-      products: JSON.parse(basketData), // Send basket data as products
-      total_price: total,
-      points_earned: points,
-      payment_method: 'card' // Assuming 'card' for payment method
-    })
-  });
-
-  if (response.ok) {
-    const data = await response.json();
-    console.log(data.message); // Confirm the order was saved successfully
-  } else {
-    console.error('Failed to save order');
-  }
-}
 
 // Run loadBasket function when the page loads
 document.addEventListener("DOMContentLoaded", loadBasket);

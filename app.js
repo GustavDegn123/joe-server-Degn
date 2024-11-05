@@ -61,7 +61,6 @@ app.get('/startside', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'startSide.html'));
 });
 
-
 // Test route to check server health
 app.get("/ping", (req, res) => {
     const serverTime = Date.now();
@@ -83,13 +82,14 @@ server.setTimeout(5000); // If a request takes longer than 5 seconds, it times o
 
 app.post('/create-checkout-session', async (req, res) => {
     try {
-      const amount = req.body.amount; // Get amount from request body
-      const session = await createCheckoutSession(amount); // Call the function from stripe.js
-      res.json({ id: session.id });
+        const { amount, metadata } = req.body;
+        const session = await createCheckoutSession(amount, metadata); // Pass metadata to createCheckoutSession
+        res.json({ id: session.id });
     } catch (error) {
-      res.status(500).send(error.message);
+        console.error('Error creating checkout session:', error);
+        res.status(500).send(error.message);
     }
-  });
+});
 
   // This must be defined before `express.json()` to properly handle raw body
-app.post('/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);
+  app.post('/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook); // For Stripe payment confirmation
