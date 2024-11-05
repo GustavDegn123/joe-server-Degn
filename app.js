@@ -57,9 +57,11 @@ app.get('/checkout', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'checkOut.html'));
 });
 
+const path = require('path');
 app.get('/startside', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'startSide.html'));
 });
+
 
 // Test route to check server health
 app.get("/ping", (req, res) => {
