@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken");
-const { getUserByEmail } = require("../models/userModel"); // Example function to fetch user from DB
+const { getUserByEmail } = require("../models/userModel");
 const bcrypt = require("bcrypt");
 
 const loginController = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Fetch the user from database (this is just a placeholder, replace with actual logic)
+    // Fetch the user from the database
     const user = await getUserByEmail(email);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -15,20 +15,29 @@ const loginController = async (req, res) => {
     // Verify password
     const isMatch = await bcrypt.compare(password, user.hashed_password);
     if (!isMatch) {
-    return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
+    // Create a JWT with only email (or any other user data except userId)
     const token = jwt.sign(
-        { userId: user.id, email: user.email }, // Include user-specific claims
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
-      );
+      { email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
     // Store JWT in a secure, HTTP-only cookie
     res.cookie("jwt", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Use secure in production
-      maxAge: 3600000, // 1 hour
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 3600000,
+      sameSite: "Lax",
+    });
+
+    // Store user_id in a separate cookie, accessible by JavaScript
+    res.cookie("userId", user.user_id, { // Ensure you're using `user.user_id` from your Users table
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 3600000,
       sameSite: "Lax",
     });
 

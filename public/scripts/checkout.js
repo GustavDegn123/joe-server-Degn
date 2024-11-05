@@ -1,3 +1,5 @@
+// checkout.js
+
 // Function to get cookie value by name
 function getCookie(name) {
   const decodedCookie = decodeURIComponent(document.cookie);
@@ -10,6 +12,9 @@ function getCookie(name) {
   }
   return "";
 }
+
+const userId = getCookie("userId");
+console.log("User ID from cookie:", userId);
 
 // Load basket data from cookie and display on the checkout page
 function loadBasket() {
@@ -46,38 +51,52 @@ function loadBasket() {
 }
 
 // Initialize Stripe with your publishable key
-const stripe = Stripe('pk_test_51QHLtmDyYoD3JPze0yO9cw7XiNyWF42spzAB9othHSsS4j9uA1cDfigSer627zGupBCYPFGpioq5LlxcelYMGf9W00dCCOoQDX'); // Replace with your actual Stripe publishable key
+const stripe = Stripe('pk_test_51QHLtmDyYoD3JPze0yO9cw7XiNyWF42spzAB9othHSsS4j9uA1cDfigSer627zGupBCYPFGpioq5LlxcelYMGf9W00dCCOoQDX');
 
 document.getElementById('payButton').addEventListener('click', async () => {
-  // Calculate the total dynamically
-  const total = parseFloat(document.getElementById("total").textContent.replace(" kr", "")) * 100; // Convert to cents
+  const userId = getCookie("userId"); // Get userId from the cookie directly
+  console.log("Retrieved User ID from cookie:", userId);
+
+  if (!userId) {
+      console.error("User ID not found.");
+      return;
+  }
+
+  const total = parseFloat(document.getElementById("total").textContent.replace(" kr", "")) * 100;
   const basketData = getCookie("basket");
   const points = parseInt(document.getElementById("points").textContent);
-  const userId = getCookie("user_id");
 
-  // Make a request to your backend to create a checkout session with metadata
-  const response = await fetch('/create-checkout-session', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      amount: Math.round(total),
-      metadata: {
-        user_id: userId,
-        basket: basketData, // Pass basket as JSON string
-        points: points
+  console.log("Data being sent to /api/orders:", {
+      user_id: userId,
+      products: JSON.parse(basketData),
+      points: points,
+      total: total / 100
+  });
+
+  const response = await fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+          user_id: userId,
+          products: JSON.parse(basketData),
+          points: points,
+          total: total / 100
+      })
+  });
+
+  const data = await response.json();
+  console.log("Response from /api/orders:", data);
+
+  if (data.sessionId) {
+      const result = await stripe.redirectToCheckout({
+          sessionId: data.sessionId,
+      });
+
+      if (result.error) {
+          console.error(result.error.message);
       }
-    })
-  });
-  
-  const session = await response.json();
-
-  // Redirect to Stripe Checkout
-  const result = await stripe.redirectToCheckout({
-    sessionId: session.id,
-  });
-
-  if (result.error) {
-    console.error(result.error.message);
+  } else {
+      console.error('Error initiating payment:', data.error);
   }
 });
 

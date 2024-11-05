@@ -44,7 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function addToBasketAndRedirect(product) {
-    setCookie("selectedProduct", JSON.stringify(product), 1);
     window.location.href = "/ordernow"; // Redirect to MENU page
   }
 
