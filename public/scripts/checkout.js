@@ -1,107 +1,76 @@
 // Function to get cookie value by name
 function getCookie(name) {
-  const decodedCookie = decodeURIComponent(document.cookie);
-  const cookieArr = decodedCookie.split(';');
-  for (let i = 0; i < cookieArr.length; i++) {
-      let cookie = cookieArr[i].trim();
-      if (cookie.indexOf(name + "=") === 0) {
-          return cookie.substring((name + "=").length, cookie.length);
-      }
-  }
-  return "";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const cookieArr = decodedCookie.split(';');
+    for (let i = 0; i < cookieArr.length; i++) {
+        let cookie = cookieArr[i].trim();
+        if (cookie.indexOf(name + "=") === 0) {
+            return cookie.substring((name + "=").length, cookie.length);
+        }
+    }
+    return "";
 }
 
 // Load basket data from cookie and display on the checkout page
 function loadBasket() {
-  const basketData = getCookie("basket");
-  if (basketData) {
-      const basket = JSON.parse(basketData);
+    const basketData = getCookie("basket");
+    if (basketData) {
+        const basket = JSON.parse(basketData);
 
-      const basketItems = document.getElementById("basket-items");
-      basketItems.innerHTML = ""; // Clear any previous items to avoid duplication
+        const basketItems = document.getElementById("basket-items");
+        basketItems.innerHTML = ""; // Clear any previous items to avoid duplication
 
-      let subtotal = 0;
-      let points = 0;
+        let subtotal = 0;
+        let points = 0;
 
-      for (const productName in basket) {
-          const item = basket[productName];
-          const li = document.createElement("li");
-          li.textContent = `${item.quantity}x ${productName}; ${item.totalPrice.toFixed(2)} kr.`;
-          basketItems.appendChild(li);
+        for (const productName in basket) {
+            const item = basket[productName];
+            const li = document.createElement("li");
+            li.textContent = `${item.quantity}x ${productName}; ${item.totalPrice.toFixed(2)} kr.`;
+            basketItems.appendChild(li);
 
-          subtotal += item.totalPrice;
-          points += item.unitPrice * item.quantity; // Assuming `unitPrice` holds the points value for each product
-      }
+            subtotal += item.totalPrice;
+            points += item.unitPrice * item.quantity; // Assuming `unitPrice` holds the points value for each product
+        }
 
-      // Display subtotal, points, tax, and total
-      document.getElementById("subtotal").textContent = `${subtotal.toFixed(2)} kr`;
-      document.getElementById("points").textContent = `${points} points`;
+        // Display subtotal, points, tax, and total
+        document.getElementById("subtotal").textContent = `${subtotal.toFixed(2)} kr`;
+        document.getElementById("points").textContent = `${points} points`;
 
-      const tax = subtotal * 0.2;
-      document.getElementById("tax").textContent = `${tax.toFixed(2)} kr`;
+        const tax = subtotal * 0.2;
+        document.getElementById("tax").textContent = `${tax.toFixed(2)} kr`;
 
-      const total = subtotal + tax;
-      document.getElementById("total").textContent = `${total.toFixed(2)} kr`;
-  }
+        const total = subtotal + tax;
+        document.getElementById("total").textContent = `${total.toFixed(2)} kr`;
+    }
 }
 
 // Initialize Stripe with your publishable key
 const stripe = Stripe('pk_test_51QHLtmDyYoD3JPze0yO9cw7XiNyWF42spzAB9othHSsS4j9uA1cDfigSer627zGupBCYPFGpioq5LlxcelYMGf9W00dCCOoQDX'); // Replace with your actual Stripe publishable key
 
 document.getElementById('payButton').addEventListener('click', async () => {
-  // Calculate the total dynamically
-  const total = parseFloat(document.getElementById("total").textContent.replace(" kr", "")) * 100; // Convert to cents
-
-  // Make a request to your backend to create a checkout session with the dynamic total
-  const response = await fetch('/create-checkout-session', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ amount: Math.round(total) }) // Send total as an integer in cents
+    // Calculate the total dynamically
+    const total = parseFloat(document.getElementById("total").textContent.replace(" kr", "")) * 100; // Convert to cents
+  
+    // Make a request to your backend to create a checkout session with the dynamic total
+    const response = await fetch('/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: Math.round(total) }) // Send total as an integer in cents
+    });
+    
+    const session = await response.json();
+  
+    // Redirect to Stripe Checkout
+    const result = await stripe.redirectToCheckout({
+      sessionId: session.id,
+    });
+  
+    if (result.error) {
+      console.error(result.error.message);
+    }
   });
   
-  const session = await response.json();
-
-  // Redirect to Stripe Checkout
-  const result = await stripe.redirectToCheckout({
-    sessionId: session.id,
-  });
-
-  if (result.error) {
-    console.error(result.error.message);
-  } else {
-    // If payment succeeds, log the order in the database
-    logOrder();
-  }
-});
-
-// Function to log order in the backend after successful payment
-async function logOrder() {
-  const basketData = getCookie("basket");
-  const subtotal = parseFloat(document.getElementById("subtotal").textContent.replace(" kr", ""));
-  const tax = parseFloat(document.getElementById("tax").textContent.replace(" kr", ""));
-  const total = subtotal + tax;
-  const points = parseInt(document.getElementById("points").textContent);
-  const userId = getCookie("user_id"); // Assuming user ID is stored in a cookie
-
-  const response = await fetch('/api/createOrder', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      user_id: userId,
-      products: JSON.parse(basketData), // Send basket data as products
-      total_price: total,
-      points_earned: points,
-      payment_method: 'card' // Assuming 'card' for payment method
-    })
-  });
-
-  if (response.ok) {
-    const data = await response.json();
-    console.log(data.message); // Confirm the order was saved successfully
-  } else {
-    console.error('Failed to save order');
-  }
-}
 
 // Run loadBasket function when the page loads
 document.addEventListener("DOMContentLoaded", loadBasket);
