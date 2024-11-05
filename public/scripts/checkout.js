@@ -45,5 +45,32 @@ function loadBasket() {
     }
 }
 
+// Initialize Stripe with your publishable key
+const stripe = Stripe('pk_test_51QHLtmDyYoD3JPze0yO9cw7XiNyWF42spzAB9othHSsS4j9uA1cDfigSer627zGupBCYPFGpioq5LlxcelYMGf9W00dCCOoQDX'); // Replace with your actual Stripe publishable key
+
+document.getElementById('payButton').addEventListener('click', async () => {
+    // Calculate the total dynamically
+    const total = parseFloat(document.getElementById("total").textContent.replace(" kr", "")) * 100; // Convert to cents
+  
+    // Make a request to your backend to create a checkout session with the dynamic total
+    const response = await fetch('/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: Math.round(total) }) // Send total as an integer in cents
+    });
+    
+    const session = await response.json();
+  
+    // Redirect to Stripe Checkout
+    const result = await stripe.redirectToCheckout({
+      sessionId: session.id,
+    });
+  
+    if (result.error) {
+      console.error(result.error.message);
+    }
+  });
+  
+
 // Run loadBasket function when the page loads
 document.addEventListener("DOMContentLoaded", loadBasket);

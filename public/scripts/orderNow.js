@@ -15,8 +15,7 @@ const products = [
     { title: "Latte", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Latte?_a=BAMCkGRg0" }
 ];
 
-
-  // Fetch products from the backend and display them in the gallery
+// Fetch products from the backend and display them in the gallery
 async function fetchProducts() {
     try {
         const response = await fetch('/api/products');
@@ -87,8 +86,9 @@ function addToBasket(product) {
             totalPoints: product.points_value
         };
     }
+    setCookie("basket", JSON.stringify(basket), 1); // Update the cookie with new basket data
     renderBasket();
-
+    
     // Flyvende animation
     const productCard = document.querySelector(`img[alt="${product.name}"]`);
     const flyImg = productCard.cloneNode(true);
@@ -112,15 +112,6 @@ function addToBasket(product) {
     });
 }
 
-// Run fetchProducts when the page loads
-document.addEventListener("DOMContentLoaded", fetchProducts);
-
-// Helper function to set cookies
-function setCookie(name, value, days) {
-    const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
-    document.cookie = `${name}=${value}; expires=${expires}; path=/;`;
-}
-
 // Function to render the basket on the frontend
 function renderBasket() {
     const basketItems = document.getElementById("basket-items");
@@ -129,9 +120,52 @@ function renderBasket() {
     for (const productName in basket) {
         const item = basket[productName];
         const li = document.createElement("li");
-        li.textContent = `${item.quantity}x ${productName}; ${item.totalPrice.toFixed(2)} kr. | ${item.totalPoints} points`;
+        li.classList.add("basket-item");
+
+        li.innerHTML = `
+            ${item.quantity}x ${productName}; ${item.totalPrice.toFixed(2)} kr. | ${item.totalPoints} points
+            <button class="decrease-quantity" onclick="removeFromBasket('${productName}')">-</button>
+            <button class="increase-quantity" onclick="addQuantity('${productName}')">+</button>
+        `;
+        
         basketItems.appendChild(li);
     }
+}
+
+// Function to increase the quantity of an item in the basket
+function addQuantity(productName) {
+    if (basket[productName]) {
+        basket[productName].quantity += 1;
+        basket[productName].totalPrice += basket[productName].unitPrice;
+        basket[productName].totalPoints += basket[productName].unitPoints;
+    }
+    setCookie("basket", JSON.stringify(basket), 1); // Update the cookie with new basket data
+    renderBasket();
+}
+
+// Function to remove items from the basket
+function removeFromBasket(productName) {
+    if (basket[productName]) {
+        // Decrease the quantity or remove the item if quantity is 1
+        if (basket[productName].quantity > 1) {
+            basket[productName].quantity -= 1;
+            basket[productName].totalPrice -= basket[productName].unitPrice;
+            basket[productName].totalPoints -= basket[productName].unitPoints;
+        } else {
+            delete basket[productName]; // Remove the item entirely if quantity is 1
+        }
+    }
+    setCookie("basket", JSON.stringify(basket), 1); // Update the cookie with new basket data
+    renderBasket();
+}
+
+// Run fetchProducts when the page loads
+document.addEventListener("DOMContentLoaded", fetchProducts);
+
+// Helper function to set cookies
+function setCookie(name, value, days) {
+    const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = `${name}=${value}; expires=${expires}; path=/;`;
 }
 
 // Event listener for "Review Order" button

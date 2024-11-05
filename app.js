@@ -12,6 +12,10 @@ const loginRoutes = require('./routes/loginRoutes');
 const logoutRoutes = require('./routes/logoutRoutes');
 const cloudinaryRoutes = require('./routes/cloudinaryRoutes');
 const productRoutes = require('./routes/productsRoutes'); // Opdater stien hvis nødvendigt
+const { createCheckoutSession } = require('./public/scripts/stripe');
+const handleStripeWebhook = require('./routes/webhookHandler');
+
+require('dotenv').config();
 
 getConnection();
 
@@ -51,6 +55,10 @@ app.get('/checkout', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'checkout.html'));
 });
 
+app.get('/startside', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'startside.html'));
+});
+
 // Test route to check server health
 app.get("/ping", (req, res) => {
     const serverTime = Date.now();
@@ -62,5 +70,23 @@ const server = app.listen(3000, () => {
     console.log("Server running on port 3000");
 });
 
+// Efter man trykker "pay" på checkout page bliver man rykket til oderconfirmed.html siden
+app.get('/success', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'orderConfirmed.html'));
+});
+
 // Set a timeout on the server (optional)
 server.setTimeout(5000); // If a request takes longer than 5 seconds, it times out
+
+app.post('/create-checkout-session', async (req, res) => {
+    try {
+      const amount = req.body.amount; // Get amount from request body
+      const session = await createCheckoutSession(amount); // Call the function from stripe.js
+      res.json({ id: session.id });
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
+  });
+
+  // This must be defined before `express.json()` to properly handle raw body
+app.post('/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);

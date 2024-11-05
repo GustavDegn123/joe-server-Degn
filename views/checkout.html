@@ -8,34 +8,33 @@
   <link rel="stylesheet" href="/styles/checkout.css">
 </head>
 <body>
-    <body>
-        <div class="checkout-container">
-          <h2>Checkout</h2>
-          <p class="custom-text">Kalvebod Brygge 59, 2, Copenhagen</p>
-          <p class="custom-text">Pickup: ASAP</p>
-          
-          
-          <div class="order-summary">
-              <h2>Order Summary</h2>
-              <ul id="basket-items"></ul>
-          </div>
-          
-          <div class="summary-details">
-              <p class="summary-item">Subtotal: <span id="subtotal"></span></p>
-              <p class="summary-item">Tax: <span id="tax"></span></p>
-              <p class="summary-item">Total: <span id="total"></span></p>
-              <p class="summary-item">Points Earned: <span id="points"></span></p>
-          </div>
-          
+  <div class="checkout-container">
+    <h2>Checkout</h2>
+    <p class="custom-text">Kalvebod Brygge 59, 2, Copenhagen</p>
+    <p class="custom-text">Pickup: ASAP</p>
+    
+ 
+    <div class="order-summary">
+      <h2>Order Summary</h2>
+      <ul id="basket-items"></ul>
+    </div>
+    
+    <div class="summary-details">
+      <p class="summary-item">Subtotal: <span id="subtotal"></span></p>
+      <p class="summary-item">Tax: <span id="tax"></span></p>
+      <p class="summary-item">Total: <span id="total"></span></p>
+      <p class="summary-item">Points Earned: <span id="points"></span></p>
+    </div>
 
-          <button class="checkout-button">Pay with card</button>
-          <button class="checkout-button">Pay with loyalty points</button>
+    <button id="payButton" class="checkout-button">Pay with card</button>
+    <button class="checkout-button">Pay with loyalty points</button>
 
-        </div>
-      
-        <script src="/scripts/checkout.js"></script>
-      </body>
-      
+    <a href="/ordernow" onclick="goBackToOrder()" class="back-button-link">Back to Order</a>
+
+  </div>
+  <!-- Include Stripe.js -->
+  <script src="https://js.stripe.com/v3/"></script>
+  <!-- Your custom JavaScript for handling checkout -->
   <script src="/scripts/checkout.js"></script>
 </body>
 </html>

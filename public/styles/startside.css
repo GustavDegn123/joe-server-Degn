@@ -1,0 +1,300 @@
+/* Ensure body and main container occupy full viewport */
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Roboto Condensed', Arial, sans-serif;
+}
+
+
+.background-container {
+  position: relative;
+  height: 80vh;
+  background: url('/img/butik.jpeg') no-repeat center center;
+  background-size: cover;
+}
+
+/* Gradient overlay */
+.background-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.2) 20%,   /* Slightly transparent at the top */
+      rgba(0, 0, 0, 0.7) 60%,   /* Darker midway */
+      rgba(0, 0, 0, 0.9) 80%,   /* Almost black near the bottom */
+      #1a1a1a 100%              /* Full black at the bottom, matching the next section */
+  );
+  z-index: 1; /* Ensures gradient is behind the text */
+}
+
+/* Centered content */
+.centered-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #fff;
+  padding: 10px 20px;
+
+  z-index: 2; /* Ensures text is in front of the gradient */
+}
+
+
+.centered-content h1 {
+  font-size: 2em;
+  margin: 0;
+  color: #ffffff;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8); /* Stronger shadow for clarity */
+}
+
+.centered-content p {
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #ffffff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Subtle shadow for readability */
+  margin-bottom: 35px;
+}
+
+
+.centered-content .order-button {
+  margin-top: 40px;
+  padding: 12px 30px;
+  font-size: 0.9em;
+  font-weight: bold;
+  background-color:rgba(247, 193, 217, 1);
+  color: #000000;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  text-decoration: none;
+}
+
+
+.centered-content .order-button:hover {
+  background-color:rgb(246, 167, 202);
+}
+
+
+/* Product section styling */
+.products-section {
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.products-section h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+.products-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.product-card {
+  background-color: #333;
+  padding: 15px;
+  border-radius: 5px;
+  width: 200px;
+  text-align: center;
+  color: #fff;
+}
+
+.product-card img {
+  width: 100%;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.product-card h3 {
+  font-size: 1.2em;
+  margin: 10px 0;
+}
+
+.product-card .add-to-basket {
+  padding: 10px;
+  background-color: rgb(246, 167, 202); /* Pink color */
+  color: #000000;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 10px;
+  border: none; /* Remove border */
+  box-shadow: none; /* Remove any shadow */
+  outline: none; /* Remove outline */
+}
+
+.product-card .add-to-basket:hover {
+  background-color: #fb87b5;
+}
+
+
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.carousel {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+}
+
+.product-card {
+  min-width: 200px;
+  margin: 0 10px;
+  text-align: center;
+}
+
+.carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgb(246, 167, 202);
+  border: none;
+  color: #fff;
+  width: 40px; /* Set a fixed width */
+  height: 40px; /* Set the height equal to the width */
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 50%; /* Makes it a perfect circle */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centers the arrow */
+}
+
+
+
+.carousel-nav.prev {
+  left: 10px;
+}
+
+.carousel-nav.next {
+  right: 10px;
+}
+
+
+
+
+/* Footer Styling */
+.footer-section {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  padding: 40px 0;
+  text-align: center;
+  font-size: 14px;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.footer-content h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.footer-columns {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  flex-wrap: wrap;
+  width: 100%;
+  text-align: left;
+}
+
+.footer-columns div {
+  min-width: 150px;
+}
+
+.footer-columns h3 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.footer-columns ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-columns ul li {
+  margin: 5px 0;
+}
+
+.footer-columns ul li a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: normal;
+}
+
+.footer-columns ul li a:hover {
+  text-decoration: underline;
+}
+
+.footer-social {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.footer-social h3 {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.footer-social a {
+  color: #ff66b2; /* Matching the pink color */
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.footer-social a:hover {
+  color: #ff3385;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .footer-columns {
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+  }
+}
+
+
+
+
+.product-card img {
+  width: 100%;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  transition: transform 0.3s ease-in-out; /* Smooth zoom transition */
+}
+
+.product-card img:hover {
+  transform: scale(1.1); /* Slightly zoom in the image */
+}
