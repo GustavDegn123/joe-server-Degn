@@ -14,6 +14,7 @@ const cloudinaryRoutes = require('./routes/cloudinaryRoutes');
 const productRoutes = require('./routes/productsRoutes'); // Opdater stien hvis nødvendigt
 const { createCheckoutSession } = require('./public/scripts/stripe');
 const handleStripeWebhook = require('./routes/webhookHandler');
+const orderRoutes = require('./routes/orderRoutes');
 
 require('dotenv').config();
 
@@ -32,6 +33,7 @@ app.use('/api', loginRoutes);
 app.use('/api', logoutRoutes);
 app.use('/api/products', authMiddleware, productRoutes); // This protects the /products route
 app.use('/api/cloudinary', cloudinaryRoutes);
+app.use('/api', orderRoutes);
 
 // Serve static files from "public" directory (CSS, JS, images, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
