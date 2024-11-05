@@ -12,9 +12,11 @@ const handleStripeWebhook = async (req, res) => {
         // Check if in testing mode (skip signature verification in testing)
         if (process.env.NODE_ENV === 'test') {
             event = req.body;
+            console.log("Running in test mode, skipping signature verification.");
         } else {
             // Use Stripe’s signature verification in production
             event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+            console.log("Signature verified.");
         }
 
         if (event.type === 'checkout.session.completed') {
@@ -23,20 +25,43 @@ const handleStripeWebhook = async (req, res) => {
 
             console.log('Received metadata from Stripe webhook:', session.metadata);
 
+            // Parse the basket JSON
+            let parsedBasket;
+            try {
+                parsedBasket = JSON.parse(basket);
+                console.log("Basket parsed successfully:", parsedBasket);
+            } catch (parseError) {
+                console.error("Error parsing basket data:", parseError.message);
+                return res.status(400).send("Invalid basket format in metadata.");
+            }
+
             const orderData = {
                 user_id,
-                products: JSON.parse(basket),
-                total_price: session.amount_total / 100,
-                points_earned: parseInt(points),
+                products: parsedBasket,
+                total_price: session.amount_total / 100, // Convert cents to currency
+                points_earned: parseInt(points, 10), // Ensure points is parsed as an integer
                 payment_method: 'card',
                 order_date: new Date()
             };
 
-            const orderResult = await createOrder(orderData);
-            console.log('Order successfully created in database:', orderResult);
-
-            res.status(200).send();
+            // Attempt to create the order in the database
+            try {
+                const orderResult = await createOrder(orderData);
+                console.log('Order successfully created in database:', orderResult);
+                
+                // Optionally send an order confirmation email
+                if (session.customer_details && session.customer_details.email) {
+                    await sendOrderConfirmation(session.customer_details.email, orderData);
+                    console.log("Order confirmation email sent successfully.");
+                }
+                
+                res.status(200).send();
+            } catch (orderError) {
+                console.error("Error creating order in database:", orderError.message);
+                res.status(500).send("Database error: " + orderError.message);
+            }
         } else {
+            console.log("Unhandled event type received:", event.type);
             res.status(400).send('Unhandled event type');
         }
     } catch (error) {

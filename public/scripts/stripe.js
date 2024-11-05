@@ -1,4 +1,3 @@
-// Import Stripe and initialize it with your secret key
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const createCheckoutSession = async (amount, metadata) => {

@@ -72,13 +72,9 @@ const server = app.listen(3000, () => {
     console.log("Server running on port 3000");
 });
 
-// Efter man trykker "pay" på checkout page bliver man rykket til oderconfirmed.html siden
 app.get('/success', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'orderConfirmed.html'));
 });
-
-// Set a timeout on the server (optional)
-server.setTimeout(5000); // If a request takes longer than 5 seconds, it times out
 
 app.post('/create-checkout-session', async (req, res) => {
     try {
