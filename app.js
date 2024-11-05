@@ -52,11 +52,11 @@ app.get('/ordernow', (req, res) => {
 });
 
 app.get('/checkout', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'checkout.html'));
+    res.sendFile(path.join(__dirname, 'views', 'checkOut.html'));
 });
 
 app.get('/startside', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'startside.html'));
+    res.sendFile(path.join(__dirname, 'views', 'startSide.html'));
 });
 
 // Test route to check server health
