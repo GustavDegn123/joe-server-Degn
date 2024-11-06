@@ -105,7 +105,88 @@ document.getElementById('payButton').addEventListener('click', async () => {
     }
 });
 
-  
+document.addEventListener("DOMContentLoaded", () => {
+    // New function to handle loyalty points payment
+    const payWithPointsButton = document.getElementById('payWithPointsButton');
+    
+    if (payWithPointsButton) {
+        payWithPointsButton.addEventListener('click', async () => {
+            const userId = getCookie("userId");
+            if (!userId) {
+                console.error("User ID not found.");
+                return;
+            }
+
+            let basketData = getCookie("basket");
+            if (basketData) {
+                try {
+                    basketData = JSON.parse(basketData);
+
+                    // Convert basketData from object format to array format, ensuring productId is included
+                    if (!Array.isArray(basketData)) {
+                        basketData = Object.keys(basketData).map(productName => {
+                            const item = basketData[productName];
+                            return {
+                                productId: item.productId, // Ensure this field matches your backend's expectation
+                                name: productName,
+                                quantity: item.quantity,
+                                totalPoints: item.totalPoints,
+                                totalPrice: item.totalPrice,
+                                unitPoints: item.unitPoints,
+                                unitPrice: item.unitPrice
+                            };
+                        });
+                    }
+                } catch (e) {
+                    console.error("Error parsing basket data:", e);
+                    alert("Error: Could not parse basket data.");
+                    return;
+                }
+            } else {
+                console.error("Basket data not found.");
+                return;
+            }
+
+            const points = parseInt(document.getElementById("points").textContent);
+
+            console.log("Attempting loyalty points payment with data:", {
+                user_id: userId,
+                products: basketData, // Now includes productId for each item
+                points: points
+            });
+
+            try {
+                const response = await fetch('/api/orders/loyalty', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        products: basketData,
+                        points: points
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.orderId) {
+                    alert(`Payment successful with loyalty points. Order ID: ${data.orderId}`);
+                    window.location.href = "/success"; // Redirect to a success page
+                } else {
+                    console.error('Error processing loyalty points payment:', data.error);
+                    alert('Payment with loyalty points failed.');
+                }
+            } catch (error) {
+                console.error('Error during loyalty points payment:', error);
+                alert('An error occurred during the loyalty points payment process.');
+            }
+        });
+    } else {
+        console.error("Pay with loyalty points button not found.");
+    }
+});
+
+// Run loadBasket function when the page loads
+document.addEventListener("DOMContentLoaded", loadBasket);
 
 // Run loadBasket function when the page loads
 document.addEventListener("DOMContentLoaded", loadBasket);
