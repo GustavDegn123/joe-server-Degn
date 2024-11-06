@@ -1,4 +1,5 @@
 const { createOrder } = require('../models/orderModel');
+const { updateUserLoyaltyPoints } = require('../models/userModel');
 const createCheckoutSession = require('../public/scripts/stripe');
 
 const handlePayWithCard = async (req, res) => {
@@ -8,14 +9,11 @@ const handlePayWithCard = async (req, res) => {
         // Convert total to total_price
         const total_price = total;
 
-        // Calculate points_earned using unitPoints from the products array
+        // Calculate points_earned directly from the products array
         let points_earned = 0;
         for (const product of products) {
-            points_earned += product.unitPoints * product.quantity; // Use unitPoints provided in the request
-            console.log(`Calculating points for ${product.name}: ${product.unitPoints} * ${product.quantity} = ${product.unitPoints * product.quantity}`);
+            points_earned += product.unitPoints * product.quantity;
         }
-
-        console.log("Total points_earned:", points_earned);
 
         // Create a Stripe checkout session
         const session = await createCheckoutSession(total_price * 100); // Stripe expects amount in cents
@@ -30,10 +28,11 @@ const handlePayWithCard = async (req, res) => {
             order_date: new Date()
         };
 
-        console.log("Order data being saved:", orderData);
-
         // Save the order in the database
         const orderId = await createOrder(orderData);
+
+        // Update user's loyalty points in the database
+        await updateUserLoyaltyPoints(user_id, points_earned);
 
         res.json({ sessionId: session.id, orderId });
     } catch (error) {

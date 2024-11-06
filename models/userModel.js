@@ -65,4 +65,25 @@ const getUserByEmail = async (email) => {
     }
 };
 
-module.exports = { createUser, getUserByEmail };
+// Function to update the user's loyalty points in the database
+const updateUserLoyaltyPoints = async (userId, pointsToAdd) => {
+    try {
+        const pool = await getConnection();
+        const result = await pool.request()
+            .input('user_id', userId)
+            .input('pointsToAdd', pointsToAdd)
+            .query(`
+                UPDATE Users
+                SET loyalty_points = loyalty_points + @pointsToAdd
+                WHERE user_id = @user_id
+            `);
+
+        console.log(`Loyalty points updated for user ${userId}. Points added: ${pointsToAdd}`);
+        return result;
+    } catch (error) {
+        console.error('Error updating user loyalty points:', error);
+        throw error;
+    }
+};
+
+module.exports = { createUser, getUserByEmail, updateUserLoyaltyPoints};
