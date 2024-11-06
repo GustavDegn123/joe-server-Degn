@@ -14,7 +14,6 @@ const createUser = async (userData) => {
         country, 
         password, 
         loyalty_points = 0, 
-        loyalty_level = 'Bronze', 
         terms_accepted, 
         loyalty_program_accepted, 
         latitude, 
@@ -31,15 +30,14 @@ const createUser = async (userData) => {
             .input('country', country)
             .input('hashed_password', hashedPassword)
             .input('loyalty_points', loyalty_points)
-            .input('loyalty_level', loyalty_level)
             .input('terms_accepted', terms_accepted)
             .input('loyalty_program_accepted', loyalty_program_accepted)
             .input('latitude', latitude)
             .input('longitude', longitude)
                 .query(`
-                INSERT INTO Users (name, email, phone_number, country, hashed_password, loyalty_points, loyalty_level, terms_accepted, loyalty_program_accepted, latitude, longitude)
+                INSERT INTO Users (name, email, phone_number, country, hashed_password, loyalty_points, terms_accepted, loyalty_program_accepted, latitude, longitude)
                 OUTPUT INSERTED.user_id
-                VALUES (@name, @email, @phone_number, @country, @hashed_password, @loyalty_points, @loyalty_level, @terms_accepted, @loyalty_program_accepted, @latitude, @longitude)
+                VALUES (@name, @email, @phone_number, @country, @hashed_password, @loyalty_points, @terms_accepted, @loyalty_program_accepted, @latitude, @longitude)
             `);
 
         console.log("User created successfully:", result); // Bekræft succes i loggen

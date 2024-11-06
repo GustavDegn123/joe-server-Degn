@@ -27,9 +27,6 @@ const listImages = async () => {
   }
 };
 
-
-
-
 module.exports = {
   listImages, 
 };
