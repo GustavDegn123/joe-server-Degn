@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Our Stores</title>
+    <link rel="stylesheet" href="/styles/global.css">
+    <link rel="stylesheet" href="/styles/stores.css">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="navbar-logo">
+            <img src="/img/joeLogo.svg" alt="Joe Logo" class="logo">
+        </div>
+        <div class="navbar-links">
+            <a href="/startside">HOME</a>
+            <a href="/ordernow">MENU</a>
+            <a href="#">STORES</a>
+        </div>
+        <div class="navbar-user">
+            <button class="user-button" id="logout-button">Log out</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Venstre kolonne med butikker -->
+        <div class="stores-section">
+            <h2>LOOKING FOR A JOE? <br> FIND A STORE NEAR YOU</h2>
+            <input type="text" placeholder="Search an address" class="store-search">
+            <div id="stores-container">
+                <!-- Butikoplysninger vil blive tilføjet her -->
+            </div>
+        </div>
+
+        <!-- Højre kolonne med kort -->
+        <div id="map" class="map-container"></div>
+    </div>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>
+    <script src="/scripts/stores.js" defer></script>
+    <script src="/scripts/logout.js" defer></script>
+</body>
+
+</html>

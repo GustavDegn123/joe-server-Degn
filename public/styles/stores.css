@@ -1,0 +1,84 @@
+/* Flexbox-layout for hovedindhold */
+.main-content {
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 60px); /* Fuld højde minus navbar */
+    padding-top: 20px; /* Tilføj lidt padding i toppen */
+}
+
+/* Styling af søgefelt og sektion */
+.stores-section {
+    width: 30%;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #3a3a3a; /* Grå baggrund */
+    color: #ffffff; /* Hvid tekstfarve */
+    border-right: 1px solid #ddd;
+}
+
+/* Overskrift i butikssektionen */
+.stores-section h2 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* Søgefelt */
+.store-search {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+    font-size: 1rem;
+    background-color: #f2f2f2; /* Lys grå baggrund */
+    color: #333;
+}
+
+/* Styling af hver butik */
+.store-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+
+    background-color: #fff;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.store-item h3 {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333; /* Gør teksten mørk og tydelig */
+    margin: 0;
+}
+
+.store-item p {
+    margin: 5px 0;
+    color: #666;
+}
+
+/* "Order Now" knap */
+.order-now-btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #ff69b4; /* Joe & the Juice pink farve */
+    color: #fff;
+    border: none;
+    font-size: 0.9rem;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.order-now-btn:hover {
+    background-color: #ff4c8a; /* Mørkere pink ved hover */
+}
+
+/* Højre kolonne (kort) */
+.map-container {
+    width: 70%; /* 70% af skærmbredden til kortet */
+    height: 100%; /* Fuld højde */
+}

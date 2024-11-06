@@ -16,6 +16,8 @@ const { createCheckoutSession } = require('./public/scripts/stripe');
 const handleStripeWebhook = require('./routes/webhookHandler');
 const orderRoutes = require('./routes/orderRoutes'); // Import the order routes
 // const favoritesRoutes = require('./routes/favoritesRoutes');
+const storesRoutes = require('./routes/storesRoutes'); // Stien inkluderer nu 'routes'-mappen
+
 
 require('dotenv').config();
 
@@ -36,6 +38,7 @@ app.use('/api/products', authMiddleware, productRoutes); // This protects the /p
 app.use('/api/cloudinary', cloudinaryRoutes);
 app.use('/api/orders', orderRoutes); // Register order routes under /api/orders
 // app.use('/api/favorites', favoritesRoutes);
+app.use('/api', storesRoutes); // Din route vil være tilgængelig på /api/stores
 
 
 // Serve static files from "public" directory (CSS, JS, images, etc.)
@@ -62,6 +65,10 @@ app.get('/checkout', (req, res) => {
 
 app.get('/startside', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'startSide.html'));
+});
+
+app.get('/stores', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'stores.html'));
 });
 
 // Test route to check server health
