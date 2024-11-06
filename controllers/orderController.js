@@ -57,17 +57,15 @@ const handlePayWithLoyaltyPoints = async (req, res) => {
             return res.status(400).json({ message: "Insufficient loyalty points" });
         }
 
-        // Convert product names to product IDs and calculate total points cost
+        // Calculate total points cost based on totalPrice in DKK
         let totalPointsCost = 0;
         for (const product of products) {
-            const productId = await getProductIdByName(product.name); // Get product ID by name
-            if (!productId) {
-                return res.status(404).json({ error: `Product not found: ${product.name}` });
-            }
-            product.productId = productId; // Add productId to the product object for further use
-            
-            const productPointsValue = await getProductPointsValue(productId);
-            totalPointsCost += productPointsValue * product.quantity;
+            totalPointsCost += product.totalPrice * product.quantity; // Use totalPrice as points cost
+        }
+
+        // Ensure user has enough points for the total points cost
+        if (user.loyalty_points < totalPointsCost) {
+            return res.status(400).json({ message: "Insufficient loyalty points" });
         }
 
         // Deduct points from user's balance
