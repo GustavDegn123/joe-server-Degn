@@ -10,10 +10,12 @@
 <body>
   <div class="checkout-container">
     <h2>Checkout</h2>
-    <p class="custom-text">Kalvebod Brygge 59, 2, Copenhagen</p>
-    <p class="custom-text">Pickup: ASAP</p>
-    
- 
+
+    <!-- Store Information -->
+    <div id="store-info">
+      <!-- Store details will be populated here by JavaScript -->
+    </div>
+
     <div class="order-summary">
       <h2>Order Summary</h2>
       <ul id="basket-items"></ul>
@@ -29,12 +31,10 @@
     <button id="payButton" class="checkout-button">Pay with card</button>
     <button id="payWithPointsButton" class="checkout-button">Pay with loyalty points</button>
 
-    <a href="/ordernow" onclick="goBackToOrder()" class="back-button-link">Back to Order</a>
-
+    <a href="/ordernow" class="back-button-link">Back to Order</a>
   </div>
-  <!-- Include Stripe.js -->
+
   <script src="https://js.stripe.com/v3/"></script>
-  <!-- Your custom JavaScript for handling checkout -->
   <script src="/scripts/checkout.js"></script>
 </body>
 </html>

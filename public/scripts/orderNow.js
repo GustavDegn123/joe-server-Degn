@@ -1,3 +1,33 @@
+document.addEventListener("DOMContentLoaded", () => {
+    // Retrieve the selected store from the cookie
+    const selectedStore = getCookie("selectedStore");
+    if (selectedStore) {
+        const store = JSON.parse(selectedStore);
+
+        // Display the store details in an element on the Menu page
+        const storeInfoContainer = document.getElementById("store-info");
+        storeInfoContainer.innerHTML = `
+            <h3>Ordering from: ${store.name}</h3>
+            <p>Address: ${store.address}</p>
+            <p>Opening Hours: ${store.hours}</p>
+        `;
+    }
+
+    fetchProducts();
+});
+
+function setCookie(name, value, days) {
+    const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = `${name}=${value}; expires=${expires}; path=/;`;
+    console.log(`Cookie set: ${name} = ${value}`);
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
 const products = [
     { title: "Serrano", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Serrano?_a=BAMCkGRg0" },
     { title: "Avocado", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Avocado?_a=BAMCkGRg0" },
@@ -159,19 +189,30 @@ function removeFromBasket(productName) {
     renderBasket();
 }
 
-// Run fetchProducts when the page loads
-document.addEventListener("DOMContentLoaded", fetchProducts);
+document.addEventListener("DOMContentLoaded", () => {
+    const selectedStore = getCookie("selectedStore");
+    if (selectedStore) {
+        const store = JSON.parse(selectedStore);
 
-// Helper function to set cookies
-function setCookie(name, value, days) {
-    const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
-    document.cookie = `${name}=${value}; expires=${expires}; path=/;`;
-}
+        const storeInfoContainer = document.getElementById("store-info");
+        storeInfoContainer.innerHTML = `
+            <h3>Ordering from: ${store.name}</h3>
+            <p>Address: ${store.address}</p>
+            <p>Opening Hours: ${store.hours}</p>
+        `;
+    }
 
-// Event listener for "Review Order" button
-document.getElementById("review-order").addEventListener("click", () => {
-    setCookie("basket", JSON.stringify(basket), 1); // Store basket data in cookie for 1 day
-    window.location.href = "/checkout"; // Navigate to checkout page
+    fetchProducts();
 });
 
-
+document.getElementById("review-order").addEventListener("click", () => {
+    const selectedStore = getCookie("selectedStore");
+    setCookie("basket", JSON.stringify(basket), 1); // Store basket data in cookie for 1 day
+    if (selectedStore) {
+        setCookie("checkoutStore", selectedStore, 1); // Save store info in another cookie
+        console.log("checkoutStore cookie set:", selectedStore);
+    } else {
+        console.error("No selectedStore data found.");
+    }
+    window.location.href = "/checkout"; // Navigate to checkout page
+});

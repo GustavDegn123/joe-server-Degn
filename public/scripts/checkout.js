@@ -39,9 +39,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-// Function to load basket data and display it on the checkout page
 function loadBasket() {
+    console.log("CheckoutStore cookie:", getCookie("checkoutStore"));
+
     const basketData = getCookie("basket");
+    const selectedStoreData = getCookie("checkoutStore");
+
+    if (selectedStoreData) {
+        const store = JSON.parse(selectedStoreData);
+        const storeInfoContainer = document.getElementById("store-info");
+        if (storeInfoContainer) {
+            storeInfoContainer.innerHTML = `
+                <p>Ordering from: ${store.name}</p>
+                <p>Address: ${store.address}</p>
+                <p>Opening Hours: ${store.hours}</p>
+            `;
+        } else {
+            console.error("Store info container not found.");
+        }
+    } else {
+        console.error("No store data found in the cookie.");
+    }
+
     if (basketData) {
         const basket = JSON.parse(basketData);
         const basketItems = document.getElementById("basket-items");
