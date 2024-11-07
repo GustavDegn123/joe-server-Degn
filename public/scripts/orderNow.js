@@ -45,10 +45,18 @@ const products = [
 ];
 
 // Fetch products from the backend and display them in the gallery
+// Fetch products from the backend and display them in the gallery
 async function fetchProducts() {
     try {
         const response = await fetch('/api/products');
         const products = await response.json();
+
+        // Store all product IDs in an array
+        const productIds = products.map(product => product.id);
+        
+        // Save product IDs as a JSON string in a cookie
+        setCookie("productIds", JSON.stringify(productIds), 1); // Store for 1 day
+        console.log("Product IDs stored in cookie:", productIds);
 
         products.forEach(product => {
             const productCard = document.createElement("div");
@@ -93,6 +101,18 @@ async function fetchProducts() {
     } catch (error) {
         console.error("Error fetching products:", error);
     }
+}
+
+function setCookie(name, value, days) {
+    const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = `${name}=${value}; expires=${expires}; path=/;`;
+    console.log(`Cookie set: ${name} = ${value}`);
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
 }
 
 // Initialize an empty basket object to store items
