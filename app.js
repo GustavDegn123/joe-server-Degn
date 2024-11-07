@@ -44,7 +44,6 @@ app.use('/api/orders', orderRoutes); // Register order routes under /api/orders
 app.use('/api', storesRoutes); // Din route vil være tilgængelig på /api/stores
 app.use('/api', decodeRoutes);
 
-
 // Serve static files from "public" directory (CSS, JS, images, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
 
