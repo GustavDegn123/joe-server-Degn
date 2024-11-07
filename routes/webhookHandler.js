@@ -18,22 +18,29 @@ const handleStripeWebhook = async (req, res) => {
             console.log("Signature verified.");
         }
 
+        // Handle the checkout.session.completed event
         if (event.type === 'checkout.session.completed') {
             const session = event.data.object;
 
             console.log('Received metadata from Stripe webhook:', session.metadata);
 
-            // Optionally send an order confirmation email
+            // Prepare order details for the email
+            const orderDetails = `
+              <p><strong>Total Price:</strong> ${session.amount_total / 100} DKK</p>
+              <p><strong>Payment Method:</strong> ${session.payment_method_types[0]}</p>
+              <p><strong>Order Date:</strong> ${new Date().toLocaleString()}</p>
+            `;
+
+            // Check if email exists and send the order confirmation
             if (session.customer_details && session.customer_details.email) {
-                await sendOrderConfirmation(session.customer_details.email, {
-                    total_price: session.amount_total / 100, // Convert cents to currency
-                    payment_method: 'card',
-                    order_date: new Date()
-                });
+                await sendOrderConfirmation(session.customer_details.email, orderDetails);
                 console.log("Order confirmation email sent successfully.");
+            } else {
+                console.log("No customer email found in session data.");
             }
 
-            res.status(200).send();
+            // Acknowledge receipt of the event to Stripe
+            res.status(200).send('Webhook received and processed.');
         } else {
             console.log("Unhandled event type received:", event.type);
             res.status(400).send('Unhandled event type');
