@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
-    fetchProducts();
 });
 
 function setCookie(name, value, days) {

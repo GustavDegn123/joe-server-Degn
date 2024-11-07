@@ -15,7 +15,7 @@ const productRoutes = require('./routes/productsRoutes'); // Opdater stien hvis 
 const { createCheckoutSession } = require('./public/scripts/stripe');
 const handleStripeWebhook = require('./routes/webhookHandler');
 const orderRoutes = require('./routes/orderRoutes'); // Import the order routes
-// const favoritesRoutes = require('./routes/favoritesRoutes');
+const favoriteRoutes = require('./routes/favoriteRoutes');
 const storesRoutes = require('./routes/storesRoutes'); // Stien inkluderer nu 'routes'-mappen
 const decodeRoutes = require('./routes/decodeRoutes');
 
@@ -40,7 +40,7 @@ app.use('/api', logoutRoutes);
 app.use('/api/products', authMiddleware, productRoutes); // This protects the /products route
 app.use('/api/cloudinary', cloudinaryRoutes);
 app.use('/api/orders', orderRoutes); // Register order routes under /api/orders
-// app.use('/api/favorites', favoritesRoutes);
+app.use('/favorites', favoriteRoutes);
 app.use('/api', storesRoutes); // Din route vil være tilgængelig på /api/stores
 app.use('/api', decodeRoutes);
 
