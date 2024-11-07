@@ -188,5 +188,3 @@ document.addEventListener("DOMContentLoaded", () => {
 // Run loadBasket function when the page loads
 document.addEventListener("DOMContentLoaded", loadBasket);
 
-// Run loadBasket function when the page loads
-document.addEventListener("DOMContentLoaded", loadBasket);
