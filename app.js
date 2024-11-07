@@ -17,6 +17,7 @@ const handleStripeWebhook = require('./routes/webhookHandler');
 const orderRoutes = require('./routes/orderRoutes'); // Import the order routes
 // const favoritesRoutes = require('./routes/favoritesRoutes');
 const storesRoutes = require('./routes/storesRoutes'); // Stien inkluderer nu 'routes'-mappen
+const decodeRoutes = require('./routes/decodeRoutes');
 
 // This must be defined before `express.json()` to properly handle raw body
 app.post('/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook); // For Stripe payment confirmation
@@ -41,6 +42,7 @@ app.use('/api/cloudinary', cloudinaryRoutes);
 app.use('/api/orders', orderRoutes); // Register order routes under /api/orders
 // app.use('/api/favorites', favoritesRoutes);
 app.use('/api', storesRoutes); // Din route vil være tilgængelig på /api/stores
+app.use('/api', decodeRoutes);
 
 
 // Serve static files from "public" directory (CSS, JS, images, etc.)

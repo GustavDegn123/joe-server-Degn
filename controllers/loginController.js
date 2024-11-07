@@ -25,9 +25,8 @@ const loginController = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    // Store JWT in a secure, HTTP-only cookie
     res.cookie("jwt", token, {
-      httpOnly: true,
+      httpOnly: false, // Make accessible to JavaScript
       secure: process.env.NODE_ENV === "production",
       maxAge: 3600000, // 1 hour
       sameSite: "Lax",

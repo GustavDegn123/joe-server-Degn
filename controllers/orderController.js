@@ -5,21 +5,18 @@ const createCheckoutSession = require('../public/scripts/stripe');
 
 const handlePayWithCard = async (req, res) => {
     try {
-        const { user_id, products, total } = req.body;
+        const { products, total } = req.body;
+        const user_id = req.userId; // Get userId from authMiddleware
 
-        // Convert total to total_price
         const total_price = total;
 
-        // Calculate points_earned directly from the products array
         let points_earned = 0;
         for (const product of products) {
             points_earned += product.unitPoints * product.quantity;
         }
 
-        // Create a Stripe checkout session
-        const session = await createCheckoutSession(total_price * 100); // Stripe expects amount in cents
+        const session = await createCheckoutSession(total_price * 100);
 
-        // Prepare order data
         const orderData = {
             user_id,
             products,
@@ -29,10 +26,8 @@ const handlePayWithCard = async (req, res) => {
             order_date: new Date()
         };
 
-        // Save the order in the database
         const orderId = await createOrder(orderData);
 
-        // Update user's loyalty points in the database
         await updateUserLoyaltyPoints(user_id, points_earned);
 
         res.json({ sessionId: session.id, orderId });
@@ -44,39 +39,34 @@ const handlePayWithCard = async (req, res) => {
 
 const handlePayWithLoyaltyPoints = async (req, res) => {
     try {
-        const { user_id, products, points } = req.body;
+        const { products, points } = req.body;
+        const user_id = req.userId; // Get userId from authMiddleware
 
-        // Fetch user from the database
         const user = await getUserById(user_id);
         if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
 
-        // Check if user has enough points
         if (user.loyalty_points < points) {
             return res.status(400).json({ message: "Insufficient loyalty points" });
         }
 
-        // Calculate total points cost based on totalPrice in DKK
         let totalPointsCost = 0;
         for (const product of products) {
-            totalPointsCost += product.totalPrice * product.quantity; // Use totalPrice as points cost
+            totalPointsCost += product.totalPrice * product.quantity;
         }
 
-        // Ensure user has enough points for the total points cost
         if (user.loyalty_points < totalPointsCost) {
             return res.status(400).json({ message: "Insufficient loyalty points" });
         }
 
-        // Deduct points from user's balance
         const newPointsBalance = user.loyalty_points - totalPointsCost;
         await updateUserPoints(user_id, newPointsBalance);
 
-        // Create order with loyalty points payment
         const orderData = {
-            user_id: user_id,
-            products: products,
-            total_price: 0, // Assuming the price is 0 since it's paid by points
+            user_id,
+            products,
+            total_price: 0,
             payment_method: 'loyalty points',
             order_date: new Date()
         };
