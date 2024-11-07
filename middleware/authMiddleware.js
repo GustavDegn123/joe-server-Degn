@@ -1,21 +1,17 @@
-// authMiddleware.js
 const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
-  console.log("Cookies:", req.cookies); // Debug log
   const token = req.cookies.jwt;
-
   if (!token) {
-    return res.status(401).json({ message: "Access denied. No token provided." });
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded JWT:", decoded); // Debug log
-    req.userId = decoded.userId;
+    req.userId = decoded.userId; // Attach userId to the request object
     next();
-  } catch (err) {
-    res.status(400).json({ message: "Invalid token." });
+  } catch (error) {
+    res.status(403).json({ message: "Forbidden" });
   }
 };
 
