@@ -18,9 +18,9 @@ const loginController = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Create a JWT with only email (or any other user data except userId)
+    // Create a JWT with only user_id
     const token = jwt.sign(
-      { email: user.email },
+      { userId: user.user_id }, // Only store user_id in the JWT payload
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -29,15 +29,7 @@ const loginController = async (req, res) => {
     res.cookie("jwt", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 3600000,
-      sameSite: "Lax",
-    });
-
-    // Store user_id in a separate cookie, accessible by JavaScript
-    res.cookie("userId", user.user_id, { // Ensure you're using `user.user_id` from your Users table
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 3600000,
+      maxAge: 3600000, // 1 hour
       sameSite: "Lax",
     });
 
