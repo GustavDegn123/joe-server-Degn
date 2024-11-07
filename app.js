@@ -62,11 +62,11 @@ app.get('/ordernow', (req, res) => {
 });
 
 app.get('/checkout', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'checkOut.html'));
+    res.sendFile(path.join(__dirname, 'views', 'checkout.html'));
 });
 
 app.get('/startside', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'startSide.html'));
+    res.sendFile(path.join(__dirname, 'views', 'startside.html'));
 });
 
 app.get('/stores', (req, res) => {
