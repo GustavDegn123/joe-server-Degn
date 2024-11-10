@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joe & The Juice Loyalty Card</title>
+    <link rel="stylesheet" href="/styles/global.css">
+    <link rel="stylesheet" href="/styles/myprofile.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="navbar-logo">
+            <img src="/img/joeLogo.svg" alt="Joe Logo" class="logo">
+        </div>
+        <div class="navbar-links">
+            <a href="/startside">HOME</a>
+            <a href="/orderNow">MENU</a>
+            <a href="/stores">STORES</a>
+            <a href="/myprofile">MY PROFILE</a>
+        </div>
+        <div class="navbar-user">
+            <img src="/img/Denmark.jpeg" alt="Denmark Flag" class="flag">
+            <img src="/img/Icon.png" alt="User Icon" class="icon">
+            <button class="user-button" onclick="window.location.href='/'">Sign Up</button>
+            <button class="user-button" onclick="window.location.href='/login'">Login</button>
+        </div>
+    </div>
+
+ <!-- Navbar -->
+<!-- Navbar -->
+<div class="navbar">
+    <div class="navbar-logo">
+      <img src="/img/joeLogo.svg" alt="Joe Logo" class="logo">
+    </div>
+    <div class="navbar-links">
+      <a href="/startside">HOME</a>
+      <a href="/ordernow">MENU</a>
+      <a href="#">STORES</a>
+      <a href="/myProfile" class="profile-link">PROFILE</a> <!-- New profile link -->
+    </div>
+    <div class="navbar-user">
+      <button href="/login" class="user-button" id="logout-button">Log out</button>
+    </div>
+  </div>
+  
+
+  <div class="profile-container">
+    <h2 class="hund">My Profile</h2>
+    <div class="loyalty-card">
+        <img src="/img/Denmark.jpeg" alt="Denmark Flag" class="loyalty-flag">
+        <div class="loyalty-chip"></div>
+        <div class="loyalty-card-pattern"></div>
+        <div class="loyalty-card-details">
+            <h3>Loyalty Card</h3>
+            <p>Name: <span id="full-name"></span></p>
+            <p>Email: <span id="email"></span></p>
+            <p>Phone Number: <span id="phone-number"></span></p>
+            <p>Country: <span id="country"></span></p>
+            <p>Loyalty Points: <span id="loyalty-points"></span></p>
+            <p>Total Orders: <span id="total-orders"></span></p> <!-- Tilføjet Total Orders -->
+        </div>
+        <div class="mastercard-logo">
+            <div class="circle red"></div>
+            <div class="circle yellow"></div>
+        </div>
+    </div>
+    <button id="edit-profile-button" class="edit-profile-button">Edit Profile</button>
+</div>
+
+    <script src="/scripts/myProfile.js"></script>
+    <script src="/scripts/editProfile.js"></script>
+    <script src="/scripts/logout.js" defer></script>
+
+</body>
+</html>

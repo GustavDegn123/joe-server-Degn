@@ -18,6 +18,8 @@ const orderRoutes = require('./routes/orderRoutes'); // Import the order routes
 const favoriteRoutes = require('./routes/favoriteRoutes');
 const storesRoutes = require('./routes/storesRoutes'); // Stien inkluderer nu 'routes'-mappen
 const decodeRoutes = require('./routes/decodeRoutes');
+const myProfileRoutes = require('./routes/myProfileRoutes');
+
 
 // This must be defined before `express.json()` to properly handle raw body
 app.post('/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook); // For Stripe payment confirmation
@@ -43,6 +45,7 @@ app.use('/api/orders', orderRoutes); // Register order routes under /api/orders
 app.use('/favorites', favoriteRoutes);
 app.use('/api', storesRoutes); // Din route vil være tilgængelig på /api/stores
 app.use('/api', decodeRoutes);
+app.use('/api/profile', myProfileRoutes);
 
 // Serve static files from "public" directory (CSS, JS, images, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -72,6 +75,15 @@ app.get('/startside', (req, res) => {
 
 app.get('/stores', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'stores.html'));
+});
+
+app.get('/myprofile', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'myprofile.html'));
+});
+
+// Route to serve the Edit Profile page
+app.get('/edit-profile', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'editProfile.html')); // Adjust the path if necessary
 });
 
 // Test route to check server health

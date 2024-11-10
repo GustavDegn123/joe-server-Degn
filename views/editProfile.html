@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profile</title>
+  <link rel="stylesheet" href="/styles/global.css"> <!-- Global styles for navbar and common elements -->
+  <link rel="stylesheet" href="/styles/editProfile.css"> <!-- Specific styles for edit profile -->
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="navbar-logo">
+      <img src="/img/joeLogo.svg" alt="Joe Logo" class="logo">
+    </div>
+    <div class="navbar-links">
+      <a href="/startside">HOME</a>
+      <a href="/ordernow">MENU</a>
+      <a href="#">STORES</a>
+      <a href="/myProfile">PROFILE</a>
+    </div>
+    <div class="navbar-user">
+      <button class="user-button" id="logout-button">Log out</button>
+    </div>
+  </div>
+
+  <!-- Edit Profile Container -->
+  <div class="edit-profile-container">
+    <div id="logo">
+      <img src="/img/joeLogo.svg" alt="Joe Logo" />
+  </div>
+    <h2>Edit Your Profile</h2>
+    <span>Alle felter skal udfyldes!</span>
+
+    <form class="edit-profile-form">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" placeholder="Enter your name">
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="Enter your email">
+
+      <label for="phone">Phone Number</label>
+      <input type="text" id="phone" name="phone" placeholder="Enter your phone number">
+
+      <label for="country">Country</label>
+      <input type="text" id="country" name="country" placeholder="Enter your country">
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter a new password">
+
+      <button type="button" id="save-button" class="save-button" onclick="saveProfile()">Save Changes</button>
+    </form>
+  </div>
+
+  <script src="/scripts/editProfile.js"></script> <!-- JavaScript for handling profile updates -->
+  <script src="/scripts/logout.js" defer></script>
+
+</body>
+</html>

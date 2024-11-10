@@ -1,0 +1,300 @@
+/* General Body Styling */
+.body {
+    margin-top: 30px;
+    padding-top: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Profile Container */
+.profile-container {
+    display: flex;
+    flex-direction: column; /* Placerer elementerne vertikalt */
+    align-items: center; /* Centrerer horisontalt */
+    justify-content: center; /* Centrerer vertikalt */
+    height: 500px; /* Brug hele skærmhøjden */
+    text-align: center; /* Center-tekst */
+    margin-top: 0; /* Justeret for at sikre god alignment */
+
+}
+/* Left Section: Profile Menu */
+.profile-menu {
+    width: 70%;
+    margin-right: 20px;
+    margin-top: 40px;
+}
+
+.profile-card {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: #ffffff;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.profile-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #ffc0cb; /* Light pink background for avatar */
+}
+
+.profile-info {
+    margin-left: 15px;
+}
+
+.profile-name {
+    font-weight: bold;
+    font-size: 20px;
+    color: #333;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+}
+
+.arrow {
+    margin-left: auto;
+    font-size: 20px;
+    color: #999;
+}
+
+.help, .logout {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+
+/* Profile Container */
+.profile-container {
+    display: flex;
+    margin: 20px;
+    margin-top: 40px; /* To prevent overlap with navbar */
+}
+/* Right Section: Loyalty Card */
+.loyalty-card {
+    width: 25%;
+    position: relative;
+    padding: 30px;
+    background: linear-gradient(135deg, #ffc0cb, #ffb6c1); /* Light pink gradient for background */
+    color: #333; /* Dark text color */
+    border-radius: 20px; /* Softer corners */
+    box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.3); /* Enhanced shadow for better depth */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 180px; /* Lower height */
+    align-items: flex-start;
+    overflow: hidden; /* To keep pattern within the bounds of the card */
+    z-index: 1;
+    margin-top: 0px; /* Justeret for alignment */
+
+}
+.hund {
+    margin-top: 0px; /* Flyt overskriften højere op */
+    margin-bottom: 15px; /* Plads under overskriften for bedre udseende */
+    margin-left: -40px; /* Plads under overskriften for bedre udseende */
+    font-weight: bold;
+    text-align: left;
+}
+/* Overskrift til Loyalty Card */
+.loyalty-card-details h3 {
+    margin-top: 0px; /* Flyt overskriften højere op */
+    margin-bottom: 15px; /* Plads under overskriften for bedre udseende */
+    font-weight: bold;
+    text-align: left;
+}
+/* Background Pattern - Tree and Leaves */
+.loyalty-card-pattern {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    opacity: 0.3; /* Low opacity to keep the pattern subtle */
+    z-index: 1; /* Place the pattern behind the text and elements */
+}
+
+/* Flag in Top Right */
+.loyalty-flag {
+    position: absolute;
+    top: 15px;
+    right: 27px;
+    width: 50px;
+    height: auto;
+    border-radius: 4px;
+    z-index: 3; /* Place above background pattern */
+}
+
+/* CSS Chip Design */
+.loyalty-chip {
+    position: absolute;
+    top: 105px; /* Positioned below the text */
+    left: 20px;
+    width: 45px;
+    height: 35px;
+    background: linear-gradient(135deg, #d4b382, #f5d7b5);
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 3; /* Place above background pattern */
+}
+
+.loyalty-chip::before, .loyalty-chip::after {
+    content: "";
+    position: absolute;
+    width: 80%;
+    height: 2px;
+    background: rgba(0, 0, 0, 0.2);
+    left: 10%;
+    border-radius: 2px;
+}
+
+.loyalty-chip::before {
+    top: 8px;
+}
+
+.loyalty-chip::after {
+    top: 18px;
+}
+
+/* Logo and Card Details Styling */
+.loyalty-card-logo,
+.loyalty-card-number,
+.loyalty-card-holder,
+.loyalty-expiry {
+    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.4), -1px -1px 1px rgba(255, 255, 255, 0.7); /* Enhanced 3D effect for out-of-card appearance */
+    z-index: 4; /* Place above background pattern */
+    position: relative;
+}
+
+.loyalty-card-logo {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: left;
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+.loyalty-card-details {
+    width: 100%;
+    text-align: left;
+    margin-top: 0px;
+}
+
+.loyalty-card-number {
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 60px;
+    text-align: left;
+}
+
+.loyalty-card-holder {
+    font-size: 16px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    text-align: left;
+}
+
+.loyalty-expiry {
+    font-size: 14px;
+    color: #555;
+    text-align: left;
+}
+
+/* Mastercard Logo Styling */
+.mastercard-logo {
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 3; /* Place above background pattern */
+}
+
+.circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    position: absolute;
+    opacity: 0.9;
+}
+
+.circle.red {
+    background-color: #eb001b;
+    left: 0;
+}
+
+.circle.yellow {
+    background-color: #f79e1b;
+    right: 0;
+    transform: translateX(-10px);
+}
+
+
+/* Edit Profile Button Styling */
+.edit-profile-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #ffc0cb, #ffb6c1); /* Light pink gradient for background */
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    position: relative;
+    z-index: 5; /* Sørg for, at knappen står over loyalty card */
+}
+
+.edit-profile-button:hover {
+    background-color: #ff85c1; /* Lysere pink ved hover for feedback */
+}
+
+/* Styling til teksten på kortet */
+.loyalty-card-details p {
+    margin: 3px 0; /* Reduceret margin for bedre linjeafstand */
+    position: relative;
+    z-index: 4;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Justering af container for loyalitetskortet */
+.loyalty-card-details {
+    width: 100%;
+    padding-left: 30px; /* Flytter teksten til højre, så den ikke overlapper chippen */
+    padding-bottom: 20px; /* Flytter teksten til højre, så den ikke overlapper chippen */
+    margin-bottom: 20px;
+
+    margin-left: 70px; /* Placerer teksten under chippen */
+}
+
+/* Styling til Edit Profile knappen */
+.edit-profile-button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #ff69b4; /* Lys pink baggrund */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.edit-profile-button:hover {
+    background-color: #ff1493; /* Mørkere pink ved hover */
+    transform: translateY(-2px);
+}

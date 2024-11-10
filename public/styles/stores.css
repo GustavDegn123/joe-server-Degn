@@ -11,7 +11,7 @@
     width: 30%;
     padding: 20px;
     overflow-y: auto;
-    background-color: #3a3a3a; /* Grå baggrund */
+    background-color: rgba(247, 193, 217, 1);
     color: #ffffff; /* Hvid tekstfarve */
     border-right: 1px solid #ddd;
 }
@@ -25,15 +25,34 @@
 
 /* Søgefelt */
 .store-search {
-    width: 100%;
+    width: 96%;
     padding: 8px;
     margin-bottom: 15px;
     border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: 4px; /* Let runding af kanterne */
     outline: none;
     font-size: 1rem;
-    background-color: #f2f2f2; /* Lys grå baggrund */
+    background-color: #ffffff; /* Lys grå baggrund */
     color: #333;
+    transition: all 0.4s ease; /* Tilføjer en overgang for fokus-effekt */
+}
+
+/* Hover og fokus-effekt for søgefelt */
+.store-search:hover,
+.store-search:focus {
+    border-color: #333; /* Sort kant ved hover eller fokus */
+    border-radius: 15px; /* Mere afrundede kanter ved hover eller fokus */
+    box-shadow: 0 0 10px rgba(51, 51, 51, 0.3); /* Let skygge for at give dybde */
+    transform: translateY(-3px); /* Flytter feltet let op for en dynamisk effekt */
+}
+
+/* Animation af placeholder-tekst */
+.store-search::placeholder {
+    transition: all 0.4s ease; /* Tilføj overgang for placeholder-teksten */
+}
+
+.store-search:focus::placeholder {
+    opacity: 0; /* Gør placeholder-teksten usynlig ved fokus */
 }
 
 /* Styling af hver butik */
@@ -41,11 +60,9 @@
     border: 1px solid #ddd;
     padding: 10px;
     margin-bottom: 10px;
-
     background-color: #fff;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
-
 
 .store-item h3 {
     font-size: 1.1rem;
@@ -64,17 +81,18 @@
     display: inline-block;
     margin-top: 10px;
     padding: 5px 10px;
-    background-color: #ff69b4; /* Joe & the Juice pink farve */
+    background-color: rgba(247, 193, 217, 1);
     color: #fff;
     border: none;
     font-size: 0.9rem;
     text-align: center;
     cursor: pointer;
     text-decoration: none;
+    transition: background-color 0.3s ease;
 }
 
 .order-now-btn:hover {
-    background-color: #ff4c8a; /* Mørkere pink ved hover */
+    background-color: #fd95b9; /* Mørkere pink ved hover */
 }
 
 /* Højre kolonne (kort) */
