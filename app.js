@@ -20,15 +20,12 @@ const storesRoutes = require('./routes/storesRoutes'); // Stien inkluderer nu 'r
 const decodeRoutes = require('./routes/decodeRoutes');
 const myProfileRoutes = require('./routes/myProfileRoutes');
 
-
-// This must be defined before `express.json()` to properly handle raw body
 app.post('/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook); // For Stripe payment confirmation
 
 require('dotenv').config();
 
 getConnection();
 
-// Middleware for CORS
 app.use(cors());
 
 // Middleware to parse JSON
