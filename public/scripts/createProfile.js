@@ -3,14 +3,18 @@ document.getElementById("signup-form").addEventListener("submit", function(e) {
     e.preventDefault(); // Forhindrer siden i at opdatere
 
     // Hent data fra formularen
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("signup-email").value;
-    const phone = document.getElementById("signup-phone").value;
-    const password = document.getElementById("signup-password").value;
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("signup-email").value.trim();
+    const phone = document.getElementById("signup-phone").value.trim();
+    const password = document.getElementById("signup-password").value.trim();
     const termsCheckbox = document.getElementById("terms");
     const loyaltyProgramCheckbox = document.getElementById("loyalty_program");
     const termsAccepted = termsCheckbox ? (termsCheckbox.checked ? 1 : 0) : 0;
     const loyaltyProgramAccepted = loyaltyProgramCheckbox ? (loyaltyProgramCheckbox.checked ? 1 : 0) : 0;
+
+    // Formatér telefonnummer til E.164-format (inkluder landekode)
+    const countryCode = "+45"; // Denmark country code
+    const formattedPhone = phone.startsWith("+") ? phone : `${countryCode}${phone}`;
 
     // Hent geolocation (latitude og longitude)
     if (navigator.geolocation) {
@@ -36,7 +40,7 @@ document.getElementById("signup-form").addEventListener("submit", function(e) {
                 const userData = {
                     name: name,
                     email: email,
-                    phone_number: phone,
+                    phone: formattedPhone, // Brug det formaterede telefonnummer
                     password: password,
                     terms_accepted: termsAccepted,
                     loyalty_program_accepted: loyaltyProgramAccepted,

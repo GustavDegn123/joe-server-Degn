@@ -7,14 +7,14 @@ const transporter = nodemailer.createTransport({
     port: 587,
     secure: false,
     auth: {
-        user: 'joeandthejuiceproject@gmail.com',
-        pass: 'pztw pedx qjni btry'
+        user: process.env.SMTP_USER, // Use environment variable
+        pass: process.env.SMTP_PASS  // Use environment variable
     }
 });
 
 exports.sendWelcomeEmail = async (user) => {
     const mailOptions = {
-        from: '"Joe & the Juice" <joeandthejuiceproject@gmail.com>',  // Afsenderens e-mail
+        from: `"Joe & the Juice" <${process.env.SMTP_USER}>`, // Sender email
         to: user.email,                                      // Modtagerens e-mail
         subject: 'Velkommen til Joe & the Juice!',
         text: `Tak for oprettelsen af din profil hos Joe & the Juice.

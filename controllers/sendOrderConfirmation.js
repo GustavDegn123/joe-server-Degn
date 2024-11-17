@@ -7,15 +7,15 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false, // Set to true for port 465, false for other ports
   auth: {
-        user: 'joeandthejuiceproject@gmail.com',
-        pass: 'pztw pedx qjni btry'
+      user: process.env.SMTP_USER, // Use environment variable
+      pass: process.env.SMTP_PASS  // Use environment variable
   }
 });
 
 // Function to send order confirmation email and log in the database
 const sendOrderConfirmation = async (email, orderDetails, userId) => {
   const mailOptions = {
-    from: '"Joe & the Juice" <joeandthejuiceproject@gmail.com>', // Sender email
+    from: `"Joe & the Juice" <${process.env.SMTP_USER}>`, // Sender email
     to: email,
     subject: 'Ordrebekræftelse fra Joe & the Juice',
     html: `
