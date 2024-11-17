@@ -145,3 +145,22 @@ h1 {
   z-index: 10;
   pointer-events: none;
 }
+
+.favorite-button {
+  background-color: #f7b8d7;
+  border: none;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+  margin-top: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.favorite-button.favorited {
+  background-color: #e3a6c2;
+}
+
+.favorite-button:hover {
+  background-color: #d596ba;
+}

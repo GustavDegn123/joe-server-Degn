@@ -1,19 +1,5 @@
-document.addEventListener("DOMContentLoaded", () => {
-    // Retrieve the selected store from the cookie
-    const selectedStore = getCookie("selectedStore");
-    if (selectedStore) {
-        const store = JSON.parse(selectedStore);
-
-        // Display the store details in an element on the Menu page
-        const storeInfoContainer = document.getElementById("store-info");
-        storeInfoContainer.innerHTML = `
-            <h3>Ordering from: ${store.name}</h3>
-            <p>Address: ${store.address}</p>
-            <p>Opening Hours: ${store.hours}</p>
-        `;
-    }
-
-});
+const basket = {};
+let userId = null;
 
 function setCookie(name, value, days) {
     const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
@@ -22,197 +8,126 @@ function setCookie(name, value, days) {
 }
 
 function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const cookieArr = decodedCookie.split(';');
+    for (let i = 0; i < cookieArr.length; i++) {
+        let cookie = cookieArr[i].trim();
+        if (cookie.indexOf(name + "=") === 0) {
+            return cookie.substring((name + "=").length, cookie.length);
+        }
+    }
+    return "";
 }
 
-const products = [
-    { title: "Serrano", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Serrano?_a=BAMCkGRg0" },
-    { title: "Avocado", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Avocado?_a=BAMCkGRg0" },
-    { title: "Tunacado", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Tunacado?_a=BAMCkGRg0" },
-    { title: "Joe's Club", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1730456097/Joe%20billeder/Joe%27s%20Club.png" },
-    { title: "Power Shake", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Power%20Shake?_a=BAMCkGRg0" },
-    { title: "Pick Me Up", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Pick%20Me%20Up?_a=BAMCkGRg0" },
-    { title: "Avo Shake", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Avo%20Shake?_a=BAMCkGRg0" },
-    { title: "Hell of a Nerve", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Hell%20of%20a%20Nerve?_a=BAMCkGRg0" },
-    { title: "Americano", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Americano?_a=BAMCkGRg0" },
-    { title: "Iron Man", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Iron%20Man?_a=BAMCkGRg0" },
-    { title: "Go Away Doc", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Go%20Away%20Doc?_a=BAMCkGRg0" },
-    { title: "Cappuccino", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Cappuccino?_a=BAMCkGRg0" },
-    { title: "Espresso", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Espresso?_a=BAMCkGRg0" },
-    { title: "Latte", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Latte?_a=BAMCkGRg0" }
-];
+async function fetchUserId() {
+    try {
+        const response = await fetch('/api/decode', {
+            method: 'GET',
+            credentials: 'include',
+        });
+        const data = await response.json();
+        if (data.userId) {
+            setCookie("userId", data.userId, 1); // Persist user ID in cookie
+            return data.userId;
+        }
+        return null;
+    } catch (error) {
+        console.error("Error fetching user ID:", error);
+        return null;
+    }
+}
 
-// Fetch products from the backend and display them in the gallery
-// Fetch products from the backend and display them in the gallery
+async function fetchFavorites() {
+    try {
+        const userId = getCookie("userId");
+        if (!userId) {
+            console.error("User ID not found.");
+            return [];
+        }
+
+        const response = await fetch(`/favorites/${userId}`);
+        if (!response.ok) {
+            console.error("Error fetching favorites:", response.statusText);
+            return [];
+        }
+
+        const favorites = await response.json();
+        setCookie("favorites", JSON.stringify(favorites), 1); // Save favorites to cookie
+        return favorites; // Return favorites for further processing
+    } catch (error) {
+        console.error("Error in fetchFavorites:", error);
+        return [];
+    }
+}
+
 async function fetchProducts() {
     try {
-        const response = await fetch('/api/products');
+        const response = await fetch("/api/products");
         const products = await response.json();
 
-        // Store all product IDs in an array
-        const productIds = products.map(product => product.id);
-        
-        // Save product IDs as a JSON string in a cookie
-        setCookie("productIds", JSON.stringify(productIds), 1); // Store for 1 day
-        console.log("Product IDs stored in cookie:", productIds);
+        const favorites = JSON.parse(getCookie("favorites") || "[]");
+
+        const productGallery = document.getElementById("product-gallery");
+        productGallery.innerHTML = ""; // Clear previous products
 
         products.forEach(product => {
             const productCard = document.createElement("div");
             productCard.classList.add("product-card");
 
-            // Display product image
             const img = document.createElement("img");
             img.src = `https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/${product.name}`;
             img.alt = product.name;
             img.classList.add("product-image");
 
-            // Display product title
             const title = document.createElement("div");
             title.classList.add("product-title");
             title.textContent = product.name;
 
-            // Display product description
             const description = document.createElement("div");
             description.classList.add("product-description");
             description.textContent = product.description;
 
-            // Display product price
             const price = document.createElement("div");
             price.classList.add("product-price");
             price.textContent = `${product.price.toFixed(2)} kr.`;
 
-            // Add to Basket button
+            const favoriteButton = document.createElement("button");
+            favoriteButton.classList.add("favorite-button");
+            favoriteButton.textContent = "☆ Add to Favorites";
+            favoriteButton.setAttribute("data-id", product.id);
+
+            // Check if this product is a favorite
+            const isFavorited = favorites.some(fav => fav.id == product.id);
+            if (isFavorited) {
+                favoriteButton.classList.add("favorited");
+                favoriteButton.textContent = "★ Favorited";
+            }
+
+            favoriteButton.addEventListener("click", () => toggleFavorite(product.id, favoriteButton));
+
             const button = document.createElement("button");
             button.classList.add("add-to-basket");
             button.textContent = "Add to Basket";
             button.addEventListener("click", () => addToBasket(product));
 
-            // Append elements to product card
             productCard.appendChild(img);
             productCard.appendChild(title);
             productCard.appendChild(description);
             productCard.appendChild(price);
+            productCard.appendChild(favoriteButton);
             productCard.appendChild(button);
 
-            document.getElementById("product-gallery").appendChild(productCard);
+            productGallery.appendChild(productCard);
         });
     } catch (error) {
         console.error("Error fetching products:", error);
     }
 }
 
-function setCookie(name, value, days) {
-    const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
-    document.cookie = `${name}=${value}; expires=${expires}; path=/;`;
-    console.log(`Cookie set: ${name} = ${value}`);
-}
-
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-}
-
-// Initialize an empty basket object to store items
-const basket = {};
-
-// Function to add items to the basket
-function addToBasket(product) {
-    if (basket[product.name]) {
-        // If the product is already in the basket, increment the quantity, total price, and total points
-        basket[product.name].quantity += 1;
-        basket[product.name].totalPrice += product.price;
-        basket[product.name].totalPoints += product.points_value;
-    } else {
-        // If it's a new product, add it to the basket with initial quantity, price, and points
-        basket[product.name] = {
-            quantity: 1,
-            totalPrice: product.price,
-            unitPrice: product.price,
-            unitPoints: product.points_value,
-            totalPoints: product.points_value
-        };
-    }
-    setCookie("basket", JSON.stringify(basket), 1); // Update the cookie with new basket data
-    renderBasket();
-    
-    // Flyvende animation
-    const productCard = document.querySelector(`img[alt="${product.name}"]`);
-    const flyImg = productCard.cloneNode(true);
-    flyImg.classList.add('fly');
-    document.body.appendChild(flyImg);
-
-    // Få produktbilledets position
-    const startRect = productCard.getBoundingClientRect();
-    const endRect = document.querySelector(".basket").getBoundingClientRect();
-
-    // Anvend positionen for start og slut af flyvningen
-    flyImg.style.left = `${startRect.left}px`;
-    flyImg.style.top = `${startRect.top}px`;
-
-    // Start animationen mod kurven
-    flyImg.style.transform = `translate(${endRect.left - startRect.left}px, ${endRect.top - startRect.top}px) scale(0.5)`;
-
-    // Fjern billedet efter animationen
-    flyImg.addEventListener("animationend", () => {
-        flyImg.remove();
-    });
-}
-
-// Function to render the basket on the frontend
-function renderBasket() {
-    const basketItems = document.getElementById("basket-items");
-    basketItems.innerHTML = ""; // Clear previous basket content
-
-    for (const productName in basket) {
-        const item = basket[productName];
-        const li = document.createElement("li");
-        li.classList.add("basket-item");
-
-        li.innerHTML = `
-            ${item.quantity}x ${productName}; ${item.totalPrice.toFixed(2)} kr. | ${item.totalPoints} points
-            <button class="decrease-quantity" onclick="removeFromBasket('${productName}')">-</button>
-            <button class="increase-quantity" onclick="addQuantity('${productName}')">+</button>
-        `;
-        
-        basketItems.appendChild(li);
-    }
-}
-
-// Function to increase the quantity of an item in the basket
-function addQuantity(productName) {
-    if (basket[productName]) {
-        basket[productName].quantity += 1;
-        basket[productName].totalPrice += basket[productName].unitPrice;
-        basket[productName].totalPoints += basket[productName].unitPoints;
-    }
-    setCookie("basket", JSON.stringify(basket), 1); // Update the cookie with new basket data
-    renderBasket();
-}
-
-// Function to remove items from the basket
-function removeFromBasket(productName) {
-    if (basket[productName]) {
-        // Decrease the quantity or remove the item if quantity is 1
-        if (basket[productName].quantity > 1) {
-            basket[productName].quantity -= 1;
-            basket[productName].totalPrice -= basket[productName].unitPrice;
-            basket[productName].totalPoints -= basket[productName].unitPoints;
-        } else {
-            delete basket[productName]; // Remove the item entirely if quantity is 1
-        }
-    }
-    setCookie("basket", JSON.stringify(basket), 1); // Update the cookie with new basket data
-    renderBasket();
-}
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const selectedStore = getCookie("selectedStore");
     if (selectedStore) {
         const store = JSON.parse(selectedStore);
-
         const storeInfoContainer = document.getElementById("store-info");
         storeInfoContainer.innerHTML = `
             <h3>Ordering from: ${store.name}</h3>
@@ -221,17 +136,125 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
-    fetchProducts();
+    userId = await fetchUserId();
+    if (!userId) {
+        console.error("User ID not found.");
+        return;
+    }
+
+    const favorites = await fetchFavorites(); // Fetch favorites first
+    await fetchProducts(); // Render products with favorite information
 });
+
+// Toggle favorite status
+async function toggleFavorite(productId, button) {
+    try {
+        const userId = getCookie("userId");
+        if (!userId) {
+            alert("You must be logged in to manage favorites.");
+            return;
+        }
+
+        const isFavorited = button.classList.contains("favorited");
+
+        if (isFavorited) {
+            // Remove from favorites
+            const response = await fetch("/favorites/removeFavorite", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId, productId }),
+            });
+
+            if (response.ok) {
+                button.classList.remove("favorited");
+                button.textContent = "☆ Add to Favorites";
+            } else {
+                console.error("Failed to remove favorite:", await response.text());
+            }
+        } else {
+            // Add to favorites
+            const response = await fetch("/favorites/addFavorite", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId, productId }),
+            });
+
+            if (response.ok) {
+                button.classList.add("favorited");
+                button.textContent = "★ Favorited";
+            } else {
+                console.error("Failed to add favorite:", await response.text());
+            }
+        }
+
+        // Fetch updated favorites to synchronize the UI
+        fetchFavorites();
+    } catch (error) {
+        console.error("Error in toggleFavorite:", error);
+    }
+}
+
+// Basket functions
+function addToBasket(product) {
+    if (basket[product.name]) {
+        basket[product.name].quantity += 1;
+        basket[product.name].totalPrice += product.price;
+    } else {
+        basket[product.name] = {
+            quantity: 1,
+            totalPrice: product.price
+        };
+    }
+    setCookie("basket", JSON.stringify(basket), 1);
+    renderBasket();
+}
+
+function renderBasket() {
+    const basketItems = document.getElementById("basket-items");
+    basketItems.innerHTML = "";
+
+    for (const productName in basket) {
+        const item = basket[productName];
+        const li = document.createElement("li");
+        li.classList.add("basket-item");
+        li.innerHTML = `
+            ${item.quantity}x ${productName}; ${item.totalPrice.toFixed(2)} kr.
+            <button class="decrease-quantity" onclick="removeFromBasket('${productName}')">-</button>
+            <button class="increase-quantity" onclick="addQuantity('${productName}')">+</button>
+        `;
+        basketItems.appendChild(li);
+    }
+}
+
+function addQuantity(productName) {
+    if (basket[productName]) {
+        basket[productName].quantity += 1;
+        basket[productName].totalPrice += basket[productName].unitPrice;
+    }
+    setCookie("basket", JSON.stringify(basket), 1);
+    renderBasket();
+}
+
+function removeFromBasket(productName) {
+    if (basket[productName]) {
+        if (basket[productName].quantity > 1) {
+            basket[productName].quantity -= 1;
+            basket[productName].totalPrice -= basket[productName].unitPrice;
+        } else {
+            delete basket[productName];
+        }
+    }
+    setCookie("basket", JSON.stringify(basket), 1);
+    renderBasket();
+}
 
 document.getElementById("review-order").addEventListener("click", () => {
     const selectedStore = getCookie("selectedStore");
-    setCookie("basket", JSON.stringify(basket), 1); // Store basket data in cookie for 1 day
+    setCookie("basket", JSON.stringify(basket), 1);
     if (selectedStore) {
-        setCookie("checkoutStore", selectedStore, 1); // Save store info in another cookie
-        console.log("checkoutStore cookie set:", selectedStore);
+        setCookie("checkoutStore", selectedStore, 1);
     } else {
         console.error("No selectedStore data found.");
     }
-    window.location.href = "/checkout"; // Navigate to checkout page
+    window.location.href = "/checkout";
 });
