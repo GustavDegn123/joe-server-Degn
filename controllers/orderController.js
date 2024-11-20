@@ -2,6 +2,8 @@ const { getProductIdByName, createOrderWithLoyaltyPoints, getProductPointsValue,
 const { createOrder } = require('../models/orderModel');
 const { updateUserLoyaltyPoints } = require('../models/userModel');
 const createCheckoutSession = require('../public/scripts/stripe');
+const sendOrderConfirmation = require('./sendOrderConfirmation');
+
 
 const handlePayWithCard = async (req, res) => {
     try {
@@ -38,48 +40,57 @@ const handlePayWithCard = async (req, res) => {
 };
 
 const handlePayWithLoyaltyPoints = async (req, res) => {
+    const { user_id, products, points } = req.body;
+
     try {
-        const { products, points } = req.body; // Extract products and points
-        const user_id = req.userId; // Get user ID from authMiddleware
+        // Calculate total price in points
+        const totalPrice = products.reduce((sum, product) => {
+            return sum + product.quantity * product.unitPoints;
+        }, 0);
 
-        // Fetch user from database
-        const user = await getUserById(user_id);
-        if (!user) {
-            return res.status(404).json({ error: "User not found" });
+        if (points < totalPrice) {
+            return res.status(400).json({
+                message: 'Not enough points to complete the purchase.',
+            });
         }
 
-        // Calculate total points required for the basket
-        let totalPointsCost = 0;
-        for (const product of products) {
-            if (!product.unitPoints || !product.quantity) {
-                return res.status(400).json({ error: "Invalid product data" });
-            }
-            totalPointsCost += product.unitPoints * product.quantity;
-        }
+        // Deduct points
+        const remainingPoints = points - totalPrice;
+        await updateUserPoints(user_id, remainingPoints);
 
-        // Check if user has enough loyalty points
-        if (user.loyalty_points < totalPointsCost) {
-            return res.status(400).json({ message: "Insufficient loyalty points" });
-        }
-
-        // Deduct points and create order
-        const newPointsBalance = user.loyalty_points - totalPointsCost;
-        await updateUserPoints(user_id, newPointsBalance);
-
-        const orderData = {
+        // Create order in the database
+        const orderId = await createOrderWithLoyaltyPoints({
             user_id,
             products,
-            total_price: 0, // No money charged
-            payment_method: 'loyalty points',
-            order_date: new Date()
-        };
+            total_price: totalPrice,
+            payment_method: 'loyalty_points',
+            order_date: new Date(),
+        });
 
-        const orderId = await createOrderWithLoyaltyPoints(orderData);
+        // Fetch user information for email
+        const user = await getUserById(user_id);
 
-        res.status(200).json({ orderId });
+        // Prepare order details for email
+        const orderDetails = products
+            .map(
+                (product) =>
+                    `<p>${product.quantity}x ${product.name}: ${product.unitPoints * product.quantity} points</p>`
+            )
+            .join('');
+
+        // Send confirmation email
+        await sendOrderConfirmation(user.email, orderDetails, user_id);
+
+        res.status(200).json({
+            message: 'Payment successful with loyalty points.',
+            orderId,
+        });
     } catch (error) {
-        console.error("Error processing loyalty points payment:", error);
-        res.status(500).json({ error: "Internal server error" });
+        console.error('Error processing loyalty points payment:', error);
+        res.status(500).json({
+            message: 'An error occurred during loyalty points payment.',
+            error,
+        });
     }
 };
 
