@@ -36,11 +36,6 @@ async function loadUserProfile() {
     }
 }
   
-  document.getElementById("edit-profile-button").addEventListener("click", () => {
-    window.location.href = "/edit-profile";
-});
-
-  
   // Load the profile data when the page loads
   document.addEventListener("DOMContentLoaded", loadUserProfile);
   

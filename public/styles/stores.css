@@ -1,3 +1,7 @@
+body {
+    font-family: Arial, sans-serif;
+  }
+  
 /* Flexbox-layout for hovedindhold */
 .main-content {
     display: flex;
