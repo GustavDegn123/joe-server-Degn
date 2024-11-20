@@ -89,6 +89,11 @@ app.get("/ping", (req, res) => {
     res.json({ message: "Pong", serverTime });
 });
 
+// Provide the access token to the frontend via API or templating
+app.get('/api/mapbox-token', (req, res) => {
+    res.json({ accessToken: process.env.MAPBOX_ACCESS_TOKEN });
+});
+
 // Start server on port 3000
 const server = app.listen(3000, () => {
     console.log("Server running on port 3000");
