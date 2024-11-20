@@ -4,47 +4,45 @@ const bcrypt = require('bcrypt');
 
 const saltRounds = 10;
 
-// Funktion til at oprette en ny bruger med hash'et adgangskode
 const createUser = async (userData) => {
     console.log("Creating user in database:", userData);
     const { 
         name, 
         email, 
-        phone_number, 
+        phone, 
         country, 
         password, 
-        loyalty_points = 0, 
         terms_accepted, 
         loyalty_program_accepted, 
         latitude, 
         longitude 
     } = userData;
-    
+
     try {
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        const hashedPassword = await bcrypt.hash(password, saltRounds); // Hash the password
         const pool = await getConnection();
         const result = await pool.request()
             .input('name', name)
             .input('email', email)
-            .input('phone_number', phone_number)
+            .input('phone_number', phone) // Correct field mapping
             .input('country', country)
             .input('hashed_password', hashedPassword)
-            .input('loyalty_points', loyalty_points)
+            .input('loyalty_points', 0) // Default value for loyalty points
             .input('terms_accepted', terms_accepted)
             .input('loyalty_program_accepted', loyalty_program_accepted)
             .input('latitude', latitude)
             .input('longitude', longitude)
-                .query(`
+            .query(`
                 INSERT INTO Users (name, email, phone_number, country, hashed_password, loyalty_points, terms_accepted, loyalty_program_accepted, latitude, longitude)
                 OUTPUT INSERTED.user_id
                 VALUES (@name, @email, @phone_number, @country, @hashed_password, @loyalty_points, @terms_accepted, @loyalty_program_accepted, @latitude, @longitude)
             `);
 
-        console.log("User created successfully:", result); // Bekræft succes i loggen
-        return result;
+        console.log("User created successfully:", result);
+        return result; // Return the result for further use
     } catch (error) {
-        console.error('Error creating user:', error); // Log detaljeret fejl
-        throw error;
+        console.error('Error creating user:', error);
+        throw error; // Ensure the error is thrown for proper handling in the controller
     }
 };
 

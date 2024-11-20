@@ -3,26 +3,46 @@ const { sendWelcomeEmail } = require('./emailController');
 const { sendSms } = require('./twilioService'); // Import the Twilio SMS service
 
 const createUserController = async (req, res) => {
-    const { name, email, phone, password } = req.body;
+    const {
+        name,
+        email,
+        phone,
+        password,
+        terms_accepted,
+        loyalty_program_accepted,
+        country,
+        latitude,
+        longitude
+    } = req.body;
 
     try {
-        // Step 1: Create the user in the database
-        const result = await createUser({ name, email, phone, password });
-        const userId = result.recordset[0].user_id; // Get user_id from the result
-        const user = { id: userId, name, email, phone };
+        // Create user in the database
+        const result = await createUser({
+            name,
+            email,
+            phone,
+            password,
+            terms_accepted,
+            loyalty_program_accepted,
+            country,
+            latitude,
+            longitude
+        });
 
-        // Step 2: Send a welcome email
-        await sendWelcomeEmail(user);
+        const userId = result.recordset[0].user_id;
+        console.log("New user ID:", userId);
 
-        // Step 3: Send SMS notification
+        // Send welcome email
+        await sendWelcomeEmail({ id: userId, name, email });
+
+        // Send SMS notification
         const smsMessage = `Hej ${name}, velkommen til vores loyalitetsprogram!`;
         await sendSms(phone, smsMessage);
 
-        // Step 4: Respond with success
-        res.status(201).json({ message: 'Bruger oprettet og SMS sendt!', result });
+        res.status(201).json({ message: "Bruger oprettet og SMS sendt!", userId });
     } catch (error) {
         console.error('Error in createUserController:', error.message);
-        res.status(500).json({ message: 'Kunne ikke oprette bruger', error: error.message });
+        res.status(500).json({ message: "Kunne ikke oprette bruger", error: error.message });
     }
 };
 

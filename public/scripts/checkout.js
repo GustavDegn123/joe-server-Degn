@@ -40,31 +40,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function loadBasket() {
-    console.log("CheckoutStore cookie:", getCookie("checkoutStore"));
-
     const basketData = getCookie("basket");
-    const selectedStoreData = getCookie("checkoutStore");
-
-    if (selectedStoreData) {
-        const store = JSON.parse(selectedStoreData);
-        const storeInfoContainer = document.getElementById("store-info");
-        if (storeInfoContainer) {
-            storeInfoContainer.innerHTML = `
-                <p>Ordering from: ${store.name}</p>
-                <p>Address: ${store.address}</p>
-                <p>Opening Hours: ${store.hours}</p>
-            `;
-        } else {
-            console.error("Store info container not found.");
-        }
-    } else {
-        console.error("No store data found in the cookie.");
-    }
-
     if (basketData) {
         const basket = JSON.parse(basketData);
         const basketItems = document.getElementById("basket-items");
-        basketItems.innerHTML = ""; // Clear any previous items to avoid duplication
+        basketItems.innerHTML = ""; // Clear previous items
 
         let subtotal = 0;
         let points = 0;
@@ -76,17 +56,16 @@ function loadBasket() {
             basketItems.appendChild(li);
 
             subtotal += item.totalPrice;
-            points += item.unitPoints * item.quantity;
+            points += (item.unitPoints || 0) * item.quantity; // Calculate total points
         }
 
-        // Display subtotal, points, tax, and total
         document.getElementById("subtotal").textContent = `${subtotal.toFixed(2)} kr`;
         document.getElementById("points").textContent = `${points} points`;
 
-        const tax = subtotal * 0.2;
+        const tax = subtotal * 0.25;
         document.getElementById("tax").textContent = `${tax.toFixed(2)} kr`;
 
-        const total = subtotal + tax;
+        const total = subtotal;
         document.getElementById("total").textContent = `${total.toFixed(2)} kr`;
     }
 }
