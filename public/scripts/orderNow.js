@@ -95,6 +95,11 @@ function removeFromBasket(productName) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+    // Load basket from cookie
+    loadBasketFromCookie();
+    renderBasket(); // Render basket immediately after loading it
+
+    // Load store info if present
     const selectedStore = getCookie("selectedStore");
     if (selectedStore) {
         const store = JSON.parse(selectedStore);
