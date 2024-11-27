@@ -1,5 +1,5 @@
 // controllers/receipeController.js
-const { getOrderDetails } = require("../models/receipeModel");
+const { getOrderDetails } = require("../models/orderConfirmedModel");
 
 async function getOrderDetailsJson(req, res) {
     const orderId = req.query.orderId;

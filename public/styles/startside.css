@@ -299,3 +299,88 @@ body {
 .product-card img:hover {
   transform: scale(1.1); /* Slightly zoom in the image */
 }
+
+/* Cookie Overlay */
+.cookie-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); /* Slightly darkens the background */
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Cookie Consent Box */
+.cookie-consent {
+  background: linear-gradient(135deg, rgba(247, 193, 217, 1), rgba(246, 167, 202, 1)); /* Joe's pink gradient */
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.4); /* Soft shadow for depth */
+  max-width: 500px;
+  width: 90%;
+  font-family: 'Roboto Condensed', Arial, sans-serif;
+}
+
+/* Consent Text */
+.cookie-consent p {
+  font-size: 16px;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.cookie-consent a {
+  color: #ff66b2;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.cookie-consent a:hover {
+  text-decoration: underline;
+}
+
+/* Cookie Buttons Container */
+.cookie-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+/* Buttons */
+.accept-btn, .decline-btn {
+  padding: 12px 25px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+/* Accept Button */
+.accept-btn {
+  background-color: rgba(60, 179, 113, 1); /* Soft green */
+  color: #ffffff;
+}
+
+.accept-btn:hover {
+  background-color: rgba(46, 139, 87, 1); /* Darker green on hover */
+  transform: translateY(-2px); /* Subtle lift effect */
+}
+
+/* Decline Button */
+.decline-btn {
+  background-color: rgba(220, 20, 60, 1); /* Soft red */
+  color: #ffffff;
+}
+
+.decline-btn:hover {
+  background-color: rgba(178, 34, 34, 1); /* Darker red on hover */
+  transform: translateY(-2px); /* Subtle lift effect */
+}
+

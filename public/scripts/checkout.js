@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (data.orderId) {
                     alert(`Payment successful with loyalty points. Order ID: ${data.orderId}`);
-                    window.location.href = "/success";
+                    window.location.href = "/orderconfirmed";
                 } else {
                     console.error('Error processing loyalty points payment:', data.error);
                     alert('Payment with loyalty points failed.');

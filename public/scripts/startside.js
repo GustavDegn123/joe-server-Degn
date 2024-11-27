@@ -52,21 +52,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelector(".carousel-nav.prev").addEventListener("click", () => {
     if (currentIndex > 0) {
-      currentIndex -= 1; // Move by 1 product to the left
+      currentIndex -= 1;
     } else {
-      currentIndex = products.length - productsPerView; // Loop to the end if at start
+      currentIndex = products.length - productsPerView;
     }
     updateCarousel();
   });
 
   document.querySelector(".carousel-nav.next").addEventListener("click", () => {
     if (currentIndex < products.length - productsPerView) {
-      currentIndex += 1; // Move by 1 product to the right
+      currentIndex += 1;
     } else {
-      currentIndex = 0; // Loop back to the start if at end
+      currentIndex = 0;
     }
     updateCarousel();
   });
 
   updateCarousel();
+
+  const cookieBox = document.getElementById("cookie-consent-box");
+  const cookieOverlay = document.getElementById("cookie-overlay");
+  const acceptButton = document.getElementById("accept-cookies");
+  const declineButton = document.getElementById("decline-cookies");
+
+  // Check if cookies have already been accepted
+  const cookiesAccepted = document.cookie.includes("cookiesAccepted=true");
+  if (!cookiesAccepted) {
+    cookieOverlay.style.display = "flex"; // Show overlay
+  }
+
+  // Handle Accept button
+  acceptButton.addEventListener("click", () => {
+    document.cookie = "cookiesAccepted=true; path=/;"; // Set cookie
+    cookieOverlay.style.display = "none"; // Hide overlay
+  });
+
+  // Handle Decline button
+  declineButton.addEventListener("click", () => {
+    alert("You must accept cookies to proceed.");
+  });
+
+  // Prevent navigation if cookies are not accepted
+  document.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", (e) => {
+      if (!document.cookie.includes("cookiesAccepted=true")) {
+        e.preventDefault();
+        alert("You must accept cookies to proceed.");
+      }
+    });
+  });
 });

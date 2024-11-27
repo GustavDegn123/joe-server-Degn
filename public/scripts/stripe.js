@@ -15,7 +15,7 @@ const createCheckoutSession = async (amount) => {
             },
         ],
         mode: 'payment',
-        success_url: `${process.env.BASE_URL}/success`,
+        success_url: `${process.env.BASE_URL}/orderconfirmed`,
         cancel_url: `${process.env.BASE_URL}/cancel`,
     });
     return session;

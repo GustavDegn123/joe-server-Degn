@@ -101,7 +101,7 @@ const server = app.listen(3000, () => {
     console.log("Server running on port 3000");
 });
 
-app.get('/success', (req, res) => {
+app.get('/orderconfirmed', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'orderConfirmed.html'));
 });
 

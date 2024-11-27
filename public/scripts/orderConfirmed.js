@@ -1,5 +1,3 @@
-// scripts/success.js
-
 // Extract orderId from the query string
 function getQueryParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
