@@ -12,8 +12,7 @@ const createUser = async (userData) => {
         email, 
         phone, 
         country, 
-        password, // Encrypted password
-        password_iv,       // IV for the password encryption
+        password, 
         terms_accepted, 
         loyalty_program_accepted, 
         latitude, 
@@ -21,25 +20,23 @@ const createUser = async (userData) => {
     } = userData;
 
     try {
+        const hashedPassword = await bcrypt.hash(password, saltRounds); // Hash the password
         const pool = await getConnection();
         const result = await pool.request()
             .input('name', name)
             .input('email', email)
-            .input('phone_number', phone)
+            .input('phone_number', phone) // Correct field mapping
             .input('country', country)
-            .input('hashed_password', password) // Save the encrypted password
-            .input('password_iv', password_iv)           // Save the IV in the database
-            .input('loyalty_points', 0)
+            .input('hashed_password', hashedPassword)
+            .input('loyalty_points', 0) // Default value for loyalty points
             .input('terms_accepted', terms_accepted)
             .input('loyalty_program_accepted', loyalty_program_accepted)
             .input('latitude', latitude)
             .input('longitude', longitude)
             .query(`
-                INSERT INTO Users 
-                (name, email, phone_number, country, hashed_password, password_iv, loyalty_points, terms_accepted, loyalty_program_accepted, latitude, longitude)
+                INSERT INTO Users (name, email, phone_number, country, hashed_password, loyalty_points, terms_accepted, loyalty_program_accepted, latitude, longitude)
                 OUTPUT INSERTED.user_id
-                VALUES 
-                (@name, @email, @phone_number, @country, @hashed_password, @password_iv, @loyalty_points, @terms_accepted, @loyalty_program_accepted, @latitude, @longitude)
+                VALUES (@name, @email, @phone_number, @country, @hashed_password, @loyalty_points, @terms_accepted, @loyalty_program_accepted, @latitude, @longitude)
             `);
 
         console.log("User created successfully:", result);
