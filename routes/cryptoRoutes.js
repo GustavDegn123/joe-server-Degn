@@ -28,7 +28,7 @@ router.post('/symmetric/decrypt', (req, res) => {
 });
 
 router.post('/asymmetric/encrypt', (req, res) => {
-    console.log("Encrypt Request Body:", req.body); // Log request body
+    console.log("Encrypt Request Body:", req.body); // Log request body inside the route handler
     try {
         const { data } = req.body;
         if (!data) {
@@ -43,22 +43,36 @@ router.post('/asymmetric/encrypt', (req, res) => {
     }
 });
 
-console.log("Encryption request received:", req.body);
-
-
 router.post('/asymmetric/decrypt', (req, res) => {
-    const { encryptedData } = req.body;
-    const decryptedData = decryptWithPrivateKey(encryptedData);
-    res.json({ decryptedData });
+    try {
+        const { encryptedData } = req.body;
+        if (!encryptedData) {
+            return res.status(400).json({ error: 'Encrypted data field is required' });
+        }
+        const decryptedData = decryptWithPrivateKey(encryptedData);
+        console.log("Decrypted Data:", decryptedData); // Log the decrypted result
+        res.json({ decryptedData });
+    } catch (error) {
+        console.error("Error in asymmetric decryption:", error.message);
+        res.status(500).json({ error: 'Decryption failed' });
+    }
 });
 
 // Signature route
 router.post('/sign', (req, res) => {
     const { data } = req.body;
     console.log('Signing Data:', data); // Debug log
-    const signature = signData(data);
-    console.log('Generated Signature:', signature); // Debug log
-    res.json({ signature });
+    try {
+        if (!data) {
+            return res.status(400).json({ error: 'Data field is required' });
+        }
+        const signature = signData(data);
+        console.log('Generated Signature:', signature); // Debug log
+        res.json({ signature });
+    } catch (error) {
+        console.error("Error in signing data:", error.message);
+        res.status(500).json({ error: 'Signing failed' });
+    }
 });
 
 // Verification route
@@ -66,9 +80,17 @@ router.post('/verify', (req, res) => {
     const { data, signature } = req.body;
     console.log('Data to Verify:', data); // Debug log
     console.log('Signature to Verify:', signature); // Debug log
-    const isValid = verifySignature(data, signature);
-    console.log('Verification Result:', isValid); // Debug log
-    res.json({ isValid });
+    try {
+        if (!data || !signature) {
+            return res.status(400).json({ error: 'Both data and signature are required' });
+        }
+        const isValid = verifySignature(data, signature);
+        console.log('Verification Result:', isValid); // Debug log
+        res.json({ isValid });
+    } catch (error) {
+        console.error("Error in verifying signature:", error.message);
+        res.status(500).json({ error: 'Verification failed' });
+    }
 });
 
 module.exports = router;
