@@ -13,7 +13,7 @@ const createUser = async (userData) => {
         phone, 
         country, 
         password, // Encrypted password
-        iv,       // IV for the password encryption
+        password_iv,       // IV for the password encryption
         terms_accepted, 
         loyalty_program_accepted, 
         latitude, 
@@ -28,7 +28,7 @@ const createUser = async (userData) => {
             .input('phone_number', phone)
             .input('country', country)
             .input('hashed_password', password) // Save the encrypted password
-            .input('password_iv', iv)           // Save the IV in the database
+            .input('password_iv', password_iv)           // Save the IV in the database
             .input('loyalty_points', 0)
             .input('terms_accepted', terms_accepted)
             .input('loyalty_program_accepted', loyalty_program_accepted)
