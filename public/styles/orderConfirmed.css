@@ -1,7 +1,7 @@
 body {
     display: flex;
-    justify-content: center; /* Centrerer horisontalt */
-    align-items: flex-start; /* Placerer indholdet øverst */
+    justify-content: center; /* Center horizontally */
+    align-items: flex-start; /* Align content to the top */
     min-height: 100vh;
     margin: 0;
     background-color: #f0f0f0;
@@ -10,20 +10,20 @@ body {
 
 /* Printer-wrapper styling */
 .printer-wrapper {
-    background: #cccccc; /* Lysegrå baggrund */
-    width: 300px; /* Større bredde end printerområdet */
-    height: 60px; /* Højere end printerhullet */
-    border-radius: 20px; /* Afrundede hjørner */
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4); /* Skygge for dybde */
+    background: #cccccc; /* Light grey background */
+    width: 300px; /* Wider than the printer slot */
+    height: 60px; /* Taller than the printer slot */
+    border-radius: 20px; /* Rounded corners */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4); /* Depth shadow */
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding-top: 30px; /* Giv lidt plads øverst */
+    padding-top: 30px; /* Add padding at the top */
     position: relative;
-    margin-top: 100px; /* Sørger for lidt afstand fra toppen */
+    margin-top: 100px; /* Space from the top */
 }
 
-/* Container til printerhullet og kvitteringen */
+/* Container for the printer slot and receipt */
 .hole-container {
     position: relative;
     width: 260px;
@@ -35,7 +35,7 @@ body {
     overflow: hidden;
 }
 
-/* Sort hul hvor kvitteringen kommer ud */
+/* Printer slot styling */
 .printer-slot {
     width: 260px;
     height: 30px;
@@ -47,9 +47,9 @@ body {
     margin: 0 auto;
 }
 
-/* Kvitteringscontainer */
+/* Receipt container styling */
 .confirmation-container {
-    background-color: #ffc0cb;
+    background-color: #ffc0cb; /* Light pink background */
     width: 200px;
     height: 0;
     padding: 0 20px;
@@ -59,53 +59,53 @@ body {
     font-family: Arial, sans-serif;
     overflow: hidden;
     transform-origin: top;
-    animation: printEffect 6s forwards; /* Samlet animationstid */
+    animation: printEffect 6s forwards; /* Combined animation time */
     position: absolute;
     top: 15px;
     z-index: 15;
     margin-left: 10px;
-    margin-bottom: 15px; /* Sørger for, at takkerne ikke bliver skjult */
+    margin-bottom: 15px; /* Prevents the zigzag from being hidden */
 }
 
 .confirmation-container:after {
     content: '';
     position: absolute;
-    bottom: 0; /* Sørger for, at takkerne forbliver i bunden */
+    bottom: 0; /* Ensures zigzag stays at the bottom */
     left: 0;
     width: 100%;
-    height: 15px; /* Højden af takkerne */
-    background: #f0f0f0; /* Samme som body's baggrundsfarve */
+    height: 15px; /* Zigzag height */
+    background: #f0f0f0; /* Matches body's background */
     clip-path: polygon(
         0% 100%, 5% 0%, 10% 100%, 15% 0%, 20% 100%, 
         25% 0%, 30% 100%, 35% 0%, 40% 100%, 45% 0%, 
         50% 100%, 55% 0%, 60% 100%, 65% 0%, 70% 100%, 
         75% 0%, 80% 100%, 85% 0%, 90% 100%, 95% 0%, 100% 100%
     );
-    z-index: 14; /* Sørger for, at det forbliver synligt */
-    pointer-events: none; /* Forhindrer interaktion */
+    z-index: 14;
+    pointer-events: none;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Animation med glidende overgang efterfulgt af hakker */
+/* Print animation with smooth transition and zigzag */
 @keyframes printEffect {
     0% {
         height: 0;
         padding-top: 0;
         padding-bottom: 0;
     }
-    16.67% { /* Første 1 sekund (16.67% af 6 sekunder) */
+    16.67% { /* First second (16.67% of 6 seconds) */
         height: 200px;
         padding-top: 10px;
         padding-bottom: 30px;
     }
-    100% { /* Resten af animationen med hakker */
+    100% { /* Rest of the animation with zigzag */
         height: 399px;
         padding-top: 20px;
         padding-bottom: 60px;
     }
 }
 
-/* Stregkode i bunden af kvitteringen */
+/* Barcode styling */
 .barcode {
     width: 80%;
     height: 40px;
@@ -125,7 +125,7 @@ body {
     z-index: -15;
 }
 
-/* Random tal under stregkoden */
+/* Random numbers under the barcode */
 .barcode-number {
     font-family: 'Courier New', Courier, monospace;
     font-size: 14px;
@@ -134,9 +134,9 @@ body {
     z-index: 15;
 }
 
-/* Ændring af linkfarven */
+/* Link styling */
 a {
-    color: #000; /* Sort tekstfarve */
+    color: #000; /* Black text color */
     text-decoration: none;
     font-weight: bold;
 }
@@ -145,6 +145,7 @@ a:hover {
     text-decoration: underline;
 }
 
+/* General text styling */
 h1 {
     font-size: 20px;
     margin-bottom: 15px;
@@ -153,4 +154,24 @@ h1 {
 p {
     font-size: 14px;
     margin: 10px 0;
+}
+
+/* List styling for order details */
+ul {
+    text-align: left;
+    padding-left: 20px;
+    margin-bottom: 15px;
+    list-style: none;
+}
+
+ul li {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+h2 {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 18px;
+    color: #000;
 }

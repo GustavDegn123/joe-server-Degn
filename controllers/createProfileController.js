@@ -1,6 +1,6 @@
-const { createUser } = require('../models/userModel');
+const { createUser, updateUserLoyaltyPoints } = require('../models/userModel');
 const { sendWelcomeEmail } = require('./emailController');
-const { sendSms } = require('./twilioService'); // Import the Twilio SMS service
+const { sendSms } = require('./twilioService');
 
 const createUserController = async (req, res) => {
     const {
@@ -32,11 +32,14 @@ const createUserController = async (req, res) => {
         const userId = result.recordset[0].user_id;
         console.log("New user ID:", userId);
 
+        // Add 1000 loyalty points to the new user
+        await updateUserLoyaltyPoints(userId, 1000);
+
         // Send welcome email
         await sendWelcomeEmail({ id: userId, name, email });
 
         // Send SMS notification
-        const smsMessage = `Hej ${name}, velkommen til vores loyalitetsprogram!`;
+        const smsMessage = `Hej ${name}, velkommen til vores loyalitetsprogram! Du har fået 1000 velkomstpoint.`;
         await sendSms(phone, smsMessage);
 
         res.status(201).json({ message: "Bruger oprettet og SMS sendt!", userId });

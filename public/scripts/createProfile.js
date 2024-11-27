@@ -58,7 +58,7 @@ document.getElementById("signup-form").addEventListener("submit", async function
 
                     const data = await response.json();
                     console.log("User created:", data);
-                    alert("User account created successfully!");
+                    alert("User account created successfully! You have received 1000 loyalty points as a welcome gift.");
                     window.location.href = "/login";
                 } catch (error) {
                     console.error("Error creating user:", error);

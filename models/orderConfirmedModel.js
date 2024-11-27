@@ -8,12 +8,23 @@ async function getOrderDetails(orderId) {
         const result = await pool.request()
             .input("orderId", sql.Int, orderId)
             .query(`
-                SELECT * 
+                SELECT 
+                    id AS order_id,
+                    products,
+                    total_price,
+                    points_earned,
+                    payment_method,
+                    order_date
                 FROM Orders 
                 WHERE id = @orderId
             `);
 
-        return result.recordset[0]; // Return the first result
+        // Ensure products are parsed as JSON
+        if (result.recordset[0]?.products) {
+            result.recordset[0].products = JSON.parse(result.recordset[0].products);
+        }
+
+        return result.recordset[0];
     } catch (error) {
         console.error("Error fetching order details:", error);
         throw error;

@@ -1,60 +1,57 @@
-// Extract orderId from the query string
-function getQueryParam(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-}
-
-// Fetch order details from the server
+// orderConfirmed.js
 async function fetchOrderDetails(orderId) {
     try {
         const response = await fetch(`/order-details?orderId=${orderId}`);
         if (!response.ok) {
             throw new Error("Failed to fetch order details");
         }
+
         const order = await response.json();
         displayOrderDetails(order);
     } catch (error) {
         console.error("Error fetching order details:", error);
         document.getElementById("order-details").innerHTML = `
-            <p>Kunne ikke hente ordredetaljer. Prøv igen senere.</p>
+            <p>Could not fetch order details. Please try again later.</p>
         `;
     }
 }
 
-// Display order details on the page
 function displayOrderDetails(order) {
-    const orderDetailsContainer = document.getElementById("order-details");
-
-    const orderDate = new Date(order.order_date).toLocaleDateString("da-DK");
+    const orderDetailsContainer = document.querySelector(".confirmation-container");
 
     const productList = order.products
         .map(
             (product) =>
-                `<li>${product.name} - ${product.quantity} x ${product.price.toFixed(
+                `<li>${product.name} - ${product.quantity} x ${product.unitPrice.toFixed(
                     2
                 )} DKK</li>`
         )
         .join("");
 
     orderDetailsContainer.innerHTML = `
+        <img src="img/joeLogo.svg" alt="Joe Logo" class="logo" />
+        <h1>Thank you for your order!</h1>
         <ul>
-            <li><strong>Ordre ID:</strong> ${order.id}</li>
-            <li><strong>Total Pris:</strong> ${order.total_price.toFixed(2)} DKK</li>
-            <li><strong>Optjente Point:</strong> ${order.points_earned} point</li>
-            <li><strong>Betalingsmetode:</strong> ${order.payment_method}</li>
-            <li><strong>Ordredato:</strong> ${orderDate}</li>
+            <li><strong>Order ID:</strong> ${order.order_id}</li>
+            <li><strong>Total Price:</strong> ${order.total_price.toFixed(2)} DKK</li>
+            <li><strong>Points Earned:</strong> ${order.points_earned}</li>
+            <li><strong>Payment Method:</strong> ${order.payment_method}</li>
+            <li><strong>Order Date:</strong> ${new Date(order.order_date).toLocaleDateString("da-DK")}</li>
         </ul>
-        <h2>Produkter:</h2>
+        <h2>Products:</h2>
         <ul>${productList}</ul>
+        <a href="/startside" class="button">Back to Home</a>
+        <div class="barcode"></div>
+        <div class="barcode-number">${order.order_id}</div>
     `;
 }
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
-    const orderId = getQueryParam("orderId");
+    const orderId = new URLSearchParams(window.location.search).get("orderId");
     if (!orderId) {
-        document.getElementById("order-details").innerHTML = `
-            <p>Ordre ID mangler. Tjek venligst dit link.</p>
+        document.querySelector(".confirmation-container").innerHTML = `
+            <p>Order ID is missing. Please check your link.</p>
         `;
         return;
     }
