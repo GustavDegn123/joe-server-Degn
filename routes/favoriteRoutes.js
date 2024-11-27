@@ -1,11 +1,13 @@
-// routes/favoriteRoutes.js
 const express = require('express');
 const { addFavoriteController, removeFavoriteController, getFavoritesController } = require('../controllers/favoriteController');
+const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-router.post('/addFavorite', addFavoriteController);
-router.delete('/removeFavorite', removeFavoriteController);
-router.get('/:userId', getFavoritesController);
+// Tilføj authMiddleware for at beskytte favorit-endpoints
+router.post('/addFavorite', authMiddleware, addFavoriteController);
+router.delete('/removeFavorite', authMiddleware, removeFavoriteController);
+router.get('/:userId', authMiddleware, getFavoritesController);
 
 module.exports = router;
+
