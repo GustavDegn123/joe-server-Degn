@@ -40,16 +40,22 @@ router.post('/asymmetric/decrypt', (req, res) => {
     res.json({ decryptedData });
 });
 
-// Signature routes
+// Signature route
 router.post('/sign', (req, res) => {
     const { data } = req.body;
+    console.log('Signing Data:', data); // Debug log
     const signature = signData(data);
+    console.log('Generated Signature:', signature); // Debug log
     res.json({ signature });
 });
 
+// Verification route
 router.post('/verify', (req, res) => {
     const { data, signature } = req.body;
+    console.log('Data to Verify:', data); // Debug log
+    console.log('Signature to Verify:', signature); // Debug log
     const isValid = verifySignature(data, signature);
+    console.log('Verification Result:', isValid); // Debug log
     res.json({ isValid });
 });
 
