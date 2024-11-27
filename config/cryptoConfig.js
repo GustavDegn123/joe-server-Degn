@@ -27,10 +27,6 @@ if (!symmetricKey) {
     throw new Error('Symmetric key is not set in environment variables');
 }
 
-console.log('Private Key:', privateKey.slice(0, 50));
-console.log('Public Key:', publicKey.slice(0, 50));
-console.log('Symmetric Key:', symmetricKey);
-
 // Export keys and configurations
 module.exports = {
     symmetricKey,

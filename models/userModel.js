@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 
 const saltRounds = 10;
 
+// Create a new user with hashed password
 const createUser = async (userData) => {
     console.log("Creating user in database:", userData);
     const { 
@@ -39,14 +40,14 @@ const createUser = async (userData) => {
             `);
 
         console.log("User created successfully:", result);
-        return result; // Return the result for further use
+        return result.recordset[0]; // Return the inserted user ID or details
     } catch (error) {
         console.error('Error creating user:', error);
         throw error; // Ensure the error is thrown for proper handling in the controller
     }
 };
 
-// Funktion til at hente en bruger baseret på email
+// Fetch user by email
 const getUserByEmail = async (email) => {
     try {
         const pool = await getConnection();
@@ -54,14 +55,14 @@ const getUserByEmail = async (email) => {
             .input('email', email)
             .query('SELECT * FROM Users WHERE email = @email');
         
-        return result.recordset[0]; // Returnerer den første matchende bruger
+        return result.recordset[0]; // Return the first matching user
     } catch (error) {
         console.error('Error fetching user by email:', error);
         throw error;
     }
 };
 
-// Function to update the user's loyalty points in the database
+// Update user's loyalty points
 const updateUserLoyaltyPoints = async (userId, pointsToAdd) => {
     try {
         const pool = await getConnection();
@@ -82,4 +83,14 @@ const updateUserLoyaltyPoints = async (userId, pointsToAdd) => {
     }
 };
 
-module.exports = { createUser, getUserByEmail, updateUserLoyaltyPoints};
+// Verify password using bcrypt
+const verifyPassword = async (inputPassword, storedHash) => {
+    try {
+        return await bcrypt.compare(inputPassword, storedHash); // Compare hashed and input password
+    } catch (error) {
+        console.error('Error comparing password:', error);
+        throw error;
+    }
+};
+
+module.exports = { createUser, getUserByEmail, updateUserLoyaltyPoints, verifyPassword };
