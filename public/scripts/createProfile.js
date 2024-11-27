@@ -55,17 +55,18 @@ document.getElementById("signup-form").addEventListener("submit", async function
                             }
                         })
                     });
-
+                
                     if (!response.ok) {
-                        throw new Error("Encryption failed");
+                        const errorDetails = await response.json();
+                        throw new Error(`Encryption failed: ${errorDetails.error}`);
                     }
-
+                
                     encryptedData = await response.json();
                 } catch (error) {
-                    console.error("Error encrypting data:", error);
-                    alert("Failed to encrypt data. Please try again.");
+                    console.error("Error encrypting data:", error.message);
+                    alert("Failed to encrypt data. Please check your input and try again.");
                     return;
-                }
+                }                
 
                 // Prepare final data to send to the backend
                 const userData = {

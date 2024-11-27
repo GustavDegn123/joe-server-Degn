@@ -27,11 +27,20 @@ router.post('/symmetric/decrypt', (req, res) => {
     res.json({ decryptedData });
 });
 
-// Asymmetric encryption routes
 router.post('/asymmetric/encrypt', (req, res) => {
-    const { data } = req.body;
-    const encryptedData = encryptWithPublicKey(data);
-    res.json({ encryptedData });
+    console.log("Encrypt Request Body:", req.body); // Log request body
+    try {
+        const { data } = req.body;
+        if (!data) {
+            return res.status(400).json({ error: 'Data field is required' });
+        }
+        const encryptedData = encryptWithPublicKey(JSON.stringify(data)); // Encrypt serialized data
+        console.log("Encrypted Data:", encryptedData); // Log the encrypted result
+        res.json({ encryptedData });
+    } catch (error) {
+        console.error("Error in asymmetric encryption:", error.message);
+        res.status(500).json({ error: 'Encryption failed' });
+    }
 });
 
 router.post('/asymmetric/decrypt', (req, res) => {
