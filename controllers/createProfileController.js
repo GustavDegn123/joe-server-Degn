@@ -11,53 +11,42 @@ const createUserController = async (req, res) => {
         encryptedCountry,
         encryptedLatitude,
         encryptedLongitude,
+        plaintextPhone, // Retrieve plaintext phone for notifications
         password,
         terms_accepted,
         loyalty_program_accepted,
     } = req.body;
 
     try {
-        // Decrypt data for logging and processing
-        const decryptedData = {
-            name: decryptWithPrivateKey(encryptedName),
-            email: decryptWithPrivateKey(encryptedEmail),
-            phone: decryptWithPrivateKey(encryptedPhone),
-            country: decryptWithPrivateKey(encryptedCountry),
-            latitude: decryptWithPrivateKey(encryptedLatitude),
-            longitude: decryptWithPrivateKey(encryptedLongitude),
-        };
-
-        console.log("Decrypted Data (before email/SMS):", decryptedData);
+        // Log data for email and SMS before storing in the database
+        console.log("Plaintext phone number for notifications:", plaintextPhone);
 
         // Send welcome email
         await sendWelcomeEmail({
-            name: decryptedData.name,
-            email: decryptedData.email,
+            name: decryptWithPrivateKey(encryptedName), // Decrypt name
+            email: decryptWithPrivateKey(encryptedEmail), // Decrypt email
+            phone: plaintextPhone, // Use plaintext phone for email content
         });
 
         // Send SMS notification
-        const smsMessage = `Hej ${decryptedData.name}, velkommen til vores loyalitetsprogram!`;
-        await sendSms(decryptedData.phone, smsMessage);
+        const smsMessage = `Hej ${decryptWithPrivateKey(encryptedName)}, velkommen til vores loyalitetsprogram!`;
+        await sendSms(plaintextPhone, smsMessage);
 
-        // Log encrypted data to be stored in the database
-        const encryptedData = {
+        // Prepare data for database insertion
+        const userData = {
             name: encryptedName,
             email: encryptedEmail,
             phone: encryptedPhone,
             country: encryptedCountry,
             latitude: encryptedLatitude,
             longitude: encryptedLongitude,
-        };
-        console.log("Encrypted Data (stored in DB):", encryptedData);
-
-        // Create the user in the database
-        const result = await createUser({
-            ...encryptedData, // Encrypted fields
-            password, // Plain password for hashing
+            password, // Hashed password
             terms_accepted,
             loyalty_program_accepted,
-        });
+        };
 
+        // Store user in database
+        const result = await createUser(userData);
         const userId = result.recordset[0].user_id;
 
         res.status(201).json({ message: "User created successfully!", userId });

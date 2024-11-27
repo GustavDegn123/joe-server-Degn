@@ -31,16 +31,16 @@ const createUser = async (userData) => {
         });
 
         const result = await pool.request()
-            .input('name', name)
-            .input('email', email)
-            .input('phone_number', phone)
-            .input('country', country)
-            .input('latitude', latitude)
-            .input('longitude', longitude)
-            .input('hashed_password', hashedPassword)
-            .input('loyalty_points', 0) // Default loyalty points
-            .input('terms_accepted', terms_accepted)
-            .input('loyalty_program_accepted', loyalty_program_accepted)
+        .input('name', encryptedData.name)
+        .input('email', encryptedData.email) // Ensure email is encrypted
+        .input('phone_number', encryptedData.phone)
+        .input('country', encryptedData.country)
+        .input('latitude', encryptedData.latitude)
+        .input('longitude', encryptedData.longitude)
+        .input('hashed_password', hashedPassword)
+        .input('loyalty_points', 0)
+        .input('terms_accepted', terms_accepted)
+        .input('loyalty_program_accepted', loyalty_program_accepted)
             .query(`
                 INSERT INTO Users (name, email, phone_number, country, latitude, longitude, hashed_password, loyalty_points, terms_accepted, loyalty_program_accepted)
                 OUTPUT INSERTED.user_id

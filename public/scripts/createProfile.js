@@ -46,77 +46,81 @@ document.getElementById("signup-form").addEventListener("submit", async function
                     longitude,
                 });
 
-                // Encrypt each field individually
-                let encryptedName, encryptedEmail, encryptedPhone, encryptedCountry, encryptedLatitude, encryptedLongitude;
-                try {
-                    const encryptionRequests = [
-                        { data: name },
-                        { data: email },
-                        { data: formattedPhone },
-                        { data: userCountry },
-                        { data: latitude },
-                        { data: longitude },
-                    ];
+ // Store plaintext phone separately for use in email/SMS
+const plaintextPhone = formattedPhone;
 
-                    const encryptionResponses = await Promise.all(
-                        encryptionRequests.map((req) =>
-                            fetch("/crypto/asymmetric/encrypt", {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify(req),
-                            }).then((res) => res.json())
-                        )
-                    );
+// Encrypt each field individually
+let encryptedName, encryptedEmail, encryptedPhone, encryptedCountry, encryptedLatitude, encryptedLongitude;
+try {
+    const encryptionRequests = [
+        { data: name },
+        { data: email },
+        { data: formattedPhone }, // Encrypt phone
+        { data: userCountry },
+        { data: latitude },
+        { data: longitude },
+    ];
 
-                    [encryptedName, encryptedEmail, encryptedPhone, encryptedCountry, encryptedLatitude, encryptedLongitude] =
-                        encryptionResponses.map((res) => res.encryptedData);
+    const encryptionResponses = await Promise.all(
+        encryptionRequests.map((req) =>
+            fetch("/crypto/asymmetric/encrypt", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(req),
+            }).then((res) => res.json())
+        )
+    );
 
-                    // Log encrypted data
-                    console.log("Encrypted data to be sent:", {
-                        encryptedName,
-                        encryptedEmail,
-                        encryptedPhone,
-                        encryptedCountry,
-                        encryptedLatitude,
-                        encryptedLongitude,
-                    });
-                } catch (error) {
-                    console.error("Error encrypting data:", error.message);
-                    alert("Failed to encrypt data.");
-                    return;
-                }
+    [encryptedName, encryptedEmail, encryptedPhone, encryptedCountry, encryptedLatitude, encryptedLongitude] =
+        encryptionResponses.map((res) => res.encryptedData);
 
-                // Prepare final data to send to the backend
-                const userData = {
-                    encryptedName,
-                    encryptedEmail,
-                    encryptedPhone,
-                    encryptedCountry,
-                    encryptedLatitude,
-                    encryptedLongitude,
-                    password, // Send plain password for hashing
-                    terms_accepted: termsAccepted,
-                    loyalty_program_accepted: loyaltyProgramAccepted,
-                };
+    // Log encrypted data
+    console.log("Encrypted data to be sent:", {
+        encryptedName,
+        encryptedEmail,
+        encryptedPhone,
+        encryptedCountry,
+        encryptedLatitude,
+        encryptedLongitude,
+    });
+} catch (error) {
+    console.error("Error encrypting data:", error.message);
+    alert("Failed to encrypt data.");
+    return;
+}
 
-                try {
-                    const response = await fetch("/api/createProfile", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(userData),
-                    });
+// Prepare data to send to the backend
+const userData = {
+    encryptedName,
+    encryptedEmail,
+    encryptedPhone,
+    encryptedCountry,
+    encryptedLatitude,
+    encryptedLongitude,
+    plaintextPhone, // Include plaintext phone for email/SMS notifications
+    password, // Send plain password for hashing
+    terms_accepted: termsAccepted,
+    loyalty_program_accepted: loyaltyProgramAccepted,
+};
 
-                    if (!response.ok) {
-                        throw new Error("Failed to create user.");
-                    }
+try {
+    const response = await fetch("/api/createProfile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+    });
 
-                    const data = await response.json();
-                    alert("User account created successfully!");
-                    window.location.href = "/login";
-                } catch (error) {
-                    console.error("Error creating user:", error);
-                    alert("An error occurred. Please try again.");
-                }
+    if (!response.ok) {
+        throw new Error("Failed to create user.");
+    }
+
+    const data = await response.json();
+    alert("User account created successfully!");
+    window.location.href = "/login";
+} catch (error) {
+    console.error("Error creating user:", error);
+    alert("An error occurred. Please try again.");
+}
             },
             function (error) {
                 console.error("Geolocation error:", error);
