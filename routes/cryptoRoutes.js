@@ -43,6 +43,9 @@ router.post('/asymmetric/encrypt', (req, res) => {
     }
 });
 
+console.log("Encryption request received:", req.body);
+
+
 router.post('/asymmetric/decrypt', (req, res) => {
     const { encryptedData } = req.body;
     const decryptedData = decryptWithPrivateKey(encryptedData);

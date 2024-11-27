@@ -46,6 +46,19 @@ const createUser = async (userData) => {
     }
 };
 
+console.log("Data being inserted into database:", {
+    name,
+    email,
+    phone,
+    country,
+    password: hashedPassword, // hashed password
+    terms_accepted,
+    loyalty_program_accepted,
+    latitude,
+    longitude,
+});
+
+
 // Funktion til at hente en bruger baseret på email
 const getUserByEmail = async (email) => {
     try {

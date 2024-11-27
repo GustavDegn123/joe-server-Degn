@@ -68,6 +68,17 @@ document.getElementById("signup-form").addEventListener("submit", async function
                     return;
                 }                
 
+                console.log("Raw data being sent for encryption:", {
+                    name,
+                    email,
+                    phone: formattedPhone,
+                    country: userCountry,
+                    latitude,
+                    longitude,
+                });
+                
+                console.log("Encrypted data received:", encryptedData);                
+
                 // Prepare final data to send to the backend
                 const userData = {
                     ...encryptedData, // Encrypted name, email, phone, country, latitude, longitude
