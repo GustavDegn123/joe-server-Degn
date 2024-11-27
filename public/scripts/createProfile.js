@@ -32,11 +32,34 @@ document.getElementById("signup-form").addEventListener("submit", async function
                     alert("Unable to retrieve country code.");
                 }
 
+                // Encrypt the password
+                let encryptedPassword, iv;
+                try {
+                    const encryptResponse = await fetch("/crypto/symmetric/encrypt", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ data: password })
+                    });
+                    const encryptData = await encryptResponse.json();
+
+                    if (!encryptResponse.ok) {
+                        throw new Error("Failed to encrypt password. Status: " + encryptResponse.status);
+                    }
+
+                    encryptedPassword = encryptData.encryptedData;
+                    iv = encryptData.iv;
+                } catch (error) {
+                    console.error("Error encrypting password:", error);
+                    alert("An error occurred during password encryption. Please try again.");
+                    return;
+                }
+
                 const userData = {
                     name,
                     email,
                     phone: formattedPhone,
-                    password,
+                    password: encryptedPassword, // Encrypted password
+                    iv, // IV for the encrypted password
                     terms_accepted: termsAccepted,
                     loyalty_program_accepted: loyaltyProgramAccepted,
                     country: userCountry,
@@ -58,7 +81,7 @@ document.getElementById("signup-form").addEventListener("submit", async function
 
                     const data = await response.json();
                     console.log("User created:", data);
-                    alert("User account created successfully!");
+                    alert("User account created successfully, and the password was encrypted securely!");
                     window.location.href = "/login";
                 } catch (error) {
                     console.error("Error creating user:", error);
