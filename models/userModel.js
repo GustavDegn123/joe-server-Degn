@@ -6,20 +6,34 @@ const saltRounds = 10;
 
 const createUser = async (userData) => {
     console.log("Creating user in database:", userData);
+
     const { 
-        name, 
-        email, 
-        phone, 
-        country, 
+        encryptedName, 
+        encryptedEmail, 
+        encryptedPhone, 
+        encryptedCountry, 
+        encryptedLatitude, 
+        encryptedLongitude, 
         password, 
         terms_accepted, 
-        loyalty_program_accepted, 
-        latitude, 
-        longitude 
+        loyalty_program_accepted 
     } = userData;
 
     try {
-        const hashedPassword = await bcrypt.hash(password, saltRounds); // Hash the password
+        // Decrypt sensitive data using the provided decryption function
+        const name = await decryptData(encryptedName);
+        const email = await decryptData(encryptedEmail);
+        const phone = await decryptData(encryptedPhone);
+        const country = await decryptData(encryptedCountry);
+        const latitude = parseFloat(await decryptData(encryptedLatitude));
+        const longitude = parseFloat(await decryptData(encryptedLongitude));
+
+        console.log("Decrypted data:", { name, email, phone, country, latitude, longitude });
+
+        // Hash the password securely
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        // Connect to the database and insert the user record
         const pool = await getConnection();
         const result = await pool.request()
             .input('name', name)
@@ -38,7 +52,7 @@ const createUser = async (userData) => {
                 VALUES (@name, @email, @phone_number, @country, @hashed_password, @loyalty_points, @terms_accepted, @loyalty_program_accepted, @latitude, @longitude)
             `);
 
-        console.log("User created successfully:", result);
+        console.log("User created successfully:", result.recordset[0]);
         return result; // Return the result for further use
     } catch (error) {
         console.error('Error creating user:', error);
@@ -46,7 +60,7 @@ const createUser = async (userData) => {
     }
 };
 
-// Funktion til at hente en bruger baseret på email
+// Fetch a user by email
 const getUserByEmail = async (email) => {
     try {
         const pool = await getConnection();
@@ -54,14 +68,14 @@ const getUserByEmail = async (email) => {
             .input('email', email)
             .query('SELECT * FROM Users WHERE email = @email');
         
-        return result.recordset[0]; // Returnerer den første matchende bruger
+        return result.recordset[0]; // Return the first matching user
     } catch (error) {
         console.error('Error fetching user by email:', error);
         throw error;
     }
 };
 
-// Function to update the user's loyalty points in the database
+// Update the user's loyalty points in the database
 const updateUserLoyaltyPoints = async (userId, pointsToAdd) => {
     try {
         const pool = await getConnection();
@@ -82,4 +96,4 @@ const updateUserLoyaltyPoints = async (userId, pointsToAdd) => {
     }
 };
 
-module.exports = { createUser, getUserByEmail, updateUserLoyaltyPoints};
+module.exports = { createUser, getUserByEmail, updateUserLoyaltyPoints };
