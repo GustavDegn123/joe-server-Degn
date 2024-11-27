@@ -1,47 +1,37 @@
-document.getElementById("login-form").addEventListener("submit", async function (e) {
-    e.preventDefault();
+document.getElementById("login-form").addEventListener("submit", function(e) {
+    e.preventDefault(); // Forhindrer siden i at opdatere
+  
+    // Hent data fra formularen
+    const email = document.getElementById("login-email").value;
+    const password = document.getElementById("login-password").value;
 
-    const email = document.getElementById("login-email").value.trim();
-    const password = document.getElementById("login-password").value.trim();
+    // Pak data i et objekt
+    const loginData = {
+        email: email,
+        password: password
+    };
 
-    // Encrypt email before sending it to the backend
-    let encryptedEmail;
-    try {
-        const response = await fetch("/crypto/asymmetric/encrypt", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ data: { email } })
-        });
-
+    // Send login data til backend
+    fetch('/api/login', {  // Matcher backend-route
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loginData)
+    })
+    .then(response => {
         if (!response.ok) {
-            throw new Error("Encryption failed");
+            throw new Error("Authentication failed. Status: " + response.status);
         }
-
-        const result = await response.json();
-        encryptedEmail = result.encryptedData.email;
-    } catch (error) {
-        console.error("Error encrypting email:", error);
-        alert("An error occurred. Please try again.");
-        return;
-    }
-
-    // Send encrypted email and password to the backend
-    try {
-        const response = await fetch("/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: encryptedEmail, password })
-        });
-
-        if (!response.ok) {
-            throw new Error("Authentication failed");
-        }
-
-        const data = await response.json();
+        return response.json();
+    })
+    .then(data => {
+        console.log('Login successful:', data);
         alert("Login successful!");
-        window.location.href = "/startside";
-    } catch (error) {
-        console.error("Error during login:", error);
-        alert("Login failed. Please check your credentials.");
-    }
+
+        // Her kan du sende brugeren videre til en ny side efter login
+        window.location.href = "/startside"; 
+    })
+    .catch(error => {
+        console.error('Error during login:', error);
+        alert('Login failed. Please check your email and password.');
+    });
 });
