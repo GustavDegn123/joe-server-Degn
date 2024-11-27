@@ -20,6 +20,16 @@ const createUser = async (userData) => {
     try {
         const hashedPassword = await bcrypt.hash(password, saltRounds); // Hash the password
         const pool = await getConnection();
+
+        console.log("Data being inserted into the database:", {
+            name,
+            email,
+            phone,
+            country,
+            latitude,
+            longitude,
+        });
+
         const result = await pool.request()
             .input('name', name)
             .input('email', email)
@@ -34,17 +44,16 @@ const createUser = async (userData) => {
             .query(`
                 INSERT INTO Users (name, email, phone_number, country, latitude, longitude, hashed_password, loyalty_points, terms_accepted, loyalty_program_accepted)
                 OUTPUT INSERTED.user_id
-                VALUES (@name, @encryptedEmail, @phone_number, @country, @latitude, @longitude, @hashed_password, @loyalty_points, @terms_accepted, @loyalty_program_accepted)
+                VALUES (@name, @email, @phone_number, @country, @latitude, @longitude, @hashed_password, @loyalty_points, @terms_accepted, @loyalty_program_accepted)
             `);
 
-        console.log("User created successfully:", result);
+        console.log("User successfully inserted into database:", result);
         return result;
     } catch (error) {
-        console.error("Error creating user:", error);
+        console.error("Database insertion error:", error.message);
         throw error;
     }
 };
-
 
 // Fetch a user by email
 const getUserByEmail = async (email) => {

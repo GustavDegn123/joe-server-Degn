@@ -36,6 +36,16 @@ document.getElementById("signup-form").addEventListener("submit", async function
                     alert("Unable to retrieve country code.");
                 }
 
+                // Log raw data before encryption
+                console.log("Raw data before encryption:", {
+                    name,
+                    email,
+                    phone: formattedPhone,
+                    country: userCountry,
+                    latitude,
+                    longitude,
+                });
+
                 // Encrypt each field individually
                 let encryptedName, encryptedEmail, encryptedPhone, encryptedCountry, encryptedLatitude, encryptedLongitude;
                 try {
@@ -60,6 +70,16 @@ document.getElementById("signup-form").addEventListener("submit", async function
 
                     [encryptedName, encryptedEmail, encryptedPhone, encryptedCountry, encryptedLatitude, encryptedLongitude] =
                         encryptionResponses.map((res) => res.encryptedData);
+
+                    // Log encrypted data
+                    console.log("Encrypted data to be sent:", {
+                        encryptedName,
+                        encryptedEmail,
+                        encryptedPhone,
+                        encryptedCountry,
+                        encryptedLatitude,
+                        encryptedLongitude,
+                    });
                 } catch (error) {
                     console.error("Error encrypting data:", error.message);
                     alert("Failed to encrypt data.");
