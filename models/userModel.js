@@ -12,7 +12,7 @@ const createUser = async (userData) => {
         country, // Encrypted country
         latitude, // Encrypted latitude
         longitude, // Encrypted longitude
-        password, // Plain password to be hashed
+        password, // Plaintext password to be hashed
         terms_accepted,
         loyalty_program_accepted,
     } = userData;
@@ -21,7 +21,7 @@ const createUser = async (userData) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds); // Hash the password
         const pool = await getConnection();
 
-        console.log("Data being inserted into the database:", {
+        console.log("Encrypted data being inserted into database:", {
             name,
             email,
             phone,
@@ -31,16 +31,16 @@ const createUser = async (userData) => {
         });
 
         const result = await pool.request()
-        .input('name', encryptedData.name)
-        .input('email', encryptedData.email) // Ensure email is encrypted
-        .input('phone_number', encryptedData.phone)
-        .input('country', encryptedData.country)
-        .input('latitude', encryptedData.latitude)
-        .input('longitude', encryptedData.longitude)
-        .input('hashed_password', hashedPassword)
-        .input('loyalty_points', 0)
-        .input('terms_accepted', terms_accepted)
-        .input('loyalty_program_accepted', loyalty_program_accepted)
+            .input('name', name)
+            .input('email', email)
+            .input('phone_number', phone)
+            .input('country', country)
+            .input('latitude', latitude)
+            .input('longitude', longitude)
+            .input('hashed_password', hashedPassword)
+            .input('loyalty_points', 0) // Default value
+            .input('terms_accepted', terms_accepted)
+            .input('loyalty_program_accepted', loyalty_program_accepted)
             .query(`
                 INSERT INTO Users (name, email, phone_number, country, latitude, longitude, hashed_password, loyalty_points, terms_accepted, loyalty_program_accepted)
                 OUTPUT INSERTED.user_id

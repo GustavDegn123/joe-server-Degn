@@ -1,7 +1,6 @@
 const { createUser } = require('../models/userModel');
 const { sendWelcomeEmail } = require('./emailController');
 const { sendSms } = require('./twilioService');
-const { decryptWithPrivateKey } = require('./asymmetricController');
 
 const createUserController = async (req, res) => {
     const {
@@ -11,41 +10,40 @@ const createUserController = async (req, res) => {
         encryptedCountry,
         encryptedLatitude,
         encryptedLongitude,
-        plaintextPhone, // Retrieve plaintext phone for notifications
+        plaintextPhone, // Unencrypted phone
         password,
         terms_accepted,
         loyalty_program_accepted,
     } = req.body;
 
     try {
-        // Log data for email and SMS before storing in the database
-        console.log("Plaintext phone number for notifications:", plaintextPhone);
-
-        // Send welcome email
+        // Send welcome email using unencrypted data
         await sendWelcomeEmail({
-            name: decryptWithPrivateKey(encryptedName), // Decrypt name
-            email: decryptWithPrivateKey(encryptedEmail), // Decrypt email
-            phone: plaintextPhone, // Use plaintext phone for email content
+            name: req.body.name, // Unencrypted name
+            email: req.body.email, // Unencrypted email
+            phone: plaintextPhone, // Plaintext phone
         });
 
-        // Send SMS notification
-        const smsMessage = `Hej ${decryptWithPrivateKey(encryptedName)}, velkommen til vores loyalitetsprogram!`;
+        // Send SMS notification using plaintext phone
+        const smsMessage = `Hej ${req.body.name}, velkommen til vores loyalitetsprogram!`;
         await sendSms(plaintextPhone, smsMessage);
 
         // Prepare data for database insertion
         const userData = {
-            name: encryptedName,
-            email: encryptedEmail,
-            phone: encryptedPhone,
-            country: encryptedCountry,
-            latitude: encryptedLatitude,
-            longitude: encryptedLongitude,
-            password, // Hashed password
+            name: encryptedName, // Encrypted name
+            email: encryptedEmail, // Encrypted email
+            phone: encryptedPhone, // Encrypted phone
+            country: encryptedCountry, // Encrypted country
+            latitude: encryptedLatitude, // Encrypted latitude
+            longitude: encryptedLongitude, // Encrypted longitude
+            password, // Plaintext password for hashing
             terms_accepted,
             loyalty_program_accepted,
         };
 
-        // Store user in database
+        console.log("Data being sent to createUser:", userData);
+
+        // Store encrypted data in the database
         const result = await createUser(userData);
         const userId = result.recordset[0].user_id;
 

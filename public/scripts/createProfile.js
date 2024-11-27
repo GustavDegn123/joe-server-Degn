@@ -98,7 +98,7 @@ const userData = {
     encryptedLatitude,
     encryptedLongitude,
     plaintextPhone, // Include plaintext phone for email/SMS notifications
-    password, // Send plain password for hashing
+    password, // Plain password for hashing
     terms_accepted: termsAccepted,
     loyalty_program_accepted: loyaltyProgramAccepted,
 };
