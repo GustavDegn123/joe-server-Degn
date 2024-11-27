@@ -10,7 +10,6 @@ document.getElementById("signup-form").addEventListener("submit", async function
     const termsAccepted = termsCheckbox.checked ? 1 : 0;
     const loyaltyProgramAccepted = loyaltyProgramCheckbox.checked ? 1 : 0;
 
-    // Format phone number
     const countryCode = "+45"; // Denmark country code
     const formattedPhone = phone.startsWith("+") ? phone : `${countryCode}${phone}`;
 
@@ -24,7 +23,6 @@ document.getElementById("signup-form").addEventListener("submit", async function
                 latitude = position.coords.latitude;
                 longitude = position.coords.longitude;
 
-                // Fetch country using geolocation
                 try {
                     const response = await fetch(
                         `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=95a3993deb6742b298204367f83b405b`
@@ -38,61 +36,54 @@ document.getElementById("signup-form").addEventListener("submit", async function
                     alert("Unable to retrieve country code.");
                 }
 
-                // Encrypt sensitive data before sending it to the backend
-                let encryptedData;
+                // Encrypt each field individually
+                let encryptedName, encryptedEmail, encryptedPhone, encryptedCountry, encryptedLatitude, encryptedLongitude;
                 try {
-                    const response = await fetch("/crypto/asymmetric/encrypt", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            data: {
-                                name,
-                                email,
-                                phone: formattedPhone,
-                                country: userCountry,
-                                latitude,
-                                longitude
-                            }
-                        })
-                    });
-                
-                    if (!response.ok) {
-                        const errorDetails = await response.json();
-                        throw new Error(`Encryption failed: ${errorDetails.error}`);
-                    }
-                
-                    encryptedData = await response.json();
+                    const encryptionRequests = [
+                        { data: name },
+                        { data: email },
+                        { data: formattedPhone },
+                        { data: userCountry },
+                        { data: latitude },
+                        { data: longitude },
+                    ];
+
+                    const encryptionResponses = await Promise.all(
+                        encryptionRequests.map((req) =>
+                            fetch("/crypto/asymmetric/encrypt", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(req),
+                            }).then((res) => res.json())
+                        )
+                    );
+
+                    [encryptedName, encryptedEmail, encryptedPhone, encryptedCountry, encryptedLatitude, encryptedLongitude] =
+                        encryptionResponses.map((res) => res.encryptedData);
                 } catch (error) {
                     console.error("Error encrypting data:", error.message);
-                    alert("Failed to encrypt data. Please check your input and try again.");
+                    alert("Failed to encrypt data.");
                     return;
-                }                
-
-                console.log("Raw data being sent for encryption:", {
-                    name,
-                    email,
-                    phone: formattedPhone,
-                    country: userCountry,
-                    latitude,
-                    longitude,
-                });
-                
-                console.log("Encrypted data received:", encryptedData);                
+                }
 
                 // Prepare final data to send to the backend
                 const userData = {
-                    ...encryptedData, // Encrypted name, email, phone, country, latitude, longitude
-                    password, // Send password for hashing
+                    encryptedName,
+                    encryptedEmail,
+                    encryptedPhone,
+                    encryptedCountry,
+                    encryptedLatitude,
+                    encryptedLongitude,
+                    password, // Send plain password for hashing
                     terms_accepted: termsAccepted,
-                    loyalty_program_accepted: loyaltyProgramAccepted
+                    loyalty_program_accepted: loyaltyProgramAccepted,
                 };
 
-                // Send encrypted data to the backend
                 try {
                     const response = await fetch("/api/createProfile", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(userData)
+                        body: JSON.stringify(userData),
                     });
 
                     if (!response.ok) {

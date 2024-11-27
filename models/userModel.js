@@ -5,60 +5,46 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 const createUser = async (userData) => {
-    console.log("Creating user in database:", userData);
-
-    const { 
-        encryptedName, 
-        encryptedEmail, 
-        encryptedPhone, 
-        encryptedCountry, 
-        encryptedLatitude, 
-        encryptedLongitude, 
-        password, 
-        terms_accepted, 
-        loyalty_program_accepted 
+    const {
+        name, // Encrypted name
+        email, // Encrypted email
+        phone, // Encrypted phone
+        country, // Encrypted country
+        latitude, // Encrypted latitude
+        longitude, // Encrypted longitude
+        password, // Plain password to be hashed
+        terms_accepted,
+        loyalty_program_accepted,
     } = userData;
 
     try {
-        // Decrypt sensitive data using the provided decryption function
-        const name = await decryptData(encryptedName);
-        const email = await decryptData(encryptedEmail);
-        const phone = await decryptData(encryptedPhone);
-        const country = await decryptData(encryptedCountry);
-        const latitude = parseFloat(await decryptData(encryptedLatitude));
-        const longitude = parseFloat(await decryptData(encryptedLongitude));
-
-        console.log("Decrypted data:", { name, email, phone, country, latitude, longitude });
-
-        // Hash the password securely
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-        // Connect to the database and insert the user record
+        const hashedPassword = await bcrypt.hash(password, saltRounds); // Hash the password
         const pool = await getConnection();
         const result = await pool.request()
             .input('name', name)
             .input('email', email)
-            .input('phone_number', phone) // Correct field mapping
+            .input('phone_number', phone)
             .input('country', country)
-            .input('hashed_password', hashedPassword)
-            .input('loyalty_points', 0) // Default value for loyalty points
-            .input('terms_accepted', terms_accepted)
-            .input('loyalty_program_accepted', loyalty_program_accepted)
             .input('latitude', latitude)
             .input('longitude', longitude)
+            .input('hashed_password', hashedPassword)
+            .input('loyalty_points', 0) // Default loyalty points
+            .input('terms_accepted', terms_accepted)
+            .input('loyalty_program_accepted', loyalty_program_accepted)
             .query(`
-                INSERT INTO Users (name, email, phone_number, country, hashed_password, loyalty_points, terms_accepted, loyalty_program_accepted, latitude, longitude)
+                INSERT INTO Users (name, email, phone_number, country, latitude, longitude, hashed_password, loyalty_points, terms_accepted, loyalty_program_accepted)
                 OUTPUT INSERTED.user_id
-                VALUES (@name, @email, @phone_number, @country, @hashed_password, @loyalty_points, @terms_accepted, @loyalty_program_accepted, @latitude, @longitude)
+                VALUES (@name, @encryptedEmail, @phone_number, @country, @latitude, @longitude, @hashed_password, @loyalty_points, @terms_accepted, @loyalty_program_accepted)
             `);
 
-        console.log("User created successfully:", result.recordset[0]);
-        return result; // Return the result for further use
+        console.log("User created successfully:", result);
+        return result;
     } catch (error) {
-        console.error('Error creating user:', error);
-        throw error; // Ensure the error is thrown for proper handling in the controller
+        console.error("Error creating user:", error);
+        throw error;
     }
 };
+
 
 // Fetch a user by email
 const getUserByEmail = async (email) => {
