@@ -1,6 +1,7 @@
+// scripts/stripe.js
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-const createCheckoutSession = async (amount, orderId) => {
+const createCheckoutSession = async (amount) => {
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: [
@@ -14,9 +15,8 @@ const createCheckoutSession = async (amount, orderId) => {
             },
         ],
         mode: 'payment',
-        success_url: `${process.env.BASE_URL}/orderconfirmed?orderId=${orderId}`,
+        success_url: `${process.env.BASE_URL}/orderconfirmed`,
         cancel_url: `${process.env.BASE_URL}/cancel`,
-        metadata: { orderId }, // Include orderId in metadata
     });
     return session;
 };

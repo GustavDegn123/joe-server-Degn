@@ -126,6 +126,7 @@ document.getElementById('payButton').addEventListener('click', async () => {
     }
 });
 
+// Event listener for "Pay with Loyalty Points" button
 document.addEventListener("DOMContentLoaded", () => {
     const payWithPointsButton = document.getElementById('payWithPointsButton');
     
@@ -146,13 +147,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         basketData = Object.keys(basketData).map(productName => {
                             const item = basketData[productName];
                             return {
-                                productId: item.productId || null,
+                                productId: item.productId || null, // Use null if productId is not defined
                                 name: productName,
                                 quantity: item.quantity,
-                                totalPoints: item.totalPoints || 0,
-                                totalPrice: item.totalPrice || 0,
-                                unitPoints: item.unitPoints || 0,
-                                unitPrice: item.unitPrice || 0
+                                totalPoints: item.totalPoints || 0, // Default to 0 if not defined
+                                totalPrice: item.totalPrice || 0, // Default to 0 if not defined
+                                unitPoints: item.unitPoints || 0, // Default to 0 if not defined
+                                unitPrice: item.unitPrice || 0 // Default to 0 if not defined
                             };
                         });
                     }
@@ -189,8 +190,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const data = await response.json();
 
                 if (data.orderId) {
-                    // Redirect with orderId
-                    window.location.href = `/orderconfirmed?orderId=${data.orderId}`;
+                    alert(`Payment successful with loyalty points. Order ID: ${data.orderId}`);
+                    window.location.href = "/orderconfirmed";
                 } else {
                     console.error('Error processing loyalty points payment:', data.error);
                     alert('Payment with loyalty points failed.');

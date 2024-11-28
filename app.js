@@ -20,7 +20,6 @@ const storesRoutes = require('./routes/storesRoutes'); // Stien inkluderer nu 'r
 const decodeRoutes = require('./routes/decodeRoutes');
 const myProfileRoutes = require('./routes/myProfileRoutes');
 const cryptoRoutes = require('./routes/cryptoRoutes');
-const orderConfirmedRoutes = require('./routes/orderConfirmedRoutes');
 
 app.post('/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook); // For Stripe payment confirmation
 
@@ -46,8 +45,6 @@ app.use('/api', storesRoutes); // Din route vil være tilgængelig på /api/stor
 app.use('/api', decodeRoutes);
 app.use('/api/profile', myProfileRoutes);
 app.use('/crypto', cryptoRoutes);
-app.use(orderConfirmedRoutes);
-
 // Serve static files from "public" directory (CSS, JS, images, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
 

@@ -4,21 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Order Confirmed</title>
-  <link rel="stylesheet" href="/styles/global.css">  
+  <link rel="stylesheet" href="/styles/global.css">
   <link rel="stylesheet" href="/styles/orderConfirmed.css">
 </head>
 <body>
 <div class="printer-wrapper">
   <div class="hole-container">
-    <div class="printer-slot"></div> <!-- Sort hul -->
-    <div class="confirmation-container">
-      <img src="img/joeLogo.svg" alt="Joe Logo" class="logo" />
-      <h1>Thank you for your order!</h1>
-      <p>Your payment was successful, and your order has been confirmed.</p>
-      <p>You will receive an email with the details shortly.</p>
-      <a href="/startside" class="button">Back to Home</a>
-      <div class="barcode"></div> <!-- Stregkode-element -->
-      <div class="barcode-number">123456789012</div> <!-- Random tal under stregkoden -->
+    <div class="printer-slot"></div> <!-- Slot for visual styling -->
+    <div id="order-details" class="confirmation-container">
+      <!-- Static content will be rendered here by JavaScript -->
     </div>
   </div>
 </div>
