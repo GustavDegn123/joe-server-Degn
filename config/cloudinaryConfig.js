@@ -1,9 +1,10 @@
 const cloudinary = require('cloudinary').v2;
+require('dotenv').config(); // Ensure you load .env
 
 cloudinary.config({
-  cloud_name: 'dut2sot5p', // Udskift med dit Cloudinary cloud name
-  api_key: '376296236998194',       // Udskift med dit API key
-  api_secret: '3vRNT9hETzlgdSI0B_X2_A5AriM'   // Udskift med dit API secret
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 module.exports = cloudinary;

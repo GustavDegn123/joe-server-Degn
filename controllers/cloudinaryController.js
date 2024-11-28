@@ -1,7 +1,7 @@
 const cloudinary = require('../config/cloudinaryConfig');
 
 const publicIds = [
-"Joe billeder/Serano",        // Billede 1
+"Joe billeder/Serrano",        // Billede 1
   "Joe billeder/Avocado",       // Billede 2
   "Joe billeder/Tunacado",      // Billede 3
   "Joe billeder/Joes Club",     // Billede 4

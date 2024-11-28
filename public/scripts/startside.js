@@ -1,104 +1,100 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const products = [
-    { title: "Serrano", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Serrano?_a=BAMCkGRg0" },
-    { title: "Avocado", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Avocado?_a=BAMCkGRg0" },
-    { title: "Tunacado", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Tunacado?_a=BAMCkGRg0" },
-    { title: "Joe's Club", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1730456097/Joe%20billeder/Joes%20Club.png" },
-    { title: "Power Shake", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Power%20Shake?_a=BAMCkGRg0" },
-    { title: "Pick Me Up", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Pick%20Me%20Up?_a=BAMCkGRg0" },
-    { title: "Avo Shake", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Avo%20Shake?_a=BAMCkGRg0" },
-    { title: "Hell of a Nerve", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Hell%20of%20a%20Nerve?_a=BAMCkGRg0" },
-    { title: "Americano", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Americano?_a=BAMCkGRg0" },
-    { title: "Iron Man", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Iron%20Man?_a=BAMCkGRg0" },
-    { title: "Go Away Doc", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Go%20Away%20Doc?_a=BAMCkGRg0" },
-    { title: "Cappuccino", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Cappuccino?_a=BAMCkGRg0" },
-    { title: "Espresso", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Espresso?_a=BAMCkGRg0" },
-    { title: "Latte", imageUrl: "https://res.cloudinary.com/dut2sot5p/image/upload/v1/Joe%20billeder/Latte?_a=BAMCkGRg0" }
-  ];
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    // Fetch product images and metadata from the backend
+    const response = await fetch('/api/cloudinary/list-images'); // Adjust route as necessary
+    const data = await response.json();
 
-  const carousel = document.querySelector(".carousel");
-  const productsPerView = 5;
+    // Define product information (title, description, price) to map with images
+    const productDetails = [
+      { name: "Serrano", description: "Skinke, mozzarella, pesto, rugbrød", price: 75.0 },
+      { name: "Avocado", description: "Avocado, tomat, spinat, rugbrød", price: 75.0 },
+      { name: "Tunacado", description: "Tun, avocado, tomat, rugbrød", price: 75.0 },
+      { name: "Joe's Club", description: "Kylling, avocado, tomat, rugbrød", price: 75.0 },
+      { name: "Power Shake", description: "Jordbær, banan, vaniljemælk", price: 75.0 },
+      { name: "Pick Me Up", description: "Jordbær, banan, æble", price: 75.0 },
+      { name: "Avo Shake", description: "Avocado, banan, vaniljemælk", price: 75.0 },
+      { name: "Hell of a Nerve", description: "Jordbær, banan, hyldeblomst", price: 75.0 },
+      { name: "Americano", description: "Sort kaffe", price: 35.0 },
+      { name: "Iron Man", description: "Jordbær, kiwi, æble", price: 75.0 },
+      { name: "Go Away Doc", description: "Gulerod, æble, ingefær", price: 75.0 },
+      { name: "Cappuccino", description: "Espresso, mælk", price: 39.0 },
+      { name: "Espresso", description: "Ren espresso", price: 20.0 },
+      { name: "Latte", description: "Espresso, mælk, skum", price: 49.0 }
+    ];
 
-  products.forEach(product => {
-    const productCard = document.createElement("div");
-    productCard.classList.add("product-card");
+    // Map images from Cloudinary to products
+    const products = data.images.map((url, index) => ({
+      title: productDetails[index]?.name || `Product ${index + 1}`,
+      description: productDetails[index]?.description || "No description available",
+      price: productDetails[index]?.price || 0.0,
+      imageUrl: url
+    }));
 
-    const img = document.createElement("img");
-    img.src = product.imageUrl;
-    img.alt = product.title;
-    img.classList.add("product-image");
+    const carousel = document.querySelector(".carousel");
+    const productsPerView = 5;
 
-    const title = document.createElement("h3");
-    title.classList.add("product-title");
-    title.textContent = product.title;
+    // Dynamically render product cards
+    products.forEach(product => {
+      const productCard = document.createElement("div");
+      productCard.classList.add("product-card");
 
-    productCard.appendChild(img);
-    productCard.appendChild(title);
+      const img = document.createElement("img");
+      img.src = product.imageUrl;
+      img.alt = product.title;
+      img.classList.add("product-image");
 
-    carousel.appendChild(productCard);
-  });
+      const title = document.createElement("h3");
+      title.classList.add("product-title");
+      title.textContent = product.title;
 
-  let currentIndex = 0;
+      const description = document.createElement("p");
+      description.classList.add("product-description");
+      description.textContent = product.description;
 
-  function updateCarousel() {
-    const productCards = document.querySelectorAll(".product-card");
-    productCards.forEach((card, index) => {
-      card.style.display =
-        index >= currentIndex && index < currentIndex + productsPerView
-          ? "block"
-          : "none";
+      const price = document.createElement("p");
+      price.classList.add("product-price");
+      price.textContent = `${product.price.toFixed(2)} kr.`;
+
+      productCard.appendChild(img);
+      productCard.appendChild(title);
+      productCard.appendChild(description);
+      productCard.appendChild(price);
+
+      carousel.appendChild(productCard);
     });
-  }
 
-  document.querySelector(".carousel-nav.prev").addEventListener("click", () => {
-    if (currentIndex > 0) {
-      currentIndex -= 1;
-    } else {
-      currentIndex = products.length - productsPerView;
+    let currentIndex = 0;
+
+    function updateCarousel() {
+      const productCards = document.querySelectorAll(".product-card");
+      productCards.forEach((card, index) => {
+        card.style.display =
+          index >= currentIndex && index < currentIndex + productsPerView
+            ? "block"
+            : "none";
+      });
     }
-    updateCarousel();
-  });
 
-  document.querySelector(".carousel-nav.next").addEventListener("click", () => {
-    if (currentIndex < products.length - productsPerView) {
-      currentIndex += 1;
-    } else {
-      currentIndex = 0;
-    }
-    updateCarousel();
-  });
-
-  updateCarousel();
-
-  const cookieBox = document.getElementById("cookie-consent-box");
-  const cookieOverlay = document.getElementById("cookie-overlay");
-  const acceptButton = document.getElementById("accept-cookies");
-  const declineButton = document.getElementById("decline-cookies");
-
-  // Check if cookies have already been accepted
-  const cookiesAccepted = document.cookie.includes("cookiesAccepted=true");
-  if (!cookiesAccepted) {
-    cookieOverlay.style.display = "flex"; // Show overlay
-  }
-
-  // Handle Accept button
-  acceptButton.addEventListener("click", () => {
-    document.cookie = "cookiesAccepted=true; path=/;"; // Set cookie
-    cookieOverlay.style.display = "none"; // Hide overlay
-  });
-
-  // Handle Decline button
-  declineButton.addEventListener("click", () => {
-    alert("You must accept cookies to proceed.");
-  });
-
-  // Prevent navigation if cookies are not accepted
-  document.querySelectorAll("a").forEach(link => {
-    link.addEventListener("click", (e) => {
-      if (!document.cookie.includes("cookiesAccepted=true")) {
-        e.preventDefault();
-        alert("You must accept cookies to proceed.");
+    document.querySelector(".carousel-nav.prev").addEventListener("click", () => {
+      if (currentIndex > 0) {
+        currentIndex -= 1;
+      } else {
+        currentIndex = products.length - productsPerView;
       }
+      updateCarousel();
     });
-  });
+
+    document.querySelector(".carousel-nav.next").addEventListener("click", () => {
+      if (currentIndex < products.length - productsPerView) {
+        currentIndex += 1;
+      } else {
+        currentIndex = 0;
+      }
+      updateCarousel();
+    });
+
+    updateCarousel();
+  } catch (error) {
+    console.error("Error loading product images:", error);
+  }
 });
