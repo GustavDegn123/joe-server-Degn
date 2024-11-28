@@ -41,7 +41,7 @@ function displayOrderDetails(order) {
         <h2>Products:</h2>
         <ul>${productList}</ul>
         <a href="/startside" class="button">Back to Home</a>
-        <div class="barcode"></div>
+        <div class="barcode">${order.order_id}</div> <!-- Order ID as the barcode -->
         <div class="barcode-number">${order.order_id}</div>
     `;
 }
