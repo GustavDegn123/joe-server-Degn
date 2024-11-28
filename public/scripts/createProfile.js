@@ -32,6 +32,8 @@ document.getElementById("signup-form").addEventListener("submit", async function
                     alert("Unable to retrieve country code.");
                 }
 
+                console.log('User data being sent:', userData);
+
                 const userData = {
                     name,
                     email,
