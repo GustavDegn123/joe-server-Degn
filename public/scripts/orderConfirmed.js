@@ -46,14 +46,18 @@ function displayOrderDetails(order) {
     `;
 }
 
-// Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
     const orderId = new URLSearchParams(window.location.search).get("orderId");
+    console.log("Extracted orderId from URL:", orderId); // Add this log
+
     if (!orderId) {
+        console.error("No orderId found in URL.");
         document.querySelector(".confirmation-container").innerHTML = `
             <p>Order ID is missing. Please check your link.</p>
         `;
         return;
     }
+
     fetchOrderDetails(orderId);
 });
+

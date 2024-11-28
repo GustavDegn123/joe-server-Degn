@@ -8,17 +8,15 @@ const sendOrderConfirmation = require('./sendOrderConfirmation');
 const handlePayWithCard = async (req, res) => {
     try {
         const { products, total } = req.body;
-        const user_id = req.userId; // Get userId from authMiddleware
+        const user_id = req.userId;
 
         const total_price = total;
-
         let points_earned = 0;
         for (const product of products) {
             points_earned += product.unitPoints * product.quantity;
         }
 
-        const session = await createCheckoutSession(total_price * 100);
-
+        // Create the order in the database first
         const orderData = {
             user_id,
             products,
@@ -27,17 +25,20 @@ const handlePayWithCard = async (req, res) => {
             payment_method: 'card',
             order_date: new Date()
         };
+        const orderId = await createOrder(orderData); // Save the order and get the orderId
 
-        const orderId = await createOrder(orderData);
+        // Pass the orderId to createCheckoutSession
+        const session = await createCheckoutSession(total_price * 100, orderId);
 
         await updateUserLoyaltyPoints(user_id, points_earned);
 
-        res.json({ sessionId: session.id, orderId });
+        res.json({ sessionId: session.id, orderId }); // Return both sessionId and orderId
     } catch (error) {
         console.error('Error processing card payment:', error.message);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 const handlePayWithLoyaltyPoints = async (req, res) => {
     const { user_id, products, points } = req.body;
@@ -81,6 +82,7 @@ const handlePayWithLoyaltyPoints = async (req, res) => {
         // Send confirmation email
         await sendOrderConfirmation(user.email, orderDetails, user_id);
 
+        // Include `orderId` in the response for frontend redirection
         res.status(200).json({
             message: 'Payment successful with loyalty points.',
             orderId,
