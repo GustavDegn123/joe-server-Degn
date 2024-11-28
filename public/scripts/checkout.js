@@ -1,16 +1,3 @@
-// Function to retrieve a cookie by name
-function getCookie(name) {
-    const decodedCookie = decodeURIComponent(document.cookie);
-    const cookieArr = decodedCookie.split(';');
-    for (let i = 0; i < cookieArr.length; i++) {
-        let cookie = cookieArr[i].trim();
-        if (cookie.indexOf(name + "=") === 0) {
-            return cookie.substring((name + "=").length, cookie.length);
-        }
-    }
-    return "";
-}
-
 // Function to fetch the user ID from the backend
 async function fetchUserId() {
     try {

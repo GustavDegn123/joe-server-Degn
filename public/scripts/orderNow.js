@@ -9,19 +9,6 @@ function setCookie(name, value, days) {
     console.log(`Cookie set: ${name} = ${value}`);
 }
 
-// Function to get a cookie
-function getCookie(name) {
-    const decodedCookie = decodeURIComponent(document.cookie);
-    const cookieArr = decodedCookie.split(';');
-    for (let i = 0; i < cookieArr.length; i++) {
-        let cookie = cookieArr[i].trim();
-        if (cookie.indexOf(name + "=") === 0) {
-            return cookie.substring((name + "=").length, cookie.length);
-        }
-    }
-    return "";
-}
-
 // Load the basket from the cookie
 function loadBasketFromCookie() {
     const basketCookie = getCookie("basket");
