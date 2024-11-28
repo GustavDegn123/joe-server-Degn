@@ -27,7 +27,7 @@ const createUser = async (userData) => {
             .input('phone_number', phone) // Correct field mapping
             .input('country', country)
             .input('hashed_password', hashedPassword)
-            .input('loyalty_points', 0)
+            .input('loyalty_points', 0) // Default value for loyalty points
             .input('terms_accepted', terms_accepted)
             .input('loyalty_program_accepted', loyalty_program_accepted)
             .input('latitude', latitude)
@@ -45,7 +45,6 @@ const createUser = async (userData) => {
         throw error; // Ensure the error is thrown for proper handling in the controller
     }
 };
-
 
 // Funktion til at hente en bruger baseret på email
 const getUserByEmail = async (email) => {
