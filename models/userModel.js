@@ -1,30 +1,31 @@
-// models/userModel.js
 const { getConnection } = require('../config/db');
 const bcrypt = require('bcrypt');
+const { encryptWithPublicKey } = require('../controllers/asymmetricController');
 
 const saltRounds = 10;
 
 const createUser = async (userData) => {
-    console.log("Creating user in database:", userData);
-    const { 
-        name, 
-        email, 
-        phone, 
-        country, 
-        password, 
-        terms_accepted, 
-        loyalty_program_accepted, 
-        latitude, 
-        longitude 
+    console.log('Creating user in database:', userData);
+    const {
+        name,
+        email,
+        phone,
+        country,
+        password,
+        terms_accepted,
+        loyalty_program_accepted,
+        latitude,
+        longitude,
     } = userData;
 
     try {
         const hashedPassword = await bcrypt.hash(password, saltRounds); // Hash the password
         const pool = await getConnection();
-        const result = await pool.request()
+        const result = await pool
+            .request()
             .input('name', name)
             .input('email', email)
-            .input('phone_number', phone) // Correct field mapping
+            .input('phone_number', phone)
             .input('country', country)
             .input('hashed_password', hashedPassword)
             .input('loyalty_points', 0) // Default value for loyalty points
@@ -32,31 +33,42 @@ const createUser = async (userData) => {
             .input('loyalty_program_accepted', loyalty_program_accepted)
             .input('latitude', latitude)
             .input('longitude', longitude)
-            .query(`
+            .query(
+                `
                 INSERT INTO Users (name, email, phone_number, country, hashed_password, loyalty_points, terms_accepted, loyalty_program_accepted, latitude, longitude)
                 OUTPUT INSERTED.user_id
                 VALUES (@name, @email, @phone_number, @country, @hashed_password, @loyalty_points, @terms_accepted, @loyalty_program_accepted, @latitude, @longitude)
-            `);
+            `
+            );
 
-        console.log("User created successfully:", result);
+        console.log('User created successfully:', result);
         return result; // Return the result for further use
     } catch (error) {
         console.error('Error creating user:', error);
-        throw error; // Ensure the error is thrown for proper handling in the controller
+        throw error;
     }
 };
 
-// Funktion til at hente en bruger baseret på email
-const getUserByEmail = async (email) => {
+// Encrypt the email and update it in the database
+const encryptAndSaveEmail = async (userId, email) => {
     try {
+        const encryptedEmail = encryptWithPublicKey(email);
+        console.log('Encrypted Email:', encryptedEmail);
+
         const pool = await getConnection();
-        const result = await pool.request()
-            .input('email', email)
-            .query('SELECT * FROM Users WHERE email = @email');
-        
-        return result.recordset[0]; // Returnerer den første matchende bruger
+        await pool
+            .request()
+            .input('user_id', userId)
+            .input('encryptedEmail', encryptedEmail)
+            .query(`
+                UPDATE Users
+                SET email = @encryptedEmail
+                WHERE user_id = @user_id
+            `);
+
+        console.log(`Email encrypted and updated for user ${userId}`);
     } catch (error) {
-        console.error('Error fetching user by email:', error);
+        console.error('Error encrypting and saving email:', error);
         throw error;
     }
 };
@@ -65,7 +77,8 @@ const getUserByEmail = async (email) => {
 const updateUserLoyaltyPoints = async (userId, pointsToAdd) => {
     try {
         const pool = await getConnection();
-        const result = await pool.request()
+        const result = await pool
+            .request()
             .input('user_id', userId)
             .input('pointsToAdd', pointsToAdd)
             .query(`
@@ -82,4 +95,4 @@ const updateUserLoyaltyPoints = async (userId, pointsToAdd) => {
     }
 };
 
-module.exports = { createUser, getUserByEmail, updateUserLoyaltyPoints};
+module.exports = { createUser, encryptAndSaveEmail, updateUserLoyaltyPoints };
