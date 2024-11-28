@@ -22,10 +22,10 @@ document.getElementById("signup-form").addEventListener("submit", async function
 
                 let userCountry = "Unknown";
                 try {
-                    const response = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=95a3993deb6742b298204367f83b405b`);
+                    const response = await fetch(`/api/geolocation/getCountryCode?latitude=${latitude}&longitude=${longitude}`);
                     const data = await response.json();
-                    if (data.results.length > 0) {
-                        userCountry = data.results[0].components.country_code.toUpperCase();
+                    if (data.countryCode) {
+                        userCountry = data.countryCode;
                     }
                 } catch (error) {
                     console.error("Error fetching country code:", error);
