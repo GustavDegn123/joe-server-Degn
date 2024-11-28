@@ -14,8 +14,9 @@ const createCheckoutSession = async (amount, orderId) => {
             },
         ],
         mode: 'payment',
-        success_url: `${process.env.BASE_URL}/orderconfirmed?orderId=${orderId}`, // Include orderId in the URL
+        success_url: `${process.env.BASE_URL}/orderconfirmed?orderId=${orderId}`,
         cancel_url: `${process.env.BASE_URL}/cancel`,
+        metadata: { orderId }, // Include orderId in metadata
     });
     return session;
 };

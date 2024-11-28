@@ -1,4 +1,5 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { updateOrderStatus } = require('../models/orderModel');
 const sendOrderConfirmation = require('../controllers/sendOrderConfirmation');
 
 const handleStripeWebhook = async (req, res) => {
@@ -8,41 +9,50 @@ const handleStripeWebhook = async (req, res) => {
     try {
         let event;
 
-        // Check if in testing mode (skip signature verification in testing)
         if (process.env.NODE_ENV === 'test') {
-            event = req.body;
+            event = req.body; // Skip signature verification in testing
             console.log("Running in test mode, skipping signature verification.");
         } else {
-            // Use Stripe’s signature verification in production
             event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
             console.log("Signature verified.");
         }
 
-        // Handle the checkout.session.completed event
         if (event.type === 'checkout.session.completed') {
             const session = event.data.object;
 
             console.log('Received metadata from Stripe webhook:', session.metadata);
 
-            // Prepare order details for the email
-            const orderDetails = `
-              <p><strong>Total Price:</strong> ${session.amount_total / 100} DKK</p>
-              <p><strong>Payment Method:</strong> ${session.payment_method_types[0]}</p>
-              <p><strong>Order Date:</strong> ${new Date().toLocaleString()}</p>
-            `;
+            // Retrieve orderId from metadata
+            const orderId = session.metadata?.orderId;
 
-            // Check if email exists and send the order confirmation
-            if (session.customer_details && session.customer_details.email) {
-                await sendOrderConfirmation(session.customer_details.email, orderDetails);
-                console.log("Order confirmation email sent successfully.");
-            } else {
-                console.log("No customer email found in session data.");
+            if (!orderId) {
+                console.error("Order ID missing in metadata.");
+                return res.status(400).send('Order ID is required.');
             }
 
-            // Acknowledge receipt of the event to Stripe
+            // Update the order status in the database
+            await updateOrderStatus(orderId, 'completed');
+            console.log(`Order ${orderId} status updated to completed.`);
+
+            // Prepare order details for the email
+            const orderDetails = `
+                <p><strong>Order ID:</strong> ${orderId}</p>
+                <p><strong>Total Price:</strong> ${(session.amount_total / 100).toFixed(2)} DKK</p>
+                <p><strong>Payment Method:</strong> ${session.payment_method_types[0]}</p>
+                <p><strong>Order Date:</strong> ${new Date().toLocaleString()}</p>
+            `;
+
+            // Send order confirmation email
+            if (session.customer_details && session.customer_details.email) {
+                await sendOrderConfirmation(session.customer_details.email, orderDetails, orderId);
+                console.log("Order confirmation email sent successfully.");
+            } else {
+                console.log("No customer email found in session.");
+            }
+
             res.status(200).send('Webhook received and processed.');
         } else {
-            console.log("Unhandled event type received:", event.type);
+            console.log("Unhandled event type:", event.type);
             res.status(400).send('Unhandled event type');
         }
     } catch (error) {
