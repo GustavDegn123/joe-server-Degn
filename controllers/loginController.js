@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { getConnection } = require("../config/db");
 const { decryptWithPrivateKey } = require("../controllers/asymmetricController");
+const { getConnection } = require("../config/db");
 
 const loginController = async (req, res) => {
     const { email, password } = req.body;
@@ -13,7 +13,7 @@ const loginController = async (req, res) => {
         const result = await pool.request().query("SELECT * FROM Users");
         const users = result.recordset;
 
-        // Decrypt each stored email and compare with input email
+        // Decrypt stored emails and find the matching one
         const user = users.find((user) => {
             try {
                 const decryptedEmail = decryptWithPrivateKey(user.email);
@@ -34,14 +34,25 @@ const loginController = async (req, res) => {
             return res.status(401).json({ message: "Invalid email or password" });
         }
 
-        // Generate a JWT token
-        const token = jwt.sign({ userId: user.user_id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-        res.cookie("token", token, { httpOnly: true });
+        // Create JWT token
+        const token = jwt.sign(
+            { userId: user.user_id }, // Only store user_id in the JWT payload
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+        );
 
-        return res.status(200).json({ message: "Login successful", token });
+        // Set the cookie with the token
+        res.cookie("jwt", token, {
+            httpOnly: false,
+            secure: process.env.NODE_ENV === "production", // Secure in production
+            maxAge: 3600000, // 1 hour in milliseconds
+            sameSite: "Lax", // Prevent CSRF on cross-site requests
+        });
+
+        res.status(200).json({ message: "Login successful", token });
     } catch (error) {
-        console.error("Error during login:", error.message, error.stack);
-        return res.status(500).json({ message: "Internal server error", error: error.message });
+        console.error("Error during login:", error.message);
+        res.status(500).json({ message: "Internal server error", error: error.message });
     }
 };
 
