@@ -95,4 +95,13 @@ const updateUserLoyaltyPoints = async (userId, pointsToAdd) => {
     }
 };
 
-module.exports = { createUser, encryptAndSaveEmail, updateUserLoyaltyPoints };
+const getUserByEmail = async (email) => {
+    const pool = await getConnection();
+    const result = await pool
+        .request()
+        .input('email', email)
+        .query('SELECT * FROM Users WHERE email = @email');
+    return result.recordset[0]; // Return the user record
+};
+
+module.exports = {createUser, encryptAndSaveEmail, updateUserLoyaltyPoints, getUserByEmail};
