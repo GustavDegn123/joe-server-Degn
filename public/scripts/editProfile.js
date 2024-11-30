@@ -30,13 +30,12 @@ async function saveProfile() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(updatedData) // Only send the fields that were filled in
+            body: JSON.stringify(updatedData)
         });
 
         // Check if the update was successful
         if (response.ok) {
             alert('Profile updated successfully!');
-            // Redirect to the home page after a successful update
             window.location.href = "/startside";
         } else {
             const data = await response.json();

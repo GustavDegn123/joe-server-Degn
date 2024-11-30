@@ -4,7 +4,7 @@ const publicIds = [
 "Joe billeder/Serrano",        // Billede 1
   "Joe billeder/Avocado",       // Billede 2
   "Joe billeder/Tunacado",      // Billede 3
-  "Joe billeder/Joe's Club",     // Billede 4
+  "Joe billeder/Joes Club",     // Billede 4
   "Joe billeder/Power Shake",   // Billede 5
   "Joe billeder/Pick Me Up",    // Billede 6
   "Joe billeder/Avo Shake",     // Billede 7
