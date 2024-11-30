@@ -1,4 +1,3 @@
-// controllers/favoriteController.js
 const { addFavoriteProduct, removeFavoriteProduct, getFavoriteProducts } = require('../models/favoriteModel');
 
 const addFavoriteController = async (req, res) => {
