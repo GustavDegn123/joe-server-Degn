@@ -28,12 +28,19 @@ const getFavoritesController = async (req, res) => {
     const { userId } = req.params;
 
     try {
+        // Fetch favorites from the database
         const favorites = await getFavoriteProducts(userId);
+
+        if (!favorites) {
+            return res.status(404).json({ message: "No favorites found for the user." });
+        }
+
         res.status(200).json(favorites);
     } catch (error) {
-        console.error('Error in getFavoritesController:', error);
-        res.status(500).json({ message: 'Could not retrieve favorite products.', error });
+        console.error("Error in getFavoritesController:", error.message, error.stack);
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 };
+
 
 module.exports = { addFavoriteController, removeFavoriteController, getFavoritesController };

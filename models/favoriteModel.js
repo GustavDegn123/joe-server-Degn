@@ -50,14 +50,14 @@ const getFavoriteProducts = async (userId) => {
         const result = await pool.request()
             .input('user_id', userId)
             .query(`
-                SELECT f.product_id, f.iv, p.*
+                SELECT f.product_id, f.iv, p.* 
                 FROM Favorites f
-                JOIN Products p ON p.id = CONVERT(VARCHAR(MAX), f.product_id)
+                JOIN Products p ON p.id = f.product_id -- Adjust as needed for your schema
                 WHERE f.user_id = @user_id
             `);
 
-        // Decrypt product_id for each favorite
-        const decryptedFavorites = result.recordset.map((favorite) => {
+        // Decrypt product IDs
+        const favorites = result.recordset.map(favorite => {
             const decryptedProductId = decryptData(favorite.product_id, favorite.iv);
             return {
                 ...favorite,
@@ -65,7 +65,7 @@ const getFavoriteProducts = async (userId) => {
             };
         });
 
-        return decryptedFavorites;
+        return favorites;
     } catch (error) {
         console.error('Error fetching favorite products:', error);
         throw error;
