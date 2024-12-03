@@ -1,4 +1,6 @@
 const { getUserLoyaltyCardData, updateUserProfile } = require('../models/myProfileModel');
+const { decryptWithPrivateKey } = require('../controllers/asymmetricController'); // Import decryption logic
+
 
 exports.getLoyaltyCardData = async (req, res) => {
     const userId = req.userId; // Directly access userId from req
@@ -8,7 +10,16 @@ exports.getLoyaltyCardData = async (req, res) => {
 
     try {
         const userData = await getUserLoyaltyCardData(userId);
+
         if (userData) {
+            try {
+                // Decrypt the email before sending
+                userData.email = decryptWithPrivateKey(userData.email);
+            } catch (error) {
+                console.error(`Error decrypting email for user_id ${userId}:`, error.message);
+                return res.status(500).json({ message: "Error decrypting email" });
+            }
+
             res.status(200).json(userData);
         } else {
             res.status(404).json({ message: "User not found" });

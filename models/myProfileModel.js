@@ -1,5 +1,6 @@
 const { getConnection } = require('../config/db');
 const bcrypt = require("bcrypt");
+const { encryptWithPublicKey } = require('../controllers/asymmetricController'); // Import encryption function
 
 // Function to get user data for loyalty card
 const getUserLoyaltyCardData = async (userId) => {
@@ -18,13 +19,21 @@ const getUserLoyaltyCardData = async (userId) => {
     return result.recordset[0];
 };
 
-// Function to update user profile with editable fields, including password
 const updateUserProfile = async (userId, { name, email, phone_number, country, password }) => {
     const pool = await getConnection();
-    const request = pool.request()
-        .input('user_id', userId)
-        .input('name', name)
-        .input('email', email)
+    const request = pool.request().input('user_id', userId);
+
+    // Encrypt the email before updating
+    let encryptedEmail;
+    try {
+        encryptedEmail = encryptWithPublicKey(email); // Encrypt the email
+    } catch (error) {
+        console.error("Error encrypting email:", error.message);
+        throw error;
+    }
+
+    request.input('name', name)
+        .input('email', encryptedEmail) // Use encrypted email here
         .input('phone_number', phone_number)
         .input('country', country);
 
