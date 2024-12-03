@@ -2,7 +2,7 @@ const { getProductIdByName, createOrderWithLoyaltyPoints, getProductPointsValue,
 const { createOrder } = require('../models/orderModel');
 const { updateUserLoyaltyPoints } = require('../models/userModel');
 const createCheckoutSession = require('../public/scripts/stripe');
-const sendOrderConfirmation = require('./sendOrderConfirmation');
+const sendOrderConfirmation = require('./confirmationController');
 const { decryptWithPrivateKey } = require('../controllers/asymmetricController');
 
 

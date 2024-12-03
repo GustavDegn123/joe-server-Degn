@@ -20,7 +20,7 @@ const storesRoutes = require('./routes/storesRoutes'); // Stien inkluderer nu 'r
 const decodeRoutes = require('./routes/decodeRoutes');
 const myProfileRoutes = require('./routes/myProfileRoutes');
 const cryptoRoutes = require('./routes/cryptoRoutes');
-const geolocationRoutes = require('./routes/geoLocation');
+const geolocationRoutes = require('./routes/geoLocationRoutes');
 
 app.post('/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook); // For Stripe payment confirmation
 

@@ -1,6 +1,6 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { updateOrderStatus, getUserById } = require('../models/orderModel');
-const sendOrderConfirmation = require('../controllers/sendOrderConfirmation');
+const sendOrderConfirmation = require('../controllers/confirmationController');
 const { decryptWithPrivateKey } = require('../controllers/asymmetricController');
 
 const handleStripeWebhook = async (req, res) => {
