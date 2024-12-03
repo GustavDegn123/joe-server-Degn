@@ -21,7 +21,6 @@ exports.sendWelcomeEmail = async (user) => {
         
 Navn: ${user.name}
 E-mail: ${user.email}
-Telefonnummer: ${user.phone_number}
 
 Bemærk venligst, at du også har accepteret vores vilkår og betingelser samt vores loyalitetsprogram. Velkommen til The Joe World!`
     };
@@ -29,7 +28,6 @@ Bemærk venligst, at du også har accepteret vores vilkår og betingelser samt v
     try {
         // Send e-mail
         await transporter.sendMail(mailOptions);
-
         // Gem e-mailoplysninger i databasen
         const pool = await db.getConnection();
         await pool.request()

@@ -12,11 +12,10 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Function to send order confirmation email and log in the database
 const sendOrderConfirmation = async (email, orderDetails, userId) => {
   const mailOptions = {
-    from: `"Joe & the Juice" <${process.env.SMTP_USER}>`, // Sender email
-    to: email,
+    from: `"Joe & the Juice" <${process.env.SMTP_USER}>`,
+    to: email, // Use the decrypted email directly
     subject: 'Ordrebekræftelse fra Joe & the Juice',
     html: `
       <h1>Tak for din ordre!</h1>
@@ -25,7 +24,7 @@ const sendOrderConfirmation = async (email, orderDetails, userId) => {
       ${orderDetails}
       <p>Venlig hilsen,<br>Joe & the Juice</p>
     `,
-    text: `Tak for din ordre! Vi har modtaget din ordre og behandler den snart.\n\nOrdredetaljer:\n${orderDetails}\n\nVenlig hilsen,\nJoe & the Juice` // Plain text fallback
+    text: `Tak for din ordre! Vi har modtaget din ordre og behandler den snart.\n\nOrdredetaljer:\n${orderDetails}\n\nVenlig hilsen,\nJoe & the Juice`
   };
 
   try {
@@ -36,10 +35,10 @@ const sendOrderConfirmation = async (email, orderDetails, userId) => {
     // Log email details in the database
     const pool = await db.getConnection();
     await pool.request()
-      .input('user_id', userId) // Make sure to pass userId as an argument
+      .input('user_id', userId)
       .input('email_type', 'order_confirmation')
       .input('sent_at', new Date())
-      .input('content', mailOptions.html) // Store HTML content in database
+      .input('content', mailOptions.html)
       .query('INSERT INTO Emails (user_id, email_type, sent_at, content) VALUES (@user_id, @email_type, @sent_at, @content)');
 
     console.log('Ordrebekræftelsesmail gemt i databasen!');
@@ -48,5 +47,6 @@ const sendOrderConfirmation = async (email, orderDetails, userId) => {
     throw error;
   }
 };
+
 
 module.exports = sendOrderConfirmation;

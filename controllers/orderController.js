@@ -3,6 +3,7 @@ const { createOrder } = require('../models/orderModel');
 const { updateUserLoyaltyPoints } = require('../models/userModel');
 const createCheckoutSession = require('../public/scripts/stripe');
 const sendOrderConfirmation = require('./sendOrderConfirmation');
+const { decryptWithPrivateKey } = require('../controllers/asymmetricController');
 
 
 const handlePayWithCard = async (req, res) => {
@@ -67,8 +68,17 @@ const handlePayWithLoyaltyPoints = async (req, res) => {
             order_date: new Date(),
         });
 
-        // Fetch user information for email
+        // Fetch user information
         const user = await getUserById(user_id);
+
+        // Decrypt user's email
+        let decryptedEmail;
+        try {
+            decryptedEmail = decryptWithPrivateKey(user.email);
+        } catch (error) {
+            console.error(`Error decrypting email for user ID ${user_id}:`, error.message);
+            throw error;
+        }
 
         // Prepare order details for email
         const orderDetails = products
@@ -79,7 +89,7 @@ const handlePayWithLoyaltyPoints = async (req, res) => {
             .join('');
 
         // Send confirmation email
-        await sendOrderConfirmation(user.email, orderDetails, user_id);
+        await sendOrderConfirmation(decryptedEmail, orderDetails, user_id);
 
         res.status(200).json({
             message: 'Payment successful with loyalty points.',

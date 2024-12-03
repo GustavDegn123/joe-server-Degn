@@ -28,7 +28,6 @@ const getFavoritesController = async (req, res) => {
     const { userId } = req.params;
 
     try {
-        // Fetch favorites from the database
         const favorites = await getFavoriteProducts(userId);
 
         if (!favorites) {
@@ -41,6 +40,5 @@ const getFavoritesController = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 };
-
 
 module.exports = { addFavoriteController, removeFavoriteController, getFavoritesController };

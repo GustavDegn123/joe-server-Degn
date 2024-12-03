@@ -1,6 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const { updateOrderStatus } = require('../models/orderModel');
+const { updateOrderStatus, getUserById } = require('../models/orderModel');
 const sendOrderConfirmation = require('../controllers/sendOrderConfirmation');
+const { decryptWithPrivateKey } = require('../controllers/asymmetricController');
 
 const handleStripeWebhook = async (req, res) => {
     const sig = req.headers['stripe-signature'];
@@ -42,12 +43,29 @@ const handleStripeWebhook = async (req, res) => {
                 <p><strong>Order Date:</strong> ${new Date().toLocaleString()}</p>
             `;
 
-            // Send order confirmation email
-            if (session.customer_details && session.customer_details.email) {
-                await sendOrderConfirmation(session.customer_details.email, orderDetails, orderId);
-                console.log("Order confirmation email sent successfully.");
+            // Retrieve user ID from the metadata and fetch user information
+            const userId = session.metadata?.userId;
+            if (userId) {
+                const user = await getUserById(userId);
+
+                // Decrypt the user's email
+                let decryptedEmail;
+                try {
+                    decryptedEmail = decryptWithPrivateKey(user.email);
+                } catch (error) {
+                    console.error(`Error decrypting email for user ID ${userId}:`, error.message);
+                    throw error;
+                }
+
+                // Send order confirmation email
+                if (decryptedEmail) {
+                    await sendOrderConfirmation(decryptedEmail, orderDetails, userId);
+                    console.log("Order confirmation email sent successfully.");
+                } else {
+                    console.log("Decrypted email is null or undefined.");
+                }
             } else {
-                console.log("No customer email found in session.");
+                console.log("User ID is missing in metadata.");
             }
 
             res.status(200).send('Webhook received and processed.');

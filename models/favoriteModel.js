@@ -1,22 +1,17 @@
-// models/favoriteModel.js
 const { getConnection } = require('../config/db');
-const { encryptData, decryptData } = require('../controllers/symmetricController');
 
 const addFavoriteProduct = async (userId, productId) => {
     try {
-        const { encryptedData: encryptedProductId, iv } = encryptData(productId);
-
         const pool = await getConnection();
         const result = await pool.request()
             .input('user_id', userId)
-            .input('product_id', encryptedProductId)
-            .input('iv', iv)
+            .input('product_id', productId) // No encryption, use the original productId
             .query(`
-                INSERT INTO Favorites (user_id, product_id, iv, updated_at)
-                VALUES (@user_id, @product_id, @iv, GETDATE())
+                INSERT INTO Favorites (user_id, product_id, updated_at)
+                VALUES (@user_id, @product_id, GETDATE())
             `);
 
-        console.log(`Product ${productId} encrypted and added to favorites for user ${userId}`);
+        console.log(`Product ${productId} added to favorites for user ${userId}`);
         return result;
     } catch (error) {
         console.error('Error adding favorite product:', error);
@@ -26,17 +21,15 @@ const addFavoriteProduct = async (userId, productId) => {
 
 const removeFavoriteProduct = async (userId, productId) => {
     try {
-        const { encryptedData: encryptedProductId } = encryptData(productId);
-
         const pool = await getConnection();
         const result = await pool.request()
             .input('user_id', userId)
-            .input('product_id', encryptedProductId)
+            .input('product_id', productId) // No encryption, use the original productId
             .query(`
                 DELETE FROM Favorites WHERE user_id = @user_id AND product_id = @product_id
             `);
 
-        console.log(`Product ${productId} encrypted and removed from favorites for user ${userId}`);
+        console.log(`Product ${productId} removed from favorites for user ${userId}`);
         return result;
     } catch (error) {
         console.error('Error removing favorite product:', error);
@@ -50,22 +43,14 @@ const getFavoriteProducts = async (userId) => {
         const result = await pool.request()
             .input('user_id', userId)
             .query(`
-                SELECT f.product_id, f.iv, p.* 
-                FROM Favorites f
-                JOIN Products p ON p.id = f.product_id -- Adjust as needed for your schema
-                WHERE f.user_id = @user_id
+                SELECT p.* 
+                FROM Products p
+                JOIN Favorites f ON p.id = f.product_id
+                WHERE f.user_id = @user_id;
             `);
 
-        // Decrypt product IDs
-        const favorites = result.recordset.map(favorite => {
-            const decryptedProductId = decryptData(favorite.product_id, favorite.iv);
-            return {
-                ...favorite,
-                product_id: decryptedProductId,
-            };
-        });
-
-        return favorites;
+        console.log(`Fetched favorite products for user ${userId}`);
+        return result.recordset;
     } catch (error) {
         console.error('Error fetching favorite products:', error);
         throw error;

@@ -1,13 +1,6 @@
 // Load environment variables
 require('dotenv').config();
 
-// Load Symmetric Key (directly from .env)
-const symmetricKey = process.env.SYMMETRIC_KEY;
-
-if (!symmetricKey) {
-    throw new Error('Symmetric key is not set in environment variables');
-}
-
 // Load RSA Private and Public Keys from Base64 Strings
 let privateKey;
 let publicKey;
@@ -26,7 +19,6 @@ try {
 
 // Export keys and configurations
 module.exports = {
-    symmetricKey,
     privateKey,
     publicKey,
 };
