@@ -43,29 +43,31 @@ const handleStripeWebhook = async (req, res) => {
                 <p><strong>Order Date:</strong> ${new Date().toLocaleString()}</p>
             `;
 
-            // Retrieve user ID from the metadata and fetch user information
-            const userId = session.metadata?.userId;
-            if (userId) {
-                const user = await getUserById(userId);
+            // Check for email in the Stripe session
+            let emailToUse = session.customer_details?.email;
 
-                // Decrypt the user's email
-                let decryptedEmail;
-                try {
-                    decryptedEmail = decryptWithPrivateKey(user.email);
-                } catch (error) {
-                    console.error(`Error decrypting email for user ID ${userId}:`, error.message);
-                    throw error;
-                }
+            // If no email in session, fetch user information from the database
+            if (!emailToUse) {
+                const userId = session.metadata?.userId;
+                if (userId) {
+                    const user = await getUserById(userId);
 
-                // Send order confirmation email
-                if (decryptedEmail) {
-                    await sendOrderConfirmation(decryptedEmail, orderDetails, userId);
-                    console.log("Order confirmation email sent successfully.");
-                } else {
-                    console.log("Decrypted email is null or undefined.");
+                    // Decrypt the user's email
+                    try {
+                        emailToUse = decryptWithPrivateKey(user.email);
+                    } catch (error) {
+                        console.error(`Error decrypting email for user ID ${userId}:`, error.message);
+                        throw error;
+                    }
                 }
+            }
+
+            // Send order confirmation email if an email is available
+            if (emailToUse) {
+                await sendOrderConfirmation(emailToUse, orderDetails, session.metadata?.userId);
+                console.log("Order confirmation email sent successfully.");
             } else {
-                console.log("User ID is missing in metadata.");
+                console.error("No valid email address available to send confirmation.");
             }
 
             res.status(200).send('Webhook received and processed.');
