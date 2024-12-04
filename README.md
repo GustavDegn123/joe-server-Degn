@@ -55,7 +55,7 @@ Dette projekt benytter følgende cloud-infrastruktur og eksterne API'er:
 - **OpenCage API** til geografisk lokation
 - **Cloudinary** til billedhåndtering
 - **SMTP-server** til e-mails
-- **Mapbox til kort- og lokationsbaserede funktioner
+- **Mapbox** til kort- og lokationsbaserede funktioner
 
 Alle ovenstående services kræver API-nøgler eller adgangsoplysninger, som skal indsættes i `.env`-filen.
 
