@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { decryptWithPrivateKey } = require("../controllers/asymmetricController");
-const { getConnection } = require("../config/db");
+const { decryptWithPrivateKey } = require("./asymmetricController");
+const { getConnection } = require("../../config/db");
 
 const loginController = async (req, res) => {
     const { email, password } = req.body;

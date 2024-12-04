@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { privateKey, publicKey } = require('../config/cryptoConfig'); // Import from config
+const { privateKey, publicKey } = require('../../config/cryptoConfig'); // Import from config
 
 function encryptWithPublicKey(data) {
     try {

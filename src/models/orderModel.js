@@ -1,5 +1,5 @@
 // models/orderModel.js
-const { getConnection } = require('../config/db');
+const { getConnection } = require('../../config/db');
 
 // Function to create a new order in the database
 const createOrder = async (orderData) => {

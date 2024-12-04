@@ -1,4 +1,4 @@
-const cloudinary = require('../config/cloudinaryConfig');
+const cloudinary = require('../../config/cloudinaryConfig');
 
 const publicIds = [
 "Joe billeder/Serrano",        // Billede 1

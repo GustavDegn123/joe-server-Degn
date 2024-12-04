@@ -1,4 +1,4 @@
-const { getConnection } = require('../config/db');
+const { getConnection } = require('../../config/db');
 
 async function fetchStoresFromDatabase() {
     try {

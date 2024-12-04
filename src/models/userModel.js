@@ -1,4 +1,4 @@
-const { getConnection } = require('../config/db');
+const { getConnection } = require('../../config/db');
 const bcrypt = require('bcrypt');
 const { encryptWithPublicKey } = require('../controllers/asymmetricController');
 

@@ -1,4 +1,4 @@
-const { sql, getConnection } = require('../config/db'); // Adjust based on the actual location of db.js
+const { sql, getConnection } = require('../../config/db'); // Adjust based on the actual location of db.js
 
 async function getAllProducts(req, res) {
   try {

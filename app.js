@@ -2,66 +2,73 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const app = express();
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser"); // Import cookie-parser
-const authMiddleware = require('./middleware/authMiddleware');
-const { getConnection } = require(path.join(__dirname, 'config', 'db'));
-const createProfileRoutes = require('./routes/createProfileRoutes');
-const loginRoutes = require('./routes/loginRoutes');
-const logoutRoutes = require('./routes/logoutRoutes');
-const cloudinaryRoutes = require('./routes/cloudinaryRoutes');
-const productRoutes = require('./routes/productsRoutes'); // Opdater stien hvis nødvendigt
+const cookieParser = require("cookie-parser");
+const dotenv = require("dotenv");
+
+dotenv.config();
+
+const app = express();
+
+// Import custom middleware and routes
+const authMiddleware = require('./src/middleware/authMiddleware');
+const { getConnection } = require('./config/db'); // Ensure the config folder is outside src
+const createProfileRoutes = require('./src/routes/createProfileRoutes');
+const loginRoutes = require('./src/routes/loginRoutes');
+const logoutRoutes = require('./src/routes/logoutRoutes');
+const cloudinaryRoutes = require('./src/routes/cloudinaryRoutes');
+const productRoutes = require('./src/routes/productsRoutes');
+const handleStripeWebhook = require('./src/routes/webhookHandler');
+const orderRoutes = require('./src/routes/orderRoutes');
+const favoriteRoutes = require('./src/routes/favoriteRoutes');
+const storesRoutes = require('./src/routes/storesRoutes');
+const decodeRoutes = require('./src/routes/decodeRoutes');
+const myProfileRoutes = require('./src/routes/myProfileRoutes');
+const cryptoRoutes = require('./src/routes/cryptoRoutes');
+const geolocationRoutes = require('./src/routes/geoLocationRoutes');
+
+// Stripe logic
 const { createCheckoutSession } = require('./public/scripts/stripe');
-const handleStripeWebhook = require('./routes/webhookHandler');
-const orderRoutes = require('./routes/orderRoutes'); // Import the order routes
-const favoriteRoutes = require('./routes/favoriteRoutes');
-const storesRoutes = require('./routes/storesRoutes'); // Stien inkluderer nu 'routes'-mappen
-const decodeRoutes = require('./routes/decodeRoutes');
-const myProfileRoutes = require('./routes/myProfileRoutes');
-const cryptoRoutes = require('./routes/cryptoRoutes');
-const geolocationRoutes = require('./routes/geoLocationRoutes');
 
-app.post('/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook); // For Stripe payment confirmation
-
-require('dotenv').config();
-
+// Initialize database connection
 getConnection();
 
+// Middleware
 app.use(cors());
-
-// Middleware to parse JSON
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cookieParser()); // Parse cookies
+app.use(cookieParser());
+
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
+// API routes
 app.use('/api', createProfileRoutes);
 app.use('/api', loginRoutes);
 app.use('/api', logoutRoutes);
-app.use('/api/products', authMiddleware, productRoutes); // This protects the /products route
+app.use('/api/products', authMiddleware, productRoutes);
 app.use('/api/cloudinary', cloudinaryRoutes);
-app.use('/api/orders', orderRoutes); // Register order routes under /api/orders
+app.use('/api/orders', orderRoutes);
 app.use('/favorites', favoriteRoutes);
-app.use('/api', storesRoutes); // Din route vil være tilgængelig på /api/stores
+app.use('/api', storesRoutes);
 app.use('/api', decodeRoutes);
 app.use('/api/profile', myProfileRoutes);
 app.use('/crypto', cryptoRoutes);
 app.use('/api/geoLocation', geolocationRoutes);
 
-// Serve static files from "public" directory (CSS, JS, images, etc.)
-app.use(express.static(path.join(__dirname, 'public')));
+// Stripe webhook route
+app.post('/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);
 
-// Route to serve the createProfile.html as the main page
+// Serve HTML views
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'createProfile.html'));
 });
 
-// Additional route to login page if needed
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'login.html'));
 });
 
-// Route for order-now siden
 app.get('/ordernow', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'orderNow.html'));
 });
@@ -82,35 +89,30 @@ app.get('/myprofile', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'myprofile.html'));
 });
 
-// Route to serve the Edit Profile page
 app.get('/edit-profile', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'editProfile.html')); // Adjust the path if necessary
-});
-
-// Test route to check server health
-app.get("/ping", (req, res) => {
-    const serverTime = Date.now();
-    res.json({ message: "Pong", serverTime });
-});
-
-// Provide the access token to the frontend via API or templating
-app.get('/api/mapbox-token', (req, res) => {
-    res.json({ accessToken: process.env.MAPBOX_ACCESS_TOKEN });
-});
-
-// Start server on port 3000
-const server = app.listen(3000, () => {
-    console.log("Server running on port 3000");
+    res.sendFile(path.join(__dirname, 'views', 'editProfile.html'));
 });
 
 app.get('/orderconfirmed', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'orderConfirmed.html'));
 });
 
+// Health check route
+app.get("/ping", (req, res) => {
+    const serverTime = Date.now();
+    res.json({ message: "Pong", serverTime });
+});
+
+// API for providing Mapbox access token
+app.get('/api/mapbox-token', (req, res) => {
+    res.json({ accessToken: process.env.MAPBOX_ACCESS_TOKEN });
+});
+
+// Stripe checkout session creation
 app.post('/create-checkout-session', async (req, res) => {
     try {
         const { amount, metadata } = req.body;
-        const session = await createCheckoutSession(amount, metadata); // Pass metadata to createCheckoutSession
+        const session = await createCheckoutSession(amount, metadata);
         res.json({ id: session.id });
     } catch (error) {
         console.error('Error creating checkout session:', error);
@@ -118,4 +120,8 @@ app.post('/create-checkout-session', async (req, res) => {
     }
 });
 
-  
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});

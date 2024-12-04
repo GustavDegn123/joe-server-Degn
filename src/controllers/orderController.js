@@ -1,9 +1,9 @@
 const { getProductIdByName, createOrderWithLoyaltyPoints, getProductPointsValue, getUserById, updateUserPoints } = require('../models/orderModel');
 const { createOrder } = require('../models/orderModel');
 const { updateUserLoyaltyPoints } = require('../models/userModel');
-const createCheckoutSession = require('../public/scripts/stripe');
+const createCheckoutSession = require('../../public/scripts/stripe');
 const sendOrderConfirmation = require('./confirmationController');
-const { decryptWithPrivateKey } = require('../controllers/asymmetricController');
+const { decryptWithPrivateKey } = require('./asymmetricController');
 
 
 const handlePayWithCard = async (req, res) => {

@@ -1,5 +1,5 @@
 const { getUserLoyaltyCardData, updateUserProfile } = require('../models/myProfileModel');
-const { decryptWithPrivateKey } = require('../controllers/asymmetricController'); // Import decryption logic
+const { decryptWithPrivateKey } = require('./asymmetricController'); // Import decryption logic
 
 
 exports.getLoyaltyCardData = async (req, res) => {

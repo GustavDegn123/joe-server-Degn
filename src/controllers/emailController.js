@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const db = require('../config/db');
+const db = require('../../config/db');
 
 // SMTP-konfiguration
 const transporter = nodemailer.createTransport({
