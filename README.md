@@ -44,7 +44,7 @@ Dette projekt demonstrerer en netværksapplikation udviklet som en del af en eks
     ```
 3. Start applikationen:
     ```bash
-    npm start
+    node app.js
     ```
 4. Applikationen kører nu på `http://localhost:3000`.
 
