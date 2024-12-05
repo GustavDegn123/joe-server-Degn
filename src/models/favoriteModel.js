@@ -1,47 +1,64 @@
+// Importerer databaseforbindelsen
 const { getConnection } = require('../../config/db');
 
+// Funktion til at tilføje et produkt til brugerens favoritter
 const addFavoriteProduct = async (userId, productId) => {
     try {
+        // Opretter forbindelse til databasen
         const pool = await getConnection();
+
+        // Indsætter et favoritprodukt for en bestemt bruger i databasen
         const result = await pool.request()
-            .input('user_id', userId)
-            .input('product_id', productId) // No encryption, use the original productId
+            .input('user_id', userId) // Binder bruger-ID
+            .input('product_id', productId) // Binder produkt-ID
             .query(`
                 INSERT INTO Favorites (user_id, product_id, updated_at)
                 VALUES (@user_id, @product_id, GETDATE())
             `);
 
-        console.log(`Product ${productId} added to favorites for user ${userId}`);
-        return result;
+        // Logger succesbesked
+        console.log(`Produkt ${productId} tilføjet til favoritter for bruger ${userId}`);
+        return result; // Returnerer resultatet af forespørgslen
     } catch (error) {
-        console.error('Error adding favorite product:', error);
+        // Logger fejl og smider en undtagelse
+        console.error('Fejl ved tilføjelse af favoritprodukt:', error);
         throw error;
     }
 };
 
+// Funktion til at fjerne et produkt fra brugerens favoritter
 const removeFavoriteProduct = async (userId, productId) => {
     try {
+        // Opretter forbindelse til databasen
         const pool = await getConnection();
+
+        // Sletter en favoritpost for en bestemt bruger fra databasen
         const result = await pool.request()
-            .input('user_id', userId)
-            .input('product_id', productId) // No encryption, use the original productId
+            .input('user_id', userId) // Binder bruger-ID
+            .input('product_id', productId) // Binder produkt-ID
             .query(`
                 DELETE FROM Favorites WHERE user_id = @user_id AND product_id = @product_id
             `);
 
-        console.log(`Product ${productId} removed from favorites for user ${userId}`);
-        return result;
+        // Logger succesbesked
+        console.log(`Produkt ${productId} fjernet fra favoritter for bruger ${userId}`);
+        return result; // Returnerer resultatet af forespørgslen
     } catch (error) {
-        console.error('Error removing favorite product:', error);
+        // Logger fejl og smider en undtagelse
+        console.error('Fejl ved fjernelse af favoritprodukt:', error);
         throw error;
     }
 };
 
+// Funktion til at hente brugerens favoritprodukter
 const getFavoriteProducts = async (userId) => {
     try {
+        // Opretter forbindelse til databasen
         const pool = await getConnection();
+
+        // Henter en liste over brugerens favoritprodukter fra databasen
         const result = await pool.request()
-            .input('user_id', userId)
+            .input('user_id', userId) // Binder bruger-ID
             .query(`
                 SELECT p.* 
                 FROM Products p
@@ -49,12 +66,15 @@ const getFavoriteProducts = async (userId) => {
                 WHERE f.user_id = @user_id;
             `);
 
-        console.log(`Fetched favorite products for user ${userId}`);
-        return result.recordset;
+        // Logger succesbesked
+        console.log(`Hentede favoritprodukter for bruger ${userId}`);
+        return result.recordset; // Returnerer listen af favoritprodukter
     } catch (error) {
-        console.error('Error fetching favorite products:', error);
+        // Logger fejl og smider en undtagelse
+        console.error('Fejl ved hentning af favoritprodukter:', error);
         throw error;
     }
 };
 
+// Eksporterer funktionerne, så de kan bruges i andre dele af applikationen
 module.exports = { addFavoriteProduct, removeFavoriteProduct, getFavoriteProducts };

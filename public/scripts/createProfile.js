@@ -1,37 +1,45 @@
+// Tilføjer en eventlistener til tilmeldingsformularen, der håndterer formens "submit"-hændelse
 document.getElementById("signup-form").addEventListener("submit", async function (e) {
-    e.preventDefault();
+    e.preventDefault(); // Forhindrer standardformularens opdatering af siden
 
+    // Henter værdier fra inputfelterne og fjerner unødvendige mellemrum
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("signup-email").value.trim();
     const phone = document.getElementById("signup-phone").value.trim();
     const password = document.getElementById("signup-password").value.trim();
+
+    // Henter værdier fra checkbokse for vilkår og loyalitetsprogram
     const termsCheckbox = document.getElementById("terms");
     const loyaltyProgramCheckbox = document.getElementById("loyalty_program");
-    const termsAccepted = termsCheckbox.checked ? 1 : 0;
+    const termsAccepted = termsCheckbox.checked ? 1 : 0; // Konverterer til 1 eller 0
     const loyaltyProgramAccepted = loyaltyProgramCheckbox.checked ? 1 : 0;
 
-    // Format phone number
-    const countryCode = "+45"; // Denmark country code
+    // Formaterer telefonnummeret med landekode, hvis det ikke allerede har en
+    const countryCode = "+45"; // Landekode for Danmark
     const formattedPhone = phone.startsWith("+") ? phone : `${countryCode}${phone}`;
 
+    // Tjekker, om browseren understøtter geolokation
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
+            // Hvis geolokation er succesfuld, udføres denne funktion
             async function (position) {
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
+                const latitude = position.coords.latitude; // Henter breddegrad
+                const longitude = position.coords.longitude; // Henter længdegrad
 
-                let userCountry = "Unknown";
+                let userCountry = "Unknown"; // Standardværdi for landet
                 try {
+                    // Henter landekode baseret på geolokation
                     const response = await fetch(`/api/geolocation/getCountryCode?latitude=${latitude}&longitude=${longitude}`);
                     const data = await response.json();
                     if (data.countryCode) {
-                        userCountry = data.countryCode;
+                        userCountry = data.countryCode; // Sætter landekoden, hvis den findes
                     }
                 } catch (error) {
-                    console.error("Error fetching country code:", error);
-                    alert("Unable to retrieve country code.");
+                    console.error("Fejl ved hentning af landekode:", error);
+                    alert("Kunne ikke hente landekode.");
                 }
 
+                // Opretter et objekt med brugerens data
                 const userData = {
                     name,
                     email,
@@ -44,33 +52,35 @@ document.getElementById("signup-form").addEventListener("submit", async function
                     longitude
                 };
 
-                // Send data to backend
+                // Sender brugerdata til backend for at oprette en ny bruger
                 try {
                     const response = await fetch("/api/createProfile", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(userData)
+                        method: "POST", // Angiver HTTP-metoden som POST
+                        headers: { "Content-Type": "application/json" }, // Angiver datatypen som JSON
+                        body: JSON.stringify(userData) // Konverterer objektet til JSON-format
                     });
 
                     if (!response.ok) {
-                        throw new Error("Failed to create user. Status: " + response.status);
+                        throw new Error("Kunne ikke oprette bruger. Status: " + response.status);
                     }
 
                     const data = await response.json();
-                    console.log("User created:", data);
-                    alert("User account created successfully! You have received 1000 loyalty points as a welcome gift.");
-                    window.location.href = "/login";
+                    console.log("Bruger oprettet:", data);
+                    alert("Bruger oprettet succesfuldt! Du har modtaget 1000 loyalitetspoint som en velkomstgave.");
+                    window.location.href = "/login"; // Omdirigerer til login-siden
                 } catch (error) {
-                    console.error("Error creating user:", error);
-                    alert("An error occurred. Please try again.");
+                    console.error("Fejl ved oprettelse af bruger:", error);
+                    alert("Der opstod en fejl. Prøv venligst igen.");
                 }
             },
+            // Hvis geolokation fejler, udføres denne funktion
             function (error) {
-                console.error("Geolocation error:", error);
-                alert("Geolocation is required to create an account.");
+                console.error("Geolokationsfejl:", error);
+                alert("Geolokation er påkrævet for at oprette en konto.");
             }
         );
     } else {
-        alert("Geolocation is not supported by this browser.");
+        // Hvis browseren ikke understøtter geolokation
+        alert("Geolokation understøttes ikke af denne browser.");
     }
 });

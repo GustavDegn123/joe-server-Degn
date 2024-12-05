@@ -1,47 +1,49 @@
-// Function to handle saving the profile updates
+// Funktion til at håndtere opdatering af brugerens profil
 async function saveProfile() {
-    // Get values from input fields
+    // Henter værdier fra inputfelterne i formularen
     const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
     const phone_number = document.getElementById("phone").value;
     const country = document.getElementById("country").value;
     const password = document.getElementById("password").value;
 
-    // Create an object to hold the updates
+    // Opretter et objekt til at gemme de opdaterede data
     const updatedData = {};
 
-    // Only add fields to the object if they are filled in
+    // Tilføjer kun felter til objektet, hvis de er udfyldt
     if (name) updatedData.name = name;
     if (email) updatedData.email = email;
     if (phone_number) updatedData.phone_number = phone_number;
     if (country) updatedData.country = country;
     if (password) updatedData.password = password;
 
-    // If there is nothing to update, alert the user and stop the function
+    // Hvis ingen felter er udfyldt, informeres brugeren, og funktionen stoppes
     if (Object.keys(updatedData).length === 0) {
-        alert('Please fill in at least one field to update your profile.');
+        alert('Udfyld venligst mindst ét felt for at opdatere din profil.');
         return;
     }
 
     try {
-        // Send a PUT request to update the profile
+        // Sender en PUT-anmodning til backend for at opdatere profilen
         const response = await fetch('/api/profile/edit-profile', {
-            method: 'PUT',
+            method: 'PUT', // Angiver, at dette er en opdateringsanmodning
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json', // Angiver, at dataene sendes som JSON
             },
-            body: JSON.stringify(updatedData)
+            body: JSON.stringify(updatedData) // Konverterer dataene til JSON-format
         });
 
-        // Check if the update was successful
+        // Tjekker om opdateringen var succesfuld
         if (response.ok) {
-            alert('Profile updated successfully!');
-            window.location.href = "/startside";
+            alert('Profil opdateret succesfuldt!');
+            window.location.href = "/startside"; // Redirecter til startsiden
         } else {
+            // Hvis opdateringen fejler, vises fejlbeskeden fra backend
             const data = await response.json();
-            alert(data.message || 'Error updating profile');
+            alert(data.message || 'Fejl ved opdatering af profil.');
         }
     } catch (error) {
-        console.error('Error updating profile:', error);
+        // Logger fejl, hvis noget går galt under opdateringen
+        console.error('Fejl ved opdatering af profil:', error);
     }
 }

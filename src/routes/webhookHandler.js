@@ -1,84 +1,102 @@
+// Importerer Stripe biblioteket med hemmelig nøgle
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+// Importerer funktioner til opdatering af ordrestatus og hentning af brugerdata
 const { updateOrderStatus, getUserById } = require('../models/orderModel');
+
+// Importerer funktion til at sende ordrebekræftelsesemails
 const sendOrderConfirmation = require('../controllers/confirmationController');
+
+// Importerer funktion til dekryptering med privat nøgle
 const { decryptWithPrivateKey } = require('../controllers/asymmetricController');
 
+// Håndterer Stripe-webhooken
 const handleStripeWebhook = async (req, res) => {
+    // Henter Stripe-signaturen fra headers og webhook-secret fra miljøvariabler
     const sig = req.headers['stripe-signature'];
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     try {
         let event;
 
+        // I testmiljø springes signaturverifikation over
         if (process.env.NODE_ENV === 'test') {
-            event = req.body; // Skip signature verification in testing
-            console.log("Running in test mode, skipping signature verification.");
+            event = req.body;
+            console.log("Kører i testtilstand, signaturverifikation springes over.");
         } else {
+            // Verificerer signaturen fra Stripe-webhooken
             event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-            console.log("Signature verified.");
+            console.log("Signaturen er verificeret.");
         }
 
+        // Håndterer begivenheden 'checkout.session.completed'
         if (event.type === 'checkout.session.completed') {
             const session = event.data.object;
 
-            console.log('Received metadata from Stripe webhook:', session.metadata);
+            // Logger metadata fra Stripe-webhooken
+            console.log('Modtaget metadata fra Stripe-webhook:', session.metadata);
 
-            // Retrieve orderId from metadata
+            // Henter ordre-ID fra metadata
             const orderId = session.metadata?.orderId;
 
+            // Tjekker om ordre-ID findes i metadata
             if (!orderId) {
-                console.error("Order ID missing in metadata.");
-                return res.status(400).send('Order ID is required.');
+                console.error("Ordre-ID mangler i metadata.");
+                return res.status(400).send('Ordre-ID er påkrævet.');
             }
 
-            // Update the order status in the database
+            // Opdaterer ordrestatus i databasen
             await updateOrderStatus(orderId, 'completed');
-            console.log(`Order ${orderId} status updated to completed.`);
+            console.log(`Ordre ${orderId} status opdateret til completed.`);
 
-            // Prepare order details for the email
+            // Forbereder ordreoplysninger til email
             const orderDetails = `
-                <p><strong>Order ID:</strong> ${orderId}</p>
-                <p><strong>Total Price:</strong> ${(session.amount_total / 100).toFixed(2)} DKK</p>
-                <p><strong>Payment Method:</strong> ${session.payment_method_types[0]}</p>
-                <p><strong>Order Date:</strong> ${new Date().toLocaleString()}</p>
+                <p><strong>Ordre-ID:</strong> ${orderId}</p>
+                <p><strong>Totalpris:</strong> ${(session.amount_total / 100).toFixed(2)} DKK</p>
+                <p><strong>Betalingsmetode:</strong> ${session.payment_method_types[0]}</p>
+                <p><strong>Ordredato:</strong> ${new Date().toLocaleString()}</p>
             `;
 
-            // Check for email in the Stripe session
+            // Tjekker efter email i Stripe-sessionen
             let emailToUse = session.customer_details?.email;
 
-            // If no email in session, fetch user information from the database
+            // Hvis email ikke findes i sessionen, hentes brugerdata fra databasen
             if (!emailToUse) {
                 const userId = session.metadata?.userId;
                 if (userId) {
                     const user = await getUserById(userId);
 
-                    // Decrypt the user's email
+                    // Forsøger at dekryptere brugerens email
                     try {
                         emailToUse = decryptWithPrivateKey(user.email);
                     } catch (error) {
-                        console.error(`Error decrypting email for user ID ${userId}:`, error.message);
+                        console.error(`Fejl ved dekryptering af email for bruger-ID ${userId}:`, error.message);
                         throw error;
                     }
                 }
             }
 
-            // Send order confirmation email if an email is available
+            // Sender ordrebekræftelse, hvis en gyldig email findes
             if (emailToUse) {
                 await sendOrderConfirmation(emailToUse, orderDetails, session.metadata?.userId);
-                console.log("Order confirmation email sent successfully.");
+                console.log("Ordrebekræftelsesmail sendt succesfuldt.");
             } else {
-                console.error("No valid email address available to send confirmation.");
+                console.error("Ingen gyldig emailadresse tilgængelig til at sende bekræftelse.");
             }
 
-            res.status(200).send('Webhook received and processed.');
+            // Sender en succesrespons til Stripe
+            res.status(200).send('Webhook modtaget og behandlet.');
         } else {
-            console.log("Unhandled event type:", event.type);
-            res.status(400).send('Unhandled event type');
+            // Logger hvis begivenhedstypen ikke håndteres
+            console.log("Uhåndteret begivenhedstype:", event.type);
+            res.status(400).send('Uhåndteret begivenhedstype');
         }
     } catch (error) {
-        console.error('Webhook error:', error.message);
-        res.status(400).send(`Webhook Error: ${error.message}`);
+        // Logger fejl og sender fejlrespons
+        console.error('Webhook-fejl:', error.message);
+        res.status(400).send(`Webhook-fejl: ${error.message}`);
     }
 };
 
+// Eksporterer funktionen som modul
 module.exports = handleStripeWebhook;

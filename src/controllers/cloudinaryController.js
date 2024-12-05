@@ -1,7 +1,9 @@
+// Importerer Cloudinary-konfigurationsfilen
 const cloudinary = require('../../config/cloudinaryConfig');
 
+// Definerer en liste over public IDs for billeder, der er gemt i Cloudinary
 const publicIds = [
-"Joe billeder/Serrano",        // Billede 1
+  "Joe billeder/Serrano",        // Billede 1
   "Joe billeder/Avocado",       // Billede 2
   "Joe billeder/Tunacado",      // Billede 3
   "Joe billeder/Joes Club",     // Billede 4
@@ -17,16 +19,22 @@ const publicIds = [
   "Joe billeder/Latte"          // Billede 14
 ];
 
+// Funktion til at generere URL'er for billederne i Cloudinary
 const listImages = async () => {
   try {
+    // Mapper gennem public IDs og genererer en URL for hvert billede
     const imageUrls = publicIds.map((id) => cloudinary.url(id));
+    
+    // Returnerer en liste af URL'er
     return imageUrls;
   } catch (error) {
+    // Logger fejl og smider en undtagelse, hvis noget går galt
     console.error("Fejl under hentning af billeder:", error);
     throw error;
   }
 };
 
+// Eksporterer funktionen, så den kan bruges i andre dele af applikationen
 module.exports = {
-  listImages, 
+  listImages,
 };

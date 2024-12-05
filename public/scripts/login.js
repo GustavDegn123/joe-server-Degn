@@ -1,37 +1,41 @@
+// Tilføjer en eventlistener til login-formularens submit-event
 document.getElementById("login-form").addEventListener("submit", function(e) {
-    e.preventDefault(); // Forhindrer siden i at opdatere
+    e.preventDefault(); // Forhindrer, at siden genindlæses, når formularen indsendes
   
-    // Hent data fra formularen
-    const email = document.getElementById("login-email").value;
-    const password = document.getElementById("login-password").value;
+    // Henter data fra formularens inputfelter
+    const email = document.getElementById("login-email").value; // Henter email fra inputfeltet
+    const password = document.getElementById("login-password").value; // Henter password fra inputfeltet
 
-    // Pak data i et objekt
+    // Pakker de indtastede data i et objekt
     const loginData = {
         email: email,
         password: password
     };
 
-    // Send login data til backend
-    fetch('/api/login', {  // Matcher backend-route
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(loginData)
+    // Sender login-data til backend for at validere brugeroplysninger
+    fetch('/api/login', {  // Matcher backend-route for login
+        method: 'POST', // Angiver HTTP-metoden som POST
+        headers: { 'Content-Type': 'application/json' }, // Angiver, at data sendes som JSON
+        body: JSON.stringify(loginData) // Konverterer login-data til JSON-format
     })
     .then(response => {
         if (!response.ok) {
+            // Kaster en fejl, hvis serveren returnerer en ikke-OK status
             throw new Error("Authentication failed. Status: " + response.status);
         }
-        return response.json();
+        return response.json(); // Returnerer det parsed JSON-svar
     })
     .then(data => {
-        console.log('Login successful:', data);
-        alert("Login successful!");
+        console.log('Login successful:', data); // Logger et succesfuldt login
+        alert("Login successful!"); // Viser en besked om succesfuldt login
 
-        // Her kan du sende brugeren videre til en ny side efter login
+        // Omdirigerer brugeren til startsiden efter et vellykket login
         window.location.href = "/startside"; 
     })
     .catch(error => {
+        // Logger fejl, hvis login mislykkes
         console.error('Error during login:', error);
+        // Viser en fejlbesked til brugeren
         alert('Login failed. Please check your email and password.');
     });
 });

@@ -1,10 +1,11 @@
+// Venter på, at DOM'en er indlæst, før koden kører
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    // Fetch product images and metadata from the backend
-    const response = await fetch('/api/cloudinary/list-images'); // Adjust route as necessary
+    // Henter produktbilleder og metadata fra backend
+    const response = await fetch('/api/cloudinary/list-images'); // Juster ruten efter behov
     const data = await response.json();
 
-    // Define product information (title, description, price) to map with images
+    // Definerer produktinformation (titel, beskrivelse, pris) til mapping med billeder
     const productDetails = [
       { name: "Serrano", description: "Skinke, mozzarella, pesto, rugbrød", price: 75.0 },
       { name: "Avocado", description: "Avocado, tomat, spinat, rugbrød", price: 75.0 },
@@ -22,18 +23,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       { name: "Latte", description: "Espresso, mælk, skum", price: 49.0 }
     ];
 
-    // Map images from Cloudinary to products
+    // Mapper billeder fra Cloudinary til produkter
     const products = data.images.map((url, index) => ({
       title: productDetails[index]?.name || `Product ${index + 1}`,
-      description: productDetails[index]?.description || "No description available",
+      description: productDetails[index]?.description || "Ingen beskrivelse tilgængelig",
       price: productDetails[index]?.price || 0.0,
       imageUrl: url
     }));
 
+    // Henter carousel-elementet og angiver, hvor mange produkter der vises ad gangen
     const carousel = document.querySelector(".carousel");
     const productsPerView = 5;
 
-    // Dynamically render product cards
+    // Dynamisk genererer produktkort og tilføjer dem til carousel
     products.forEach(product => {
       const productCard = document.createElement("div");
       productCard.classList.add("product-card");
@@ -63,8 +65,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       carousel.appendChild(productCard);
     });
 
+    // Angiver den nuværende startindeks i carousel
     let currentIndex = 0;
 
+    // Opdaterer carousel-visningen baseret på den aktuelle indeks
     function updateCarousel() {
       const productCards = document.querySelectorAll(".product-card");
       productCards.forEach((card, index) => {
@@ -75,6 +79,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     }
 
+    // Tilføjer funktionalitet til knappen for at gå til forrige produkter
     document.querySelector(".carousel-nav.prev").addEventListener("click", () => {
       if (currentIndex > 0) {
         currentIndex -= 1;
@@ -84,6 +89,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       updateCarousel();
     });
 
+    // Tilføjer funktionalitet til knappen for at gå til næste produkter
     document.querySelector(".carousel-nav.next").addEventListener("click", () => {
       if (currentIndex < products.length - productsPerView) {
         currentIndex += 1;
@@ -93,8 +99,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       updateCarousel();
     });
 
+    // Initialiserer carousel ved at vise de første produkter
     updateCarousel();
   } catch (error) {
-    console.error("Error loading product images:", error);
+    // Logger fejl, hvis noget går galt under indlæsning af billeder eller data
+    console.error("Fejl ved indlæsning af produktbilleder:", error);
   }
 });

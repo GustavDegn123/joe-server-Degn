@@ -1,32 +1,42 @@
-// Initialize basket and userId
+// Initialiserer en tom kurv og en variabel til bruger-ID
 const basket = {};
 let userId = null;
 
-// Function to set a cookie
+// Funktion til at sætte en cookie med navn, værdi og udløbsdato
 function setCookie(name, value, days) {
     const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
     document.cookie = `${name}=${value}; expires=${expires}; path=/;`;
-    console.log(`Cookie set: ${name} = ${value}`);
+    console.log(`Cookie sat: ${name} = ${value}`);
 }
 
-// Load the basket from the cookie
+// Funktion til at hente en cookie ved navn
+function getCookie(name) {
+    const cookieArray = document.cookie.split("; ");
+    for (const cookie of cookieArray) {
+        const [key, value] = cookie.split("=");
+        if (key === name) return value;
+    }
+    return null;
+}
+
+// Funktion til at indlæse kurv fra cookie
 function loadBasketFromCookie() {
     const basketCookie = getCookie("basket");
     if (basketCookie) {
         try {
             const savedBasket = JSON.parse(basketCookie);
-            Object.assign(basket, savedBasket); // Load saved basket into in-memory basket object
-            console.log("Basket loaded from cookie:", basket);
+            Object.assign(basket, savedBasket); // Indlæser gemt kurv i hukommelsen
+            console.log("Kurv indlæst fra cookie:", basket);
         } catch (error) {
-            console.error("Invalid basket data in cookie:", error);
+            console.error("Ugyldige data i kurv-cookie:", error);
         }
     }
 }
 
-// Render the basket on the page
+// Funktion til at vise kurvens indhold på siden
 function renderBasket() {
     const basketItems = document.getElementById("basket-items");
-    basketItems.innerHTML = ""; // Clear previous basket content
+    basketItems.innerHTML = ""; // Rydder tidligere indhold
 
     for (const productName in basket) {
         const item = basket[productName];
@@ -41,73 +51,77 @@ function renderBasket() {
     }
 }
 
+// Funktion til at tilføje et produkt til kurven
 function addToBasket(product) {
     if (basket[product.name]) {
         basket[product.name].quantity += 1;
-        basket[product.name].totalPrice += basket[product.name].unitPrice; // Use unitPrice here
+        basket[product.name].totalPrice += basket[product.name].unitPrice;
     } else {
         basket[product.name] = {
             quantity: 1,
             totalPrice: product.price,
-            unitPrice: product.price, // Add unitPrice for future calculations
-            unitPoints: product.points_value || 0, // Default to 0 if undefined
+            unitPrice: product.price, // Enhedspris
+            unitPoints: product.points_value || 0, // Loyalitetspoint (standard 0)
         };
     }
-    setCookie("basket", JSON.stringify(basket), 1); // Save updated basket to cookie
+    setCookie("basket", JSON.stringify(basket), 1); // Gemmer opdateret kurv i cookie
     renderBasket();
 }
 
+// Funktion til at øge mængden af et produkt i kurven
 function addQuantity(productName) {
     if (basket[productName]) {
         basket[productName].quantity += 1;
-        basket[productName].totalPrice += basket[productName].unitPrice; // Use unitPrice here
+        basket[productName].totalPrice += basket[productName].unitPrice;
     }
-    setCookie("basket", JSON.stringify(basket), 1); // Save updated basket to cookie
+    setCookie("basket", JSON.stringify(basket), 1);
     renderBasket();
 }
 
+// Funktion til at fjerne et produkt fra kurven
 function removeFromBasket(productName) {
     if (basket[productName]) {
         if (basket[productName].quantity > 1) {
             basket[productName].quantity -= 1;
-            basket[productName].totalPrice -= basket[productName].unitPrice; // Use unitPrice here
+            basket[productName].totalPrice -= basket[productName].unitPrice;
         } else {
-            delete basket[productName]; // Remove item if quantity becomes 0
+            delete basket[productName];
         }
     }
-    setCookie("basket", JSON.stringify(basket), 1); // Save updated basket to cookie
+    setCookie("basket", JSON.stringify(basket), 1);
     renderBasket();
 }
 
+// Venter på, at DOM'en indlæses
 document.addEventListener("DOMContentLoaded", async () => {
-    // Load basket from cookie
+    // Indlæser kurv fra cookie
     loadBasketFromCookie();
-    renderBasket(); // Render basket immediately after loading it
+    renderBasket();
 
-    // Load store info if present
+    // Indlæser butiksinfo, hvis det er gemt
     const selectedStore = getCookie("selectedStore");
     if (selectedStore) {
         const store = JSON.parse(selectedStore);
         const storeInfoContainer = document.getElementById("store-info");
         storeInfoContainer.innerHTML = `
-            <h3>Ordering from: ${store.name}</h3>
-            <p>Address: ${store.address}</p>
-            <p>Opening Hours: ${store.hours}</p>
+            <h3>Bestiller fra: ${store.name}</h3>
+            <p>Adresse: ${store.address}</p>
+            <p>Åbningstider: ${store.hours}</p>
         `;
     }
 
-    // Fetch the decoded user ID securely
+    // Henter dekodet bruger-ID
     userId = await fetchUserId();
     if (!userId) {
-        console.error("User ID not found.");
+        console.error("Bruger-ID ikke fundet.");
         return;
     }
 
-    // Fetch and render products (favorites handled within fetchProducts)
-    await fetchProducts(); 
+    // Henter og viser produkter
+    await fetchProducts();
 });
 
-// Fetch user ID from the backend
+// Funktion til at hente dekodet bruger-ID fra backend
 async function fetchUserId() {
     try {
         const response = await fetch('/api/decode', {
@@ -116,115 +130,69 @@ async function fetchUserId() {
         });
         const data = await response.json();
         if (data.userId) {
-            return data.userId; // Return the user ID directly, without saving it in a cookie
+            return data.userId;
         }
         return null;
     } catch (error) {
-        console.error("Error fetching user ID:", error);
+        console.error("Fejl ved hentning af bruger-ID:", error);
         return null;
     }
 }
 
-
-// Fetch favorites
+// Funktion til at hente brugerens favoritter fra backend
 async function fetchFavorites() {
     try {
-        const userId = await fetchUserId(); // Fetch user ID securely
-        if (!userId) {
-            console.error("User ID not found.");
-            return [];
-        }
-
         const response = await fetch(`/favorites/${userId}`);
-        if (!response.ok) {
-            console.error("Error fetching favorites:", response.statusText);
-            return [];
-        }
-
+        if (!response.ok) throw new Error("Kunne ikke hente favoritter");
         const favorites = await response.json();
-        setCookie("favorites", JSON.stringify(favorites), 1); // Save favorites to cookie
-        return favorites; // Return favorites for further processing
+        setCookie("favorites", JSON.stringify(favorites), 1); // Gemmer favoritter i cookie
+        return favorites;
     } catch (error) {
-        console.error("Error in fetchFavorites:", error);
+        console.error("Fejl i fetchFavorites:", error);
         return [];
     }
 }
 
-// Toggle favorite status
+// Funktion til at tilføje eller fjerne favoritter
 async function toggleFavorite(productId, button) {
     try {
-        const userId = await fetchUserId(); // Ensure we get the decoded user ID securely
-        if (!userId) {
-            alert("You must be logged in to manage favorites.");
-            return;
-        }
-
         const isFavorited = button.classList.contains("favorited");
 
         if (isFavorited) {
-            // Remove from favorites
             const response = await fetch("/favorites/removeFavorite", {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userId, productId }),
             });
-
             if (response.ok) {
                 button.classList.remove("favorited");
-                button.textContent = "☆ Add to Favorites";
-            } else {
-                console.error("Failed to remove favorite:", await response.text());
+                button.textContent = "☆ Tilføj til favoritter";
             }
         } else {
-            // Add to favorites
             const response = await fetch("/favorites/addFavorite", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userId, productId }),
             });
-
             if (response.ok) {
                 button.classList.add("favorited");
-                button.textContent = "★ Favorited";
-            } else {
-                console.error("Failed to add favorite:", await response.text());
+                button.textContent = "★ Favorit";
             }
         }
-
-        // Optionally refresh the favorites list or update the UI as needed
-        console.log("Favorite toggled successfully.");
     } catch (error) {
-        console.error("Error in toggleFavorite:", error);
+        console.error("Fejl i toggleFavorite:", error);
     }
 }
 
-
-// Fetch products
+// Funktion til at hente produkter fra backend og vise dem i UI
 async function fetchProducts() {
     try {
-        // Fetch products from the backend
         const response = await fetch("/api/products");
         const products = await response.json();
 
-        // Fetch the user ID using the decoded JWT token
-        const userId = await fetchUserId();
-        if (!userId) {
-            console.error("User ID not found. Unable to fetch favorites.");
-            return;
-        }
-
-        // Fetch the user's favorites using the decoded user ID
-        const favoritesResponse = await fetch(`/favorites/${userId}`);
-        if (!favoritesResponse.ok) {
-            console.error("Error fetching favorites:", favoritesResponse.statusText);
-            return;
-        }
-
-        const favorites = await favoritesResponse.json();
-
-        // Update product gallery
+        const favorites = await fetchFavorites();
         const productGallery = document.getElementById("product-gallery");
-        productGallery.innerHTML = ""; // Clear previous products
+        productGallery.innerHTML = ""; // Rydder tidligere produkter
 
         products.forEach(product => {
             const productCard = document.createElement("div");
@@ -247,25 +215,20 @@ async function fetchProducts() {
             price.classList.add("product-price");
             price.textContent = `${product.price.toFixed(2)} kr.`;
 
-            // Create the "Add to Favorites" button
             const favoriteButton = document.createElement("button");
             favoriteButton.classList.add("favorite-button");
-            favoriteButton.textContent = "☆ Add to Favorites";
-            favoriteButton.setAttribute("data-id", product.id);
+            favoriteButton.textContent = "☆ Tilføj til favoritter";
 
-            // Check if this product is a favorite
-            const isFavorited = favorites.some(fav => fav.id == product.id);
-            if (isFavorited) {
+            if (favorites.some(fav => fav.id == product.id)) {
                 favoriteButton.classList.add("favorited");
-                favoriteButton.textContent = "★ Favorited";
+                favoriteButton.textContent = "★ Favorit";
             }
 
-            // Attach the toggleFavorite event listener
             favoriteButton.addEventListener("click", () => toggleFavorite(product.id, favoriteButton));
 
             const button = document.createElement("button");
             button.classList.add("add-to-basket");
-            button.textContent = "Add to Basket";
+            button.textContent = "Tilføj til kurv";
             button.addEventListener("click", () => addToBasket(product));
 
             productCard.appendChild(img);
@@ -278,17 +241,16 @@ async function fetchProducts() {
             productGallery.appendChild(productCard);
         });
     } catch (error) {
-        console.error("Error in fetchProducts:", error);
+        console.error("Fejl i fetchProducts:", error);
     }
 }
 
-
-// Review order button handler
+// Eventlistener til "Gennemse ordre"-knappen
 document.getElementById("review-order").addEventListener("click", () => {
     const selectedStore = getCookie("selectedStore");
     setCookie("basket", JSON.stringify(basket), 1);
     if (selectedStore) {
         setCookie("checkoutStore", selectedStore, 1);
     }
-    window.location.href = "/checkout";
+    window.location.href = "/checkout"; // Redirecter til checkout-side
 });

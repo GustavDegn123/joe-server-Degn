@@ -1,52 +1,58 @@
+// Importerer nodemailer til e-mailafsendelse
 const nodemailer = require('nodemailer');
+
+// Importerer databaseforbindelsen
 const db = require('../../config/db');
 
-// Configure Nodemailer transporter
+// Konfigurerer Nodemailer transporter til at sende e-mails
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false, // Set to true for port 465, false for other ports
+  host: 'smtp.gmail.com', // Gmail SMTP-server
+  port: 587, // Port til TLS-forbindelse
+  secure: false, // Sæt til true for SSL (port 465), false for TLS (port 587)
   auth: {
-      user: process.env.SMTP_USER, // Use environment variable
-      pass: process.env.SMTP_PASS  // Use environment variable
+      user: process.env.SMTP_USER, // SMTP-brugernavn hentet fra miljøvariabel
+      pass: process.env.SMTP_PASS  // SMTP-adgangskode hentet fra miljøvariabel
   }
 });
 
+// Funktion til at sende en ordrebekræftelse via e-mail
 const sendOrderConfirmation = async (email, orderDetails, userId) => {
+  // Definerer e-mailens indstillinger
   const mailOptions = {
-    from: `"Joe & the Juice" <${process.env.SMTP_USER}>`,
-    to: email, // Use the decrypted email directly
-    subject: 'Ordrebekræftelse fra Joe & the Juice',
+    from: `"Joe & the Juice" <${process.env.SMTP_USER}>`, // Afsenderens e-mail
+    to: email, // Modtagerens e-mail
+    subject: 'Ordrebekræftelse fra Joe & the Juice', // E-mailens emne
     html: `
       <h1>Tak for din ordre!</h1>
       <p>Vi har modtaget din ordre og behandler den snart.</p>
       <h2>Ordredetaljer:</h2>
       ${orderDetails}
       <p>Venlig hilsen,<br>Joe & the Juice</p>
-    `,
-    text: `Tak for din ordre! Vi har modtaget din ordre og behandler den snart.\n\nOrdredetaljer:\n${orderDetails}\n\nVenlig hilsen,\nJoe & the Juice`
+    `, // HTML-indhold af e-mailen
+    text: `Tak for din ordre! Vi har modtaget din ordre og behandler den snart.\n\nOrdredetaljer:\n${orderDetails}\n\nVenlig hilsen,\nJoe & the Juice` // Tekstversion af e-mailen
   };
 
   try {
-    // Send email
+    // Sender e-mailen
     await transporter.sendMail(mailOptions);
     console.log('Ordrebekræftelsesmail sendt til:', email);
 
-    // Log email details in the database
+    // Logger e-mailoplysninger i databasen
     const pool = await db.getConnection();
     await pool.request()
-      .input('user_id', userId)
-      .input('email_type', 'order_confirmation')
-      .input('sent_at', new Date())
-      .input('content', mailOptions.html)
-      .query('INSERT INTO Emails (user_id, email_type, sent_at, content) VALUES (@user_id, @email_type, @sent_at, @content)');
+      .input('user_id', userId) // Bruger-ID
+      .input('email_type', 'order_confirmation') // Type e-mail (ordrebekræftelse)
+      .input('sent_at', new Date()) // Tidsstempel for afsendelse
+      .input('content', mailOptions.html) // HTML-indholdet af e-mailen
+      .query('INSERT INTO Emails (user_id, email_type, sent_at, content) VALUES (@user_id, @email_type, @sent_at, @content)'); // Indsætter e-mailoplysninger i tabellen
 
     console.log('Ordrebekræftelsesmail gemt i databasen!');
   } catch (error) {
+    // Logger fejl og smider en undtagelse
     console.error('Fejl ved afsendelse af e-mail:', error);
     throw error;
   }
 };
 
-
+// Eksporterer funktionen, så den kan bruges i andre dele af applikationen
 module.exports = sendOrderConfirmation;
