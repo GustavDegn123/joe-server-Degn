@@ -19,20 +19,37 @@ const config = {
     },
 };
 
-// Funktion til at oprette en forbindelse til databasen
-async function getConnection() {
+// Initialiserer en poolPromise til genbrug af forbindelser
+const poolPromise = new sql.ConnectionPool(config)
+    .connect()
+    .then((pool) => {
+        console.log('Databasepool initialiseret og klar til brug'); // Bekræfter succesfuld initialisering
+        return pool;
+    })
+    .catch((error) => {
+        console.error('Fejl under oprettelse af databasepool:', error); // Logger fejl, hvis initialisering mislykkes
+        throw error; // Kaster fejl for yderligere behandling
+    });
+
+// Funktion til at udføre forespørgsler
+async function executeQuery(query, params = {}) {
     try {
-        // Forsøger at oprette en forbindelse til databasen med konfigurationen
-        const pool = await sql.connect(config);
-        console.log("Databaseforbindelse oprettet"); // Bekræfter succesfuld forbindelse
-        return pool; // Returnerer databasepoolen for yderligere forespørgsler
+        const pool = await poolPromise; // Genbruger eksisterende poolforbindelse
+        const request = pool.request();
+
+        // Tilføjer parametre til forespørgslen, hvis de er angivet
+        Object.keys(params).forEach((key) => {
+            request.input(key, params[key].type, params[key].value);
+        });
+
+        // Udfører forespørgslen og returnerer resultatet
+        const result = await request.query(query);
+        return result;
     } catch (error) {
-        // Logger fejl, hvis forbindelsen mislykkes
-        console.error('Databaseforbindelse mislykkedes: ', error);
-        console.error('Detaljeret fejlinformation: ', JSON.stringify(error, null, 2)); // Udskriver detaljeret fejlinfo
-        throw error; // Kaster fejlen, så den kan håndteres af kaldende funktion
+        console.error('Fejl under udførelse af forespørgsel:', error); // Logger fejl
+        throw error; // Kaster fejl for yderligere behandling
     }
 }
 
-// Eksporterer sql-objektet og getConnection-funktionen, så de kan bruges i andre filer
-module.exports = { sql, getConnection };
+// Eksporterer poolPromise og executeQuery til brug i andre filer
+module.exports = { sql, poolPromise, executeQuery };

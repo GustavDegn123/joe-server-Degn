@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 const { decryptWithPrivateKey } = require("./asymmetricController");
 
 // Importerer databaseforbindelsen
-const { getConnection } = require("../../config/db");
+const { poolPromise, sql } = require("../../config/db");
 
 // Funktion til login-håndtering
 const loginController = async (req, res) => {
@@ -16,8 +16,8 @@ const loginController = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Opretter forbindelse til databasen
-        const pool = await getConnection();
+        // Genbruger poolforbindelsen
+        const pool = await poolPromise;
 
         // Henter alle brugere fra databasen
         const result = await pool.request().query("SELECT * FROM Users");
@@ -54,7 +54,7 @@ const loginController = async (req, res) => {
 
         // Indstiller en cookie med token
         res.cookie("jwt", token, {
-            httpOnly: false, // Tillader JavaScript at tilgå cookien
+            httpOnly: false, // Tillader ikke JavaScript at tilgå cookien
             secure: process.env.NODE_ENV === "production", // Gør cookien sikker i produktionsmiljø
             maxAge: 3600000, // Cookieens levetid i millisekunder (1 time)
             sameSite: "Lax", // Beskytter mod CSRF-angreb

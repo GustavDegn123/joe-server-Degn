@@ -1,11 +1,11 @@
 // Importerer databaseforbindelsen og SQL-objektet
-const { sql, getConnection } = require('../../config/db'); // Juster stien baseret på placeringen af db.js
+const { poolPromise, sql } = require('../../config/db'); // Juster stien baseret på placeringen af db.js
 
 // Funktion til at hente alle produkter fra databasen
 async function getAllProducts(req, res) {
     try {
-        // Opretter forbindelse til databasen
-        const pool = await getConnection();
+        // Genbruger poolforbindelsen
+        const pool = await poolPromise;
 
         // Udfører en SQL-forespørgsel for at hente alle produkter fra tabellen "Products"
         const result = await pool.request().query('SELECT * FROM dbo.Products');
@@ -21,5 +21,5 @@ async function getAllProducts(req, res) {
 
 // Eksporterer funktionen, så den kan bruges i andre dele af applikationen
 module.exports = {
-    getAllProducts
+    getAllProducts,
 };

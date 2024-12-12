@@ -1,11 +1,11 @@
-// Importerer funktionen til at oprette forbindelse til databasen
-const { getConnection } = require('../../config/db');
+// Importerer databaseforbindelsen
+const { poolPromise } = require('../../config/db');
 
 // Funktion til at hente butikker fra databasen
 async function fetchStoresFromDatabase() {
     try {
-        // Opretter en forbindelse til databasen
-        const pool = await getConnection();
+        // Genbruger poolforbindelsen
+        const pool = await poolPromise;
 
         // Udfører en SQL-forespørgsel for at hente butikoplysninger
         const result = await pool.request().query(

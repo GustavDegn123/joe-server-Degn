@@ -1,16 +1,16 @@
 // Importerer databaseforbindelsen
-const { getConnection } = require('../../config/db');
+const { poolPromise } = require('../../config/db');
 
 // Funktion til at tilføje et produkt til brugerens favoritter
 const addFavoriteProduct = async (userId, productId) => {
     try {
-        // Opretter forbindelse til databasen
-        const pool = await getConnection();
+        // Genbruger poolforbindelsen
+        const pool = await poolPromise;
 
         // Indsætter et favoritprodukt for en bestemt bruger i databasen
         const result = await pool.request()
-            .input('user_id', userId) // Binder bruger-ID
-            .input('product_id', productId) // Binder produkt-ID
+            .input('user_id', sql.Int, userId) // Binder bruger-ID
+            .input('product_id', sql.Int, productId) // Binder produkt-ID
             .query(`
                 INSERT INTO Favorites (user_id, product_id, updated_at)
                 VALUES (@user_id, @product_id, GETDATE())
@@ -29,13 +29,13 @@ const addFavoriteProduct = async (userId, productId) => {
 // Funktion til at fjerne et produkt fra brugerens favoritter
 const removeFavoriteProduct = async (userId, productId) => {
     try {
-        // Opretter forbindelse til databasen
-        const pool = await getConnection();
+        // Genbruger poolforbindelsen
+        const pool = await poolPromise;
 
         // Sletter en favoritpost for en bestemt bruger fra databasen
         const result = await pool.request()
-            .input('user_id', userId) // Binder bruger-ID
-            .input('product_id', productId) // Binder produkt-ID
+            .input('user_id', sql.Int, userId) // Binder bruger-ID
+            .input('product_id', sql.Int, productId) // Binder produkt-ID
             .query(`
                 DELETE FROM Favorites WHERE user_id = @user_id AND product_id = @product_id
             `);
@@ -53,12 +53,12 @@ const removeFavoriteProduct = async (userId, productId) => {
 // Funktion til at hente brugerens favoritprodukter
 const getFavoriteProducts = async (userId) => {
     try {
-        // Opretter forbindelse til databasen
-        const pool = await getConnection();
+        // Genbruger poolforbindelsen
+        const pool = await poolPromise;
 
         // Henter en liste over brugerens favoritprodukter fra databasen
         const result = await pool.request()
-            .input('user_id', userId) // Binder bruger-ID
+            .input('user_id', sql.Int, userId) // Binder bruger-ID
             .query(`
                 SELECT p.* 
                 FROM Products p

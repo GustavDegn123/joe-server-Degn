@@ -13,7 +13,6 @@ const app = express();
 
 // Importerer custom middleware og routere
 const authMiddleware = require('./src/middleware/authMiddleware');
-const { getConnection } = require('./config/db'); // Sikrer, at databasekonfigurationen er korrekt
 const createProfileRoutes = require('./src/routes/createProfileRoutes');
 const loginRoutes = require('./src/routes/loginRoutes');
 const logoutRoutes = require('./src/routes/logoutRoutes');
@@ -30,9 +29,6 @@ const geolocationRoutes = require('./src/routes/geoLocationRoutes');
 
 // Importerer Stripe-logik
 const { createCheckoutSession } = require('./public/scripts/stripe');
-
-// Initialiserer databaseforbindelse
-getConnection();
 
 // Middleware til håndtering af CORS, JSON, og cookies
 app.use(cors());
