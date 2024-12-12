@@ -7,7 +7,7 @@ Dette projekt demonstrerer en netværksapplikation udviklet som en del af en eks
 
 ### Krav
 1. Installer **Node.js** (mindst version 14.0.0).
-2. Opret en `.env.development`-fil i projektets rodmappe med følgende variabler:
+2. Indsæt følgende i `.env.development`-filen i projektets rodmappe med følgende variabler og egne nøgler:
     ```
     DB_USER=<din-database-bruger>
     DB_PASSWORD=<dit-database-password>
