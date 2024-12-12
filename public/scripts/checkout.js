@@ -18,8 +18,6 @@ async function fetchUserId() {
 // Initialiserer bruger-ID og kurv, når siden indlæses
 document.addEventListener("DOMContentLoaded", async () => {
     userId = await fetchUserId(); // Henter brugerens ID
-    console.log("Bruger-ID hentet:", userId);
-
     if (userId) {
         loadBasket(); // Indlæser kurvens data
     } else {
